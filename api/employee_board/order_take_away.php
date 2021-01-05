@@ -569,7 +569,25 @@ switch ($type_manager) {
                         }
                     }
                     if (!empty($success)) {
-                        returnSuccess("Tạo đơn hàng thành công");
+                        $sql = "SELECT * FROM `tbl_order_detail` WHERE `id_order` = '{$id_insert}'";
+                        $result = db_qr($sql);
+                        $nums = db_nums($result);
+                        $detail_arr = array();
+                        if ($nums > 0) {
+                            $detail_arr['success'] = 'true';
+                            $detail_arr['data'] = array();
+                            while ($row = db_assoc($result)) {
+                                $detail_item = array(
+                                    'id' => $row['id'],
+                                    'id_order' => $row['id_order'],
+                                    'id_product' => $row['id_product'],
+                                    'detail_quantity' => $row['detail_quantity'],
+                                );
+                                array_push($detail_arr['data'], $detail_item);
+                            }
+                            reJson($detail_arr);
+                        }
+                        // returnSuccess("Tạo đơn hàng thành công");
                     } else {
                         returnError("Tao don hang khong thanh cong");
                     }

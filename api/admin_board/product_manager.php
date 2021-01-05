@@ -12,6 +12,234 @@ if (isset($_REQUEST['type_manager'])) {
 }
 
 switch ($type_manager) {
+    case "update": {
+            if (isset($_REQUEST['id_product'])) {
+                if ($_REQUEST['id_product'] == '') {
+                    unset($_REQUEST['id_product']);
+                    returnError("Nhập id_product");
+                } else {
+                    $id_product = $_REQUEST['id_product'];
+                }
+            } else {
+                returnError("Nhập id_product");
+            }
+            if (isset($_REQUEST['id_business'])) {
+                if ($_REQUEST['id_business'] == '') {
+                    unset($_REQUEST['id_business']);
+                    returnError("Nhập id_business");
+                } else {
+                    $id_business = $_REQUEST['id_business'];
+                }
+            } else {
+                returnError("Nhập id_business");
+            }
+
+
+
+            if (isset($_REQUEST['id_category']) && !empty($_REQUEST['id_category'])) {
+                $id_category = $_REQUEST['id_category'];
+                $sql = "UPDATE `tbl_product_product` 
+                            SET `id_category` = '{$id_category}' 
+                            WHERE `id` = '{$id_product}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['id_category'] = 'true';
+                }
+            }
+
+            if (isset($_REQUEST['id_unit']) && !empty($_REQUEST['id_unit'])) {
+                $id_unit = $_REQUEST['id_unit'];
+                $sql = "UPDATE `tbl_product_product` 
+                            SET `id_unit` = '{$id_unit}' 
+                            WHERE `id` = '{$id_product}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['id_unit'] = 'true';
+                }
+            }
+
+            if (isset($_REQUEST['product_title']) && !empty($_REQUEST['product_title'])) {
+                $product_title = $_REQUEST['product_title'];
+                $sql = "UPDATE `tbl_product_product` 
+                            SET `product_title` = '{$product_title}' 
+                            WHERE `id` = '{$id_product}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['product_title'] = 'true';
+                }
+            }
+
+            if (isset($_REQUEST['product_code']) && !empty($_REQUEST['product_code'])) {
+                $product_code = $_REQUEST['product_code'];
+                $sql = "UPDATE `tbl_product_product` 
+                            SET `product_code` = '{$product_code}' 
+                            WHERE `id` = '{$id_product}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['product_code'] = 'true';
+                }
+            }
+
+            if (isset($_REQUEST['product_sales_price']) && !empty($_REQUEST['product_sales_price'])) {
+                $product_sales_price = $_REQUEST['product_sales_price'];
+                $sql = "UPDATE `tbl_product_product` 
+                            SET `product_sales_price` = '{$product_sales_price}' 
+                            WHERE `id` = '{$id_product}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['product_sales_price'] = 'true';
+                }
+            }
+
+            if (isset($_REQUEST['product_description']) && !empty($_REQUEST['product_description'])) {
+                $product_description = $_REQUEST['product_description'];
+                $sql = "UPDATE `tbl_product_product` 
+                            SET `product_description` = '{$product_description}' 
+                            WHERE `id` = '{$id_product}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['product_description'] = 'true';
+                }
+            }
+
+            if (isset($_REQUEST['product_point']) && !empty($_REQUEST['product_point'])) {
+                $product_point = $_REQUEST['product_point'];
+                $sql = "UPDATE `tbl_product_product` 
+                            SET `product_point` = '{$product_point}' 
+                            WHERE `id` = '{$id_product}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['product_point'] = 'true';
+                }
+            }
+
+            if (isset($_REQUEST['product_disable']) && !empty($_REQUEST['product_disable'])) {
+                $product_disable = $_REQUEST['product_disable'];
+                $sql = "UPDATE `tbl_product_product` 
+                            SET `product_disable` = '{$product_disable}' 
+                            WHERE `id` = '{$id_product}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['product_disable'] = 'true';
+                }
+            }
+
+            if (isset($_REQUEST['product_sold_out']) && !empty($_REQUEST['product_sold_out'])) {
+                $product_sold_out = $_REQUEST['product_sold_out'];
+                $sql = "UPDATE `tbl_product_product` 
+                            SET `product_sold_out` = '{$product_sold_out}' 
+                            WHERE `id` = '{$id_product}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['product_sold_out'] = 'true';
+                }
+            }
+
+
+            if (isset($_FILES['product_img'])) {
+                $sql = "SELECT * FROM `tbl_product_product` WHERE `id` = '{$id_product}'";
+                $result = mysqli_query($conn, $sql);
+                $nums = mysqli_num_rows($result);
+                if ($nums > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $product_img = $row['product_img'];
+                        if (file_exists("../" . $product_img)) {
+                            @unlink("../" . $product_img);
+                        }
+                    }
+                }
+                $product_img = 'product_img';
+                $dir_save_product_img = "images/product_product/";
+                $dir_save_thumb = handing_file_img($product_img, $dir_save_product_img);
+                $sql = "UPDATE `tbl_product_product`
+                    SET `product_img` = '{$dir_save_thumb}' 
+                    WHERE `id` = '{$id_product}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['product_img'] = 'true';
+                }
+            }
+
+            // extra
+
+            if (isset($_REQUEST['id_extra']) && !empty($_REQUEST['id_extra'])) {
+                $id_extra = explode(",", $_REQUEST['id_extra']);
+                if (isset($_REQUEST['id_product_extra']) && !empty($_REQUEST['id_product_extra'])) {
+                    $id_product_extra = explode(",", $_REQUEST['id_product_extra']);
+
+                    if (count($id_product_extra) >= count($id_extra)) {
+                        while (count($id_extra) < count($id_product_extra)) {
+                            array_push($id_extra, "null");
+                        }
+                        for ($i = 0; $i < count($id_extra); $i++) {
+                            if ($id_extra[$i] == "null") {
+                                $sql = "INSERT INTO `tbl_product_extra` 
+                                        SET `id_product_extra` = '{$id_product_extra[$i]}',
+                                            `id_product` = '{$id_product}',
+                                            `id_business` = '{$id_business}'
+                                            ";
+                                if (mysqli_query($conn, $sql)) {
+                                    $success['add_id_product_extra'] = 'true';
+                                }
+                            } else {
+                                $sql = "UPDATE `tbl_product_extra` 
+                                        SET `id_product_extra` = '{$id_product_extra[$i]}'
+                                        WHERE `id` = '{$id_extra[$i]}'";
+                                if (mysqli_query($conn, $sql)) {
+                                    $success['edit_id_product_extra'] = 'true';
+                                }
+                            }
+                        }
+                    } else {
+                        // xoá 
+                        $sql = "DELETE FROM `tbl_product_extra` 
+                                WHERE `id_product` = '{$id_product}'";
+                        if (mysqli_query($conn, $sql)) {
+                            $success['del_id_product_extra'] = 'true';
+                        }
+                        // thêm mới lại
+                        while (count($id_product_extra) < count($id_extra)) {
+                            array_push($id_product_extra, "null");
+                        }
+                        
+                        for ($i = 0; $i < count($id_product_extra); $i++) {
+                            if ($id_product_extra[$i] != "null") {
+                                $sql = "INSERT INTO `tbl_product_extra` 
+                                        SET `id_product_extra` = '{$id_product_extra[$i]}',
+                                            `id_product` = '{$id_product}',
+                                            `id_business` = '{$id_business}'
+                                            ";
+                                if (mysqli_query($conn, $sql)) {
+                                    $success['add_id_product_extra'] = 'true';
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    for ($i = 0; $i < count($id_extra); $i++) {
+                        $sql = "DELETE FROM `tbl_product_extra` 
+                                WHERE `id` = '{$id_extra[$i]}'";
+                        if (mysqli_query($conn, $sql)) {
+                            $success['del_id_product_extra'] = 'true';
+                        }
+                    }
+                }
+            } else {
+                if (isset($_REQUEST['id_product_extra']) && !empty($_REQUEST['id_product_extra'])) {
+                    $id_product_extra = explode(",", $_REQUEST['id_product_extra']);
+                    foreach ($id_product_extra as $item) {
+                        if (!empty($item)) {
+                            $sql = "INSERT INTO `tbl_product_extra` SET 
+                                    `id_product_extra` = '{$item}',
+                                    `id_product` = '{$id_product}',
+                                    `id_business` = '{$id_business}'
+                                    ";
+                            if (mysqli_query($conn, $sql)) {
+                                $success['add_id_product_extra'] = 'true';
+                            }
+                        }
+                    }
+                }
+            }
+            // end extra
+
+            if (!empty($success)) {
+                returnSuccess("Cập nhật thông tin thành công");
+            } else {
+                returnError("Không có thông tin cập nhật");
+            }
+            break;
+        }
     case "create": {
             if (isset($_REQUEST['id_business'])) {
                 if ($_REQUEST['id_business'] == '') {
@@ -87,11 +315,20 @@ switch ($type_manager) {
                 }
             }
 
-            if (isset($_REQUEST['id_extra_arr'])) {
-                if ($_REQUEST['id_extra_arr'] == '') {
-                    unset($_REQUEST['id_extra_arr']);
+            // if (isset($_REQUEST['id_extra_arr'])) {
+            //     if ($_REQUEST['id_extra_arr'] == '') {
+            //         unset($_REQUEST['id_extra_arr']);
+            //     } else {
+            //         $id_extra_arr = $_REQUEST['id_extra_arr'];
+            //     }
+            // }
+
+            $id_extra_str = '';
+            if (isset($_REQUEST['id_extra_str'])) {
+                if ($_REQUEST['id_extra_str'] == '') {
+                    unset($_REQUEST['id_extra_str']);
                 } else {
-                    $id_extra_arr = $_REQUEST['id_extra_arr'];
+                    $id_extra_arr = explode(",", $_REQUEST['id_extra_str']);
                 }
             }
 
@@ -102,16 +339,17 @@ switch ($type_manager) {
                     $product_point = $_REQUEST['product_point'];
                 }
             }
-            
-            if (isset($_FILES['product_img'])) { // up avatar
-                $avatar = 'product_img';
-                $dir_save_avatar = "images/product_product/";
+
+            if (isset($_FILES['product_img'])) { // up product_img
+                $product_img = 'product_img';
+                $dir_save_product_img = "images/product_product/";
             } else {
                 returnError("Nhập product_img");
             }
 
 
-            $dir_save_thumb = handing_file_img($avatar, $dir_save_avatar);
+
+            $dir_save_thumb = handing_file_img($product_img, $dir_save_product_img);
             $sql = "INSERT INTO `tbl_product_product` SET 
                             `id_category` = '{$id_category}',
                             `id_unit` = '{$id_unit}',
@@ -120,20 +358,20 @@ switch ($type_manager) {
                             `product_code` = '{$product_code}',
                             `product_sales_price` = '{$product_sales_price}',
                             `product_img` = '{$dir_save_thumb}'";
-            
-            if(isset($product_point) && !empty($product_point)){
+
+            if (isset($product_point) && !empty($product_point)) {
                 $sql .= " ,`product_point` = '{$product_point}'";
             }
-            if(isset($product_point) && !empty($product_point)){
+            if (isset($product_point) && !empty($product_point)) {
                 $sql .= " ,`product_description` = '{$product_description}'";
             }
 
             $success = array();
-            if(db_qr($sql)){
+            if (db_qr($sql)) {
                 $id_insert = mysqli_insert_id($conn);
 
-                if(isset($id_extra_arr) && !empty($id_extra_arr)){
-                    foreach($id_extra_arr as $id_extra){
+                if (isset($id_extra_arr) && !empty($id_extra_arr)) {
+                    foreach ($id_extra_arr as $id_extra) {
                         $sql_extra = "INSERT INTO `tbl_product_extra`
                                         SET `id_product` = '{$id_insert}',
                                             `id_product_extra` = '{$id_extra}',
@@ -143,12 +381,11 @@ switch ($type_manager) {
                     }
                 }
 
-                returnSuccess("Tạo thành công");
-            }else{
-                returnError("Tạo thất bại");
 
+                returnSuccess("Tạo thành công");
+            } else {
+                returnError("Tạo thất bại");
             }
-            
 
             break;
         }
@@ -259,7 +496,7 @@ switch ($type_manager) {
                 } else {
                     returnSuccess("Danh sách trống");
                 }
-            } 
+            }
             break;
         }
     case "list_product_unit": {

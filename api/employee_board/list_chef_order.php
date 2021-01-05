@@ -12,6 +12,18 @@ $sql = "SELECT
         LEFT JOIN `tbl_organization_floor` ON `tbl_order_order`.`order_floor` = `tbl_organization_floor`.`floor_title`
         WHERE `tbl_order_order`.`order_status` < '4'
         ";
+if (isset($_REQUEST['id_business'])) {
+    if ($_REQUEST['id_business'] == '') {
+        unset($_REQUEST['id_business']);
+        returnError("Nhập id_business");
+    } else {
+        $id_business = $_REQUEST['id_business'];
+        $sql .= " AND `tbl_order_order`.`id_business` = '{$id_business}'";
+    }
+} else {
+    returnError("Nhập id_business");
+}
+
 if (isset($_REQUEST['type_manager'])) {
     if ($_REQUEST['type_manager'] == '') {
         unset($_REQUEST['type_manager']);

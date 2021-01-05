@@ -98,6 +98,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                         'type_account' => $row['type_account'],
                         'email' => $row['email'],
                         'full_name' => $row['full_name'],
+                        'phone_number' => $row['phone_number'],
                         'status_employee' => $row['status'],
                         'type_description' => $row['type_description'],
                         'role_permission' => getRolePermission($row['id'], $conn)
@@ -506,7 +507,8 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 returnError("user_status is missing!");
             }
 
-            $sql = "SELECT * FROM tbl_account_account WHERE id = ' . $idUser . '  AND id_business  = '$id_business'";
+            $sql = "SELECT * FROM tbl_account_account WHERE id = '$idUser'  AND id_business  = '$id_business'";
+            
             $result = mysqli_query($conn, $sql);
             $num_result = mysqli_num_rows($result);
             if ($num_result > 0) {

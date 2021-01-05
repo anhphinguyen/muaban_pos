@@ -47,10 +47,13 @@ if (isset($type_manager)) {
                 $sql = "DELETE FROM `tbl_order_detail` WHERE `id` = '{$id_detail}'";
                 if (db_qr($sql)) {
                     returnSuccess("Xóa thành công");
+                } else {
+                    returnError("Xóa thất bại");
                 }
                 break;
             }
         case "update_detail": {
+
 
 
                 if (isset($_REQUEST['id_detail'])) {
@@ -80,24 +83,10 @@ if (isset($type_manager)) {
                     }
                 }
 
-                // if (isset($_REQUEST['order_comment'])) {
-                //     if ($_REQUEST['order_comment'] == '') {
-                //         unset($_REQUEST['order_comment']);
-                //     } else {
-                //         $order_comment = $_REQUEST['order_comment'];
-                //         $sql = "UPDATE `tbl_order_order`
-                //                 SET `order_comment` = '{$order_comment}'
-                //                 WHERE `id` = '{$id_order}'";
-                //         if (db_qr($sql)) {
-                //             $success['order_comment'] = "true";
-                //         }
-                //     }
-                // }
-
                 if (!empty($success)) {
-                    returnSuccess("Cập nhật thành công");
+                    returnSuccess("Tạo đơn hàng thành công");
                 } else {
-                    returnSuccess("Không có thông tin cập nhật");
+                    returnError("Tao don hang khong thanh cong");
                 }
                 break;
             }
@@ -192,7 +181,7 @@ if (isset($type_manager)) {
                     $success['open_table'] = 'true';
                 }
 
-  
+
 
                 $sql = "SELECT `id` FROM `tbl_order_order` 
                         WHERE `order_table` = '{$table_before}'
@@ -272,7 +261,7 @@ if (isset($type_manager)) {
                             $success['order_comment'] = "true";
                         }
                     }
-                } 
+                }
 
                 if (isset($element) && !empty($element)) {
                     $element_convert_arr = explode("|", $element);
@@ -321,6 +310,7 @@ if (isset($type_manager)) {
                             $detail_item = array(
                                 'id' => $row['id'],
                                 'id_order' => $row['id_order'],
+                                'id_product' => $row['id_product'],
                                 'detail_quantity' => $row['detail_quantity'],
                             );
                             array_push($detail_arr['data'], $detail_item);
@@ -552,6 +542,7 @@ if (isset($type_manager)) {
                                     $detail_item = array(
                                         'id' => $row['id'],
                                         'id_order' => $row['id_order'],
+                                        'id_product' => $row['id_product'],
                                         'detail_quantity' => $row['detail_quantity'],
                                     );
                                     array_push($detail_arr['data'], $detail_item);
