@@ -465,7 +465,7 @@ switch ($type_manager) {
                 $error['element'] = "Truyền vào element";
             }
 
-            if (empty($error)) {
+            if (empty($errorr)) {
                 $success = array();
 
                 // $sql = "SELECT * FROM `tbl_organization_table` WHERE `id` = '{$id_table}'";

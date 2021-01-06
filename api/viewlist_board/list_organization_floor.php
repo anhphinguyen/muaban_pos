@@ -104,10 +104,23 @@ if (empty($error)) {
                                 $result_total_cost_tmp = db_qr($sql_total_cost_tmp);
                                 $nums_total_cost_tmp = db_nums($result_total_cost_tmp);
                                 $total_cost_tmp = 0;
+                                $total_acture = 0;
                                 if ($nums_total_cost_tmp > 0) {
                                     while ($row_total_cost_tmp = db_assoc($result_total_cost_tmp)) {
-                                        $total_cost_tmp += $row_total_cost_tmp['detail_cost'] * $row_total_cost_tmp['detail_quantity'];
+                                        //neus status == Y
+                                        //=> ++  total
+                                        //else
+                                        if($row_total_cost_tmp['detail_status'] == 'Y'){
+                                            $total_acture += $row_total_cost_tmp['detail_cost'] * $row_total_cost_tmp['detail_quantity'];
+                                        }else{
+                                            $total_cost_tmp += $row_total_cost_tmp['detail_cost'] * $row_total_cost_tmp['detail_quantity'];
+                                        }
                                     }
+                                }
+                                if($total_acture > 0){
+                                    $total_cost_tmp = $total_acture;
+                                }else{
+                                    $total_cost_tmp = $total_cost_tmp;
                                 }
 
 

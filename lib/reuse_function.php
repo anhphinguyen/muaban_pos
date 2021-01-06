@@ -1,4 +1,143 @@
 <?php
+
+function get_list_customer_by_level($id, $point_arr = array(), $id_level_arr = array()){
+    $sql_customer = "SELECT `customer_point` FROM `tbl_customer_customer` WHERE 1=1 ";
+    for ($i = 0; $i < count($id_level_arr); $i++) {
+        for ($j = $i + 1; $j <= count($id_level_arr); $j++) {
+            if ($j == count($id_level_arr)) {
+                if ($id == $id_level_arr[$i]) {
+                    $point_end = (int)$point_arr[$i];
+                    $sql_customer .= " AND `customer_point` >= {$point_end}
+                             ";
+                }
+                break;
+            } else {
+                if ($id == $id_level_arr[$i]) {
+                    $point_begin = (int)$point_arr[$i];
+                    $point_end = (int)$point_arr[$j];
+                    $sql_customer .= " AND `customer_point` >= {$point_begin}
+                              AND `customer_point` < {$point_end}
+                            ";
+                }
+                break;
+            }
+        }
+    }
+
+    return $sql_customer;
+}
+function arrange_position($point_arr = array(), $level_arr = array(), $id_arr = array())
+{
+    $tmp_point = "";
+    $tmp_level = "";
+    $tmp_id = "";
+    $result = array();
+
+    for ($i = 0; $i < count($point_arr); $i++) {
+        for ($j = $i + 1; $j < count($point_arr); $j++) {
+            if ($point_arr[$i] > $point_arr[$j]) {
+                $tmp_point = $point_arr[$i];
+                $point_arr[$i] = $point_arr[$j];
+                $point_arr[$j] = $tmp_point;
+
+                $tmp_level = $level_arr[$i];
+                $level_arr[$i] = $level_arr[$j];
+                $level_arr[$j] = $tmp_level;
+
+                $tmp_id = $id_arr[$i];
+                $id_arr[$i] = $id_arr[$j];
+                $id_arr[$j] = $tmp_id;
+            }
+        }
+    }
+    $result['id_level'] = $id_arr;
+    $result['point'] = $point_arr;
+    $result['level'] = $level_arr;
+    return $result;
+}
+// update product extra
+function update_product_extra($id_extra_req, $id_product_extra_req, $id_product, $id_business)
+{
+    global $conn;
+    $success = array();
+    if (isset($id_extra_req) && !empty($id_extra_req)) {
+        $id_extra = explode(",", $id_extra_req);
+        if (isset($id_product_extra_req) && !empty($id_product_extra_req)) {
+            $id_product_extra = explode(",", $id_product_extra_req);
+
+            if (count($id_product_extra) >= count($id_extra)) {
+                while (count($id_extra) < count($id_product_extra)) {
+                    array_push($id_extra, "null");
+                }
+                for ($i = 0; $i < count($id_extra); $i++) {
+                    if ($id_extra[$i] == "null") {
+                        $sql = "INSERT INTO `tbl_product_extra` 
+                                        SET `id_product_extra` = '{$id_product_extra[$i]}',
+                                            `id_product` = '{$id_product}',
+                                            `id_business` = '{$id_business}'
+                                            ";
+                        if (mysqli_query($conn, $sql)) {
+                            $success['add_id_product_extra'] = 'true';
+                        }
+                    } else {
+                        $sql = "UPDATE `tbl_product_extra` 
+                                        SET `id_product_extra` = '{$id_product_extra[$i]}'
+                                        WHERE `id` = '{$id_extra[$i]}'";
+                        if (mysqli_query($conn, $sql)) {
+                            $success['edit_id_product_extra'] = 'true';
+                        }
+                    }
+                }
+            } else {
+
+                while (count($id_product_extra) < count($id_extra)) {
+                    array_push($id_product_extra, 0);
+                }
+                for ($i = 0; $i < count($id_extra); $i++) {
+
+                    $sql = "    UPDATE `tbl_product_extra` 
+                                        SET `id_product_extra` = '{$id_product_extra[$i]}'
+                                        WHERE `id` = '{$id_extra[$i]}'";
+                    if (mysqli_query($conn, $sql)) {
+                        $success['edit_id_product_extra'] = 'true';
+                    }
+                }
+
+                $sql = "DELETE FROM `tbl_product_extra` WHERE `id_product_extra` = '0'";
+                db_qr($sql);
+            }
+        } else {
+            for ($i = 0; $i < count($id_extra); $i++) {
+                $sql = "DELETE FROM `tbl_product_extra` 
+                                WHERE `id` = '{$id_extra[$i]}'";
+                if (mysqli_query($conn, $sql)) {
+                    $success['del_id_product_extra'] = 'true';
+                }
+            }
+        }
+    } else {
+        if (isset($id_product_extra_req) && !empty($id_product_extra_req)) {
+            $id_product_extra = explode(",", $id_product_extra_req);
+            foreach ($id_product_extra as $item) {
+                if (!empty($item)) {
+                    $sql = "INSERT INTO `tbl_product_extra` SET 
+                                    `id_product_extra` = '{$item}',
+                                    `id_product` = '{$id_product}',
+                                    `id_business` = '{$id_business}'
+                                    ";
+                    if (mysqli_query($conn, $sql)) {
+                        $success['add_id_product_extra'] = 'true';
+                    }
+                }
+            }
+        }
+    }
+    if (!empty($success)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 // xu ly hinh anh
 
 function handing_files_img($myfile, $dir_save)
@@ -126,18 +265,21 @@ function handing_file_img($myfile, $dir_save)
 //     }
 // }
 
-function db_assoc($result){
+function db_assoc($result)
+{
     return mysqli_fetch_assoc($result);
 }
-function db_nums($result){
+function db_nums($result)
+{
     $nums = mysqli_num_rows($result);
     return $nums;
 }
 
-function db_qr($sql){
+function db_qr($sql)
+{
     global $conn;
     $result = mysqli_query($conn, $sql);
-    if(!empty($result)){
+    if (!empty($result)) {
         return $result;
     }
     return false;
@@ -150,7 +292,6 @@ function return_error($message)
         'message' => $message,
     ));
     exit();
-
 }
 
 function reJson($array)
@@ -177,8 +318,8 @@ function getRolePermission($idUser = '')
 {
     global $conn;
     $sql = "SELECT * FROM tbl_account_permission";
-    
-    if (! empty($idUser)) {
+
+    if (!empty($idUser)) {
         $sql = " SELECT 
             tbl_account_permission.id,
             tbl_account_permission.permission,
@@ -193,7 +334,7 @@ function getRolePermission($idUser = '')
 			ORDER BY tbl_account_authorize.grant_permission ASC
         ";
     }
-    
+
     $result = mysqli_query($conn, $sql);
     // mysqli_close($conn);
     // Get row count
@@ -201,19 +342,19 @@ function getRolePermission($idUser = '')
     $arr_result = array();
     // Check if any item
     if ($num > 0) {
-        
+
         while ($row = $result->fetch_assoc()) {
-            
+
             $role_item = array(
                 'id' => $row['id'],
                 'permission' => $row['permission'],
-                'description' => $row['description']         
+                'description' => $row['description']
             );
             // Push to "data"
             array_push($arr_result, $role_item);
         }
     }
-    
+
     return $arr_result;
 }
 
@@ -278,4 +419,54 @@ function generateRandomString($length)
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
     return $randomString;
+}
+
+function pushNotification($title, $message, $action, $to, $type_send = 'topic', $server_key = 'AAAAR0TTTdw:APA91bGSCuXgt9LxZcETqJmUS4kB2i5V5cZCq-OspochhOpVmEf3VB46ZMmT8urCLPNGuH0rzdYJntoezw0qvRg_BSoUrIV5Gubx-r31iGCKGqsAJquYzxg1cdsU5TuUHraKl-hrDI6r')
+{
+    $message_data = array(
+        'title' => $title,
+        'body' => $message,
+        "click_action" => $action,
+        "badge" => "1"
+    );
+    $headers = array(
+        'Authorization: key=' . $server_key,
+        'Content-Type: application/json'
+    );
+
+    $data = array();
+
+    if (!empty($type_send) && $type_send == 'single') {
+        require_once 'notification.php';
+        $notification = new Notification();
+
+        $notification->setTitle($title);
+        $notification->setMessage($message);
+        $notification->setAction($action);
+
+        $requestData = $notification->getNotificatin();
+
+        $data['to'] = $to;
+        $data['data'] = $requestData;
+    } else {
+        $data['to'] = "/topics/" . $to;
+        $data['notification'] = $message_data;
+    }
+
+    $data = json_encode($data);
+
+    // print_r($data);
+    // exit
+
+    $url = 'https://fcm.googleapis.com/fcm/send';
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    $result = curl_exec($ch);
+    curl_close($ch);
 }

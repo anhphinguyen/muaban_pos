@@ -77,6 +77,7 @@ if (empty($error)) {
             $sql_order_detail = "SELECT 
                                 `tbl_product_product`.`id` as `id_product`,
                                 `tbl_product_product`.`product_title` as `product_title`,
+                                `tbl_product_product`.`product_img` as `product_img`,
 
                                 `tbl_order_detail`.`id` as `id_detail`,
                                 `tbl_order_detail`.`detail_extra` as `detail_extra`,
@@ -103,6 +104,7 @@ if (empty($error)) {
                         'id_detail' => $row_detail['id_detail'],
                         'id_product' => $row_detail['id_product'],
                         'product_title' => $row_detail['product_title'],
+                        'product_img' => $row_detail['product_img'],
                         'detail_cost' => $row_detail['detail_cost'],
                         'detail_quantity' => $row_detail['detail_quantity'],
                         'detail_status' => $row_detail['detail_status'],

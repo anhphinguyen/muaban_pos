@@ -38,6 +38,10 @@ switch ($detect) {
         //         include_once 'admin_board/update_time.php';
         //         break;
         //     }
+    case 'force_signout': {
+            include_once 'admin_board/force_signout.php';
+            break;
+        }
     case 'account_type_manager': {
             include_once 'admin_board/account_type_manager.php';
             break;
@@ -63,6 +67,10 @@ switch ($detect) {
             include_once 'admin_board/order_manager.php';
             break;
         }
+    case 'customer_level_manager': {
+            include_once 'admin_board/customer_level_manager.php';
+            break;
+        }
     case 'customer_customer_manager': {
             include_once 'admin_board/customer_customer_manager.php';
             break;
@@ -80,6 +88,14 @@ switch ($detect) {
             break;
         }
         // employee
+    case 'update_detail_status': {
+            include_once 'employee_board/update_detail_status.php';
+            break;
+        }
+    case 'update_order_status': {
+            include_once 'employee_board/update_order_status.php';
+            break;
+        }
     case 'list_chef_order': {
             include_once 'employee_board/list_chef_order.php';
             break;
@@ -116,6 +132,14 @@ switch ($detect) {
 
 
         // views
+    case 'list_product_disable': {
+            include_once 'viewlist_board/list_product_disable.php';
+            break;
+        }
+    case 'list_customer_by_level': {
+            include_once 'viewlist_board/list_customer_by_level.php';
+            break;
+        }
     case 'table_order': {
             include_once 'viewlist_board/table_order.php';
             break;

@@ -12,6 +12,48 @@ if (isset($_REQUEST['type_manager'])) {
 }
 
 switch ($type_manager) {
+    case "delete": {
+            if (isset($_REQUEST['id_product'])) {
+                if ($_REQUEST['id_product'] == '') {
+                    unset($_REQUEST['id_product']);
+                    returnError("Nhập id_product");
+                } else {
+                    $id_product = $_REQUEST['id_product'];
+                }
+            } else {
+                returnError("Nhập id_product");
+            }
+
+            $success = array();
+
+            $sql = "SELECT `tbl_product_product`.`product_img` FROM `tbl_product_product` WHERE `id` = '{$id_product}'";
+            $result = mysqli_query($conn, $sql);
+            $nums = mysqli_num_rows($result);
+            if ($nums > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $product_img =  $row['product_img'];
+                }
+                if (file_exists("../" . $product_img)) {
+                    @unlink("../" . $product_img);
+                }
+            }
+
+            $sql = "DELETE FROM `tbl_product_extra` WHERE `id_product` = '{$id_product}'";
+            if (db_qr($sql)) {
+                $success['delete_extra'] = "true";
+            }
+            $sql = "DELETE FROM `tbl_product_product` WHERE `id` = '{$id_product}'";
+            if (db_qr($sql)) {
+                $success['delete_product'] = "true";
+            }
+
+            if (!empty($success)) {
+                returnSuccess("Xoa thanh cong");
+            } else {
+                returnError("Xoa that bai");
+            }
+            break;
+        }
     case "update": {
             if (isset($_REQUEST['id_product'])) {
                 if ($_REQUEST['id_product'] == '') {
@@ -152,85 +194,28 @@ switch ($type_manager) {
 
             // extra
 
-            if (isset($_REQUEST['id_extra']) && !empty($_REQUEST['id_extra'])) {
-                $id_extra = explode(",", $_REQUEST['id_extra']);
-                if (isset($_REQUEST['id_product_extra']) && !empty($_REQUEST['id_product_extra'])) {
-                    $id_product_extra = explode(",", $_REQUEST['id_product_extra']);
-
-                    if (count($id_product_extra) >= count($id_extra)) {
-                        while (count($id_extra) < count($id_product_extra)) {
-                            array_push($id_extra, "null");
-                        }
-                        for ($i = 0; $i < count($id_extra); $i++) {
-                            if ($id_extra[$i] == "null") {
-                                $sql = "INSERT INTO `tbl_product_extra` 
-                                        SET `id_product_extra` = '{$id_product_extra[$i]}',
-                                            `id_product` = '{$id_product}',
-                                            `id_business` = '{$id_business}'
-                                            ";
-                                if (mysqli_query($conn, $sql)) {
-                                    $success['add_id_product_extra'] = 'true';
-                                }
-                            } else {
-                                $sql = "UPDATE `tbl_product_extra` 
-                                        SET `id_product_extra` = '{$id_product_extra[$i]}'
-                                        WHERE `id` = '{$id_extra[$i]}'";
-                                if (mysqli_query($conn, $sql)) {
-                                    $success['edit_id_product_extra'] = 'true';
-                                }
-                            }
-                        }
-                    } else {
-                        // xoá 
-                        $sql = "DELETE FROM `tbl_product_extra` 
-                                WHERE `id_product` = '{$id_product}'";
-                        if (mysqli_query($conn, $sql)) {
-                            $success['del_id_product_extra'] = 'true';
-                        }
-                        // thêm mới lại
-                        while (count($id_product_extra) < count($id_extra)) {
-                            array_push($id_product_extra, "null");
-                        }
-                        
-                        for ($i = 0; $i < count($id_product_extra); $i++) {
-                            if ($id_product_extra[$i] != "null") {
-                                $sql = "INSERT INTO `tbl_product_extra` 
-                                        SET `id_product_extra` = '{$id_product_extra[$i]}',
-                                            `id_product` = '{$id_product}',
-                                            `id_business` = '{$id_business}'
-                                            ";
-                                if (mysqli_query($conn, $sql)) {
-                                    $success['add_id_product_extra'] = 'true';
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    for ($i = 0; $i < count($id_extra); $i++) {
-                        $sql = "DELETE FROM `tbl_product_extra` 
-                                WHERE `id` = '{$id_extra[$i]}'";
-                        if (mysqli_query($conn, $sql)) {
-                            $success['del_id_product_extra'] = 'true';
-                        }
-                    }
-                }
-            } else {
-                if (isset($_REQUEST['id_product_extra']) && !empty($_REQUEST['id_product_extra'])) {
-                    $id_product_extra = explode(",", $_REQUEST['id_product_extra']);
-                    foreach ($id_product_extra as $item) {
-                        if (!empty($item)) {
-                            $sql = "INSERT INTO `tbl_product_extra` SET 
-                                    `id_product_extra` = '{$item}',
-                                    `id_product` = '{$id_product}',
-                                    `id_business` = '{$id_business}'
-                                    ";
-                            if (mysqli_query($conn, $sql)) {
-                                $success['add_id_product_extra'] = 'true';
-                            }
+            if(isset($_REQUEST['id_product_extra']) && !empty($_REQUEST['id_product_extra'])){
+                $sql = "DELETE FROM `tbl_product_extra` WHERE `id_product` = '{$id_product}'";
+                db_qr($sql);
+                $id_product_extra = explode(",",$_REQUEST['id_product_extra']);
+                if(!empty($id_product_extra)){
+                    foreach($id_product_extra as $id_item){
+                        $sql = "INSERT INTO `tbl_product_extra` SET
+                                `id_product` = '{$id_product}',
+                                `id_product_extra` = '{$id_item}',
+                                `id_business` = '{$id_business}'
+                                ";
+                        if(db_qr($sql)){
+                            $success['product_img'] = 'true';
                         }
                     }
                 }
             }
+            // if (update_product_extra($_REQUEST['id_extra'], $_REQUEST['id_product_extra'], $id_product, $id_business)) {
+            //     $success['extra'] = "true";
+            //     returnError("ok");
+            // }
+
             // end extra
 
             if (!empty($success)) {

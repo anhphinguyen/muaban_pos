@@ -10,8 +10,28 @@ $sql = "SELECT
 
         FROM `tbl_order_order`
         LEFT JOIN `tbl_organization_floor` ON `tbl_order_order`.`order_floor` = `tbl_organization_floor`.`floor_title`
-        WHERE `tbl_order_order`.`order_status` < '4'
+        WHERE `tbl_order_order`.`order_status` < '4' 
         ";
+
+$sql_total = "SELECT
+        `tbl_organization_floor`.`floor_type` as `order_type`,
+
+        `tbl_order_order`.`id` as `id_order`,
+        `tbl_order_order`.`order_floor` as `order_floor`,
+        `tbl_order_order`.`order_table` as `order_table`,
+        `tbl_order_order`.`order_status` as `order_status`,
+        `tbl_order_order`.`order_check_time` as `order_check_time`,
+
+        `tbl_order_detail`.`detail_status` as `detail_status`
+        FROM `tbl_order_order`
+        LEFT JOIN `tbl_organization_floor` ON `tbl_order_order`.`order_floor` = `tbl_organization_floor`.`floor_title`
+        LEFT JOIN `tbl_order_detail` ON `tbl_order_order`.`id` = `tbl_order_detail`.`id_order`
+        WHERE `tbl_order_order`.`order_status` < '4' 
+        AND `tbl_order_detail`.`detail_status` = 'N'
+        GROUP BY `tbl_order_order`.`id` 
+        ";
+
+
 if (isset($_REQUEST['id_business'])) {
     if ($_REQUEST['id_business'] == '') {
         unset($_REQUEST['id_business']);
@@ -35,6 +55,17 @@ if (isset($_REQUEST['type_manager'])) {
     returnError("Nhập type_manager");
 }
 
+if (isset($_REQUEST['id_order'])) {
+    if ($_REQUEST['id_order'] == '') {
+        unset($_REQUEST['id_order']);
+    } else {
+        $id_order = $_REQUEST['id_order'];
+        $sql .= " AND `tbl_order_order`.`id` = '{$id_order}'";
+    }
+}
+
+$total = count(db_fetch_array($sql_total));
+
 switch ($type_manager) {
     case "carry_out": {
             $sql .= " AND `tbl_organization_floor`.`floor_type` = 'carry-out'";
@@ -50,31 +81,17 @@ switch ($type_manager) {
         }
 }
 
-$total = count(db_fetch_array($sql));
-$limit = 20;
-$page = 1;
+// $total = count(db_fetch_array($sql));
 
-if (isset($_REQUEST['limit']) && !empty($_REQUEST['limit'])) {
-    $limit = $_REQUEST['limit'];
-}
-if (isset($_REQUEST['page']) && !empty($_REQUEST['page'])) {
-    $page = $_REQUEST['page'];
-}
+$sql .= "ORDER BY `tbl_order_order`.`order_status` DESC";
 
-$total_pages = ceil($total / $limit);
-$start = ($page - 1) * $limit;
 
-$sql .= " ORDER BY `tbl_order_order`.`id` DESC LIMIT {$start},{$limit}";
 $result = db_qr($sql);
 $nums = db_nums($result);
 $order_arr = array();
 if ($nums > 0) {
     $order_arr['success'] = 'true';
     $order_arr['total'] = strval($total);
-    $order_arr['total_pages'] = strval($total_pages);
-    $order_arr['limit'] = strval($limit);
-    $order_arr['page'] = strval($page);
-    $order_arr['start'] = strval($start);
     $order_arr['data'] = array();
 
     while ($row = db_assoc($result)) {
@@ -84,12 +101,13 @@ if ($nums > 0) {
                                         ";
         $total_product_notyet = count(db_fetch_array($sql_total_product_notyet));
         if ($total_product_notyet > 0) {
+
+
             $order_item = array(
-                'id' => $row['id_order'],
+                'id_order' => $row['id_order'],
                 'order_type' => $row['order_type'],
                 'order_status' => $row['order_status'],
-                'order_floor' => $row['order_floor'],
-                'order_table' => $row['order_table'],
+                'order_location' => $row['order_floor'] . " - " . $row['order_table'],
                 'total_product_finished' => "",
                 'total_product_notyet' => "",
                 'order_check_time' => $row['order_check_time'],
@@ -103,9 +121,9 @@ if ($nums > 0) {
             $order_item['total_product_finished'] = strval($total_product_finished);
 
             $order_item['total_product_notyet'] = strval($total_product_notyet);
+
             array_push($order_arr['data'], $order_item);
         }
-
     }
 
     reJson($order_arr);

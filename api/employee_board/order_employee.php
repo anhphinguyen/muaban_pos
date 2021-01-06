@@ -90,10 +90,10 @@ if (isset($type_manager)) {
                 }
                 break;
             }
-        case "update_detail_status": { // chef
-                include_once "chef_update_status.php";
-                break;
-            }
+            // case "update_detail_status": { // chef
+            //         include_once "chef_update_status.php";
+            //         break;
+            //     }
         case "update_change_table": {
 
 
@@ -106,6 +106,16 @@ if (isset($type_manager)) {
                     }
                 } else {
                     returnError("Nhập id_table_before");
+                }
+
+                $sql = "SELECT `table_status` FROM `tbl_organization_table`
+                        WHERE `id` = '{$id_table_before}' 
+                        AND `table_status` = 'empty'
+                        ";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if($nums > 0){
+                    returnError("Bàn đang không có đơn");
                 }
 
                 if (isset($_REQUEST['id_table_after'])) {
@@ -206,14 +216,23 @@ if (isset($type_manager)) {
                 }
 
                 if (!empty($success)) {
-                    returnSuccess("Chuyển bàn thành công");
+                    $message = array(
+                            'success' => "true",
+                            'message' => "Chuyển bàn thành công",
+                            'data' => array()
+                        );
+                    $data = array(
+                        'id_order' => $id_order,
+                    );
+                    array_push($message['data'], $data);
+                    reJson($message);
                 }
                 break;
             }
-        case "update_order_status": {
-                include_once "update_order_status.php";
-                break;
-            }
+            // case "update_order_status": {
+            //         include_once "update_order_status.php";
+            //         break;
+            //     }
         case "update_add_product": {
 
                 if (isset($_REQUEST['id_business'])) {

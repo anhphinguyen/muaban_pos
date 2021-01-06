@@ -2,10 +2,14 @@
 
 // Thực Đơn theo từng cửa hàng
 $sql = "SELECT `tbl_product_product`.*,
-                `tbl_product_unit`.`unit` as `product_unit`
+
+                `tbl_product_unit`.`unit` as `product_unit`,
+
+                `tbl_product_category`.`category_title` as `category_title`
                 FROM  `tbl_product_product`
                 LEFT JOIN `tbl_product_unit` ON `tbl_product_product`.`id_unit` = `tbl_product_unit`.`id`
-                WHERE `tbl_product_product`.`product_disable` = 'N'";
+                LEFT JOIN `tbl_product_category` ON `tbl_product_product`.`id_category` = `tbl_product_category`.`id`
+                WHERE `tbl_product_product`.`product_sold_out` = 'N'";
 
 
 $error = array();
@@ -74,6 +78,7 @@ if (empty($error)) {
                 'id' => $row['id'],
                 'id_business' => $row['id_business'],
                 'id_category' => $row['id_category'],
+                'category_title' => $row['category_title'],
                 'product_img' => $row['product_img'],
                 'product_title' => $row['product_title'],
                 'product_code' => $row['product_code'],

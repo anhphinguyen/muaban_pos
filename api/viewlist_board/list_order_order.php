@@ -10,6 +10,7 @@ if (isset($_REQUEST['id_business'])) {
         $id_business = $_REQUEST['id_business'];
         $sql .= " AND `id_business` = '{$id_business}'";
         $sql .= " AND `order_status` = '5'";
+
         if (isset($_REQUEST['id_account'])) {
             if ($_REQUEST['id_account'] == '') {
                 unset($_REQUEST['id_account']);
@@ -99,7 +100,7 @@ if (empty($error)) {
                 'order_floor' => $row['order_floor'],
                 'order_table' => $row['order_table'],
                 'order_status' => $row['order_status'],
-                'order_total_cost' => $row['order_total_cost'],
+                'order_total_cost' => !empty($row['order_total_cost'])? $row['order_total_cost']:"0",
                 'order_created' => $row['order_created'],
             );
 

@@ -1,4 +1,15 @@
 <?php
+if (isset($_REQUEST['id_business'])) {
+    if ($_REQUEST['id_business'] == '') {
+        unset($_REQUEST['id_business']);
+        returnError("Nhập id_business");
+    } else {
+        $id_business = $_REQUEST['id_business'];
+    }
+} else {
+    returnError("Nhập id_business");
+}
+
 if (isset($_REQUEST['target'])) {
     if ($_REQUEST['target'] == '') {
         unset($_REQUEST['target']);
@@ -16,21 +27,21 @@ $title = "Thông báo đăng nhập!!!";
 $bodyMessage = "Phiên làm việc đã kết thúc, vui lòng đăng nhập lại để tiếp tục.";
 $action = "check_sign_out";
 $type_send = 'topic';
-$to = 'qlsx_notification';
+$to = 'muaban_pos_notification';
 switch ($target) {
     case 'customer':
-        $to = "qlsx_notification_customer";
+        $to = "muaban_pos_notification_customer";
         
         $query = "UPDATE tbl_customer_customer SET ";
-        $query .= " force_sign_out  = '1'";
+        $query .= " force_sign_out  = '1' WHERE `id_business` = '{$id_business}'";
         $conn->query($query);
         
         break;
     case 'employee':
-        $to = "qlsx_notification_employee";
+        $to = "muaban_pos_notification_employee";
         
-        $query = "UPDATE tbl_admin_account SET ";
-        $query .= " force_sign_out  = '1' WHERE id_type != '1'";
+        $query = "UPDATE tbl_account_account SET ";
+        $query .= " force_sign_out  = '1' WHERE id_type != '1' AND `id_business` = '{$id_business}'";
         $conn->query($query);
         
         break;

@@ -72,6 +72,28 @@ if (empty($error)) {
     $customer_arr['data'] = array();
     $result = db_qr($sql);
     $nums = db_nums($result);
+
+    // sắp xếp cấp độ
+    $sql_level = "SELECT * FROM `tbl_customer_point`";
+    $result_level = db_qr($sql_level);
+    $nums_level = db_nums($result_level);
+    if ($nums_level) {
+        $point_arr = array();
+        $point_arr['id_level'] = array();
+        $point_arr['point'] = array();
+        $point_arr['level'] = array();
+        while ($row_level = db_assoc($result_level)) {
+            $id_level = $row_level['id'];
+            $customer_point = $row_level['customer_point'];
+            $customer_level = $row_level['customer_level'];
+
+            array_push($point_arr['id_level'], $id_level);
+            array_push($point_arr['point'], $customer_point);
+            array_push($point_arr['level'], $customer_level);
+        }
+        $point_arr = arrange_position($point_arr['point'], $point_arr['level'], $point_arr['id_level']);
+    }
+    // kết thúc sắp xếp cấp độ
     if ($nums > 0) {
         while ($row = db_assoc($result)) {
             $customer_item = array(
@@ -88,15 +110,9 @@ if (empty($error)) {
                 'customer_taxcode' => htmlspecialchars_decode($row['customer_taxcode']),
             );
 
-
-            $sql_level = "SELECT * FROM `tbl_customer_point`";
-            $result_level = db_qr($sql_level);
-            $nums_level = db_nums($result_level);
-            if ($nums_level > 0) {
-                while ($row_level = db_assoc($result_level)) {
-                    if ($row['customer_point'] >= $row_level['customer_point']) {
-                        $customer_item['customer_level'] = $row_level['customer_level'];
-                    }
+            for($i = 0; $i < count($point_arr['point']); $i++){
+                if ($row['customer_point'] >= $point_arr['point'][$i]) {
+                    $customer_item['customer_level'] = $point_arr['level'][$i];
                 }
             }
 

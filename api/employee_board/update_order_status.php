@@ -1,15 +1,15 @@
 <?php
 $error = array();
 
-if (isset($_REQUEST['type_status'])) {
-    if ($_REQUEST['type_status'] == '') {
-        unset($_REQUEST['type_status']);
-        returnError("Nhập type_status");
+if (isset($_REQUEST['type_manager'])) {
+    if ($_REQUEST['type_manager'] == '') {
+        unset($_REQUEST['type_manager']);
+        returnError("Nhập type_manager");
     } else {
-        $type_status = $_REQUEST['type_status'];
+        $type_manager = $_REQUEST['type_manager'];
     }
 } else {
-    returnError("Nhập type_status");
+    returnError("Nhập type_manager");
 }
 
 if (isset($_REQUEST['id_order'])) {
@@ -23,7 +23,7 @@ if (isset($_REQUEST['id_order'])) {
     returnError("Nhập id_order");
 }
 
-switch ($type_status) {
+switch ($type_manager) {
     case "cancel": {
             $sql = "SELECT `order_table` FROM `tbl_order_order` WHERE `id` = '{$id_order}'";
             $result = db_qr($sql);
@@ -371,7 +371,7 @@ switch ($type_status) {
             break;
         }
     default: {
-            returnError("Khong ton tai type_status");
+            returnError("Khong ton tai type_manager");
             break;
         }
 }
