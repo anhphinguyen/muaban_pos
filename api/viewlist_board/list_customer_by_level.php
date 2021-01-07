@@ -47,6 +47,17 @@ if (isset($_REQUEST['id_level'])) {
 $sql = "SELECT * FROM `tbl_customer_customer` 
         WHERE 1=1
         ";
+
+if (isset($_REQUEST['filter'])) {
+    if ($_REQUEST['filter'] == '') {
+        unset($_REQUEST['filter']);
+    } else {
+        $filter = $_REQUEST['filter'];
+        $sql .= " AND `customer_name` LIKE '%{$filter}%'";
+    }
+} 
+
+
 for ($i = 0; $i < count($point_arr['id_level']); $i++) {
     for ($j = $i + 1; $j <= count($point_arr['id_level']); $j++) {
         if ($j == count($point_arr['id_level'])) {

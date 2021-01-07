@@ -53,8 +53,8 @@ if (empty($error)) {
                 'id_order' => $row['id_order'],
                 // 'id_floor' => $row['id_floor'],
                 // 'id_table' => $row['id_table'],
-                'id_customer' => "",//$row['id_customer']
-                'customer_code' => "",//$row['customer_code']
+                'id_customer' => "", //$row['id_customer']
+                'customer_code' => "", //$row['customer_code']
                 'id_account' => $row['id_account'],
                 'account_username' => $row['account_username'],
                 'order_code' => $row['order_code'],
@@ -70,7 +70,7 @@ if (empty($error)) {
                 'order_detail' => array()
             );
 
-            if($row['id_customer'] > 0){
+            if ($row['id_customer'] > 0) {
                 $order_item['id_customer'] = $row['id_customer'];
                 $order_item['customer_code'] = $row['customer_code'];
             }
@@ -99,6 +99,7 @@ if (empty($error)) {
             $nums_detail = db_nums($result_detail);
             if ($nums_detail > 0) {
                 $total_cost_tmp = 0;
+                $total_acture = 0;
                 while ($row_detail = db_assoc($result_detail)) {
                     $order_detail = array(
                         'id_detail' => $row_detail['id_detail'],
@@ -112,13 +113,17 @@ if (empty($error)) {
                     );
 
                     // total_tmp
-                        $total_cost_tmp += $row_detail['detail_cost']*$row_detail['detail_quantity'];
+                    if ($row_detail['detail_status'] == 'Y') {
+                        $total_acture += $row_detail['detail_cost'] * $row_detail['detail_quantity'];
+                    } else {
+                        $total_cost_tmp += $row_detail['detail_cost'] * $row_detail['detail_quantity'];
+                    }
 
 
                     // product_extra
                     $id_extra_arr = explode(",", $row_detail['detail_extra']);
                     $product_extra = array();
-                    for($i = 0; $i < count($id_extra_arr); $i++){
+                    for ($i = 0; $i < count($id_extra_arr); $i++) {
                         $sql_extra = "SELECT 
                                             `tbl_product_product`.`id` as `id`,
                                             `tbl_product_product`.`product_title` as `product_title_extra`
@@ -127,23 +132,26 @@ if (empty($error)) {
                                             ";
                         $result_extra = db_qr($sql_extra);
                         $nums_extra = db_nums($result_extra);
-                        if($nums_extra > 0){
-                            while($row_extra = db_assoc($result_extra)){
+                        if ($nums_extra > 0) {
+                            while ($row_extra = db_assoc($result_extra)) {
                                 $product_extra_item = array(
                                     'id' => $row_extra['id'],
                                     'product_title_extra' => $row_extra['product_title_extra'],
                                 );
-
                             }
                             array_push($product_extra, $product_extra_item);
                         }
                     }
-                    // $total_cost_tmp *= $row_detail['detail_quantity'];
 
                     $order_detail['product_extra'] = $product_extra;
 
 
                     array_push($order_item['order_detail'], $order_detail);
+                }
+                if ($total_acture > 0) {
+                    $total_cost_tmp = $total_acture;
+                } else {
+                    $total_cost_tmp = $total_cost_tmp;
                 }
                 $order_item['total_cost_tmp'] = strval($total_cost_tmp);
             }

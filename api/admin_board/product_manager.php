@@ -200,13 +200,15 @@ switch ($type_manager) {
                 $id_product_extra = explode(",",$_REQUEST['id_product_extra']);
                 if(!empty($id_product_extra)){
                     foreach($id_product_extra as $id_item){
-                        $sql = "INSERT INTO `tbl_product_extra` SET
+                        if(!empty($id_item)){
+                            $sql = "INSERT INTO `tbl_product_extra` SET
                                 `id_product` = '{$id_product}',
                                 `id_product_extra` = '{$id_item}',
                                 `id_business` = '{$id_business}'
                                 ";
                         if(db_qr($sql)){
                             $success['product_img'] = 'true';
+                        }
                         }
                     }
                 }
@@ -438,7 +440,6 @@ switch ($type_manager) {
                     while ($row = db_assoc($result)) {
                         $product_item = array(
                             'id' => $row['id'],
-                            'id_business' => $row['id_business'],
                             'product_title' => $row['product_title'],
                             'product_extra' => array()
                         );
@@ -586,7 +587,7 @@ switch ($type_manager) {
 
             $total_page = ceil($total / $limit);
             $start = ($page - 1) * $limit;
-            $sql .= " ORDER BY `tbl_product_product`.`id` DESC LIMIT {$start},{$limit}";
+            $sql .= " ORDER BY `tbl_product_product`.`id` DESC "; //LIMIT {$start},{$limit}
 
 
             $product_arr['success'] = 'true';
@@ -601,8 +602,8 @@ switch ($type_manager) {
                 while ($row = db_assoc($result)) {
                     $product_item = array(
                         'id' => $row['id'],
-                        'id_business' => $row['id_business'],
-                        'product_title' => $row['product_title'],
+                        // 'id_business' => $row['id_business'],
+                        'product_extra_title' => $row['product_title'],
 
                     );
 

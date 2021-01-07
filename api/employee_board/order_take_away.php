@@ -70,7 +70,58 @@ switch ($type_manager) {
             }
             break;
         }
+    case "close_table": {
+            if (isset($_REQUEST['id_table'])) {
+                if ($_REQUEST['id_table'] == '') {
+                    unset($_REQUEST['id_table']);
+                    returnError("Nhập id_table");
+                } else {
+                    $id_table = $_REQUEST['id_table'];
+                }
+            } else {
+                returnError("Nhập id_table");
+            }
+
+            $sql_update_table_status = "UPDATE `tbl_organization_table`
+                                            SET `table_status` = 'empty'
+                                            WHERE `id` = '{$id_table}'
+                                            ";
+            if (db_qr($sql_update_table_status)) {
+                returnSuccess("Đóng bàn thành công");
+            }
+           
+        }
     case "finished": {
+            if (isset($_REQUEST['id_detail'])) {
+                if ($_REQUEST['id_detail'] == '') {
+                    unset($_REQUEST['id_detail']);
+                    returnError("Nhập id_detail");
+                } else {
+                    $id_detail = $_REQUEST['id_detail'];
+                }
+            } else {
+                returnError("Nhập id_detail");
+            }
+
+            // $sql = "SELECT * FROM `tbl_order_detail` 
+            //             WHERE `id` = '{$id_detail}'
+            //             AND `detail_status` = 'Y'
+            //             ";
+            // $result = db_qr($sql);
+            // $nums = db_nums($result);
+            // if($nums > 0){
+            //     returnError("Món này đã hoàn thành");
+            // }
+            $sql = "UPDATE `tbl_order_detail` 
+                        SET `detail_status` = 'Y'
+                        WHERE `id` = '{$id_detail}'
+                        ";
+            if (db_qr($sql)) {
+                returnSuccess("Đã làm xong món");
+            }
+            break;
+        }
+    case "finished_all": {
             if (isset($_REQUEST['id_order'])) {
                 if ($_REQUEST['id_order'] == '') {
                     unset($_REQUEST['id_order']);
@@ -105,26 +156,24 @@ switch ($type_manager) {
                 }
 
                 $sql = "SELECT 
-                `id_product`,   
-                `detail_extra` 
-                FROM `tbl_order_detail` 
-                WHERE `id_order` = '{$id_order}'
-                AND `detail_status` = 'Y'
-                ";
+                        `id_product`,   
+                        `detail_extra` 
+                        FROM `tbl_order_detail` 
+                        WHERE `id_order` = '{$id_order}'
+                        AND `detail_status` = 'Y'
+                        ";
                 $result = db_qr($sql);
                 $nums = db_nums($result);
                 if ($nums > 0) {
                     $id_str_tmp = "";
                     while ($row = db_assoc($result)) {
                         $id_str_tmp .= "," . $row['id_product'] . "," . $row['detail_extra'];
-                        // returnError($id_str_tmp); /////////////
                     }
                     $id_str = substr($id_str_tmp, 1);
                 }
 
                 if (!empty($id_str)) {
                     $id_product_arr = explode(",", $id_str);
-                    // reJson(count($id_product_arr));
                     $total_product_point = 0;
                     for ($i = 0; $i < count($id_product_arr); $i++) {
 
@@ -167,23 +216,23 @@ switch ($type_manager) {
             $success = array();
             $sql = "SELECT * FROM `tbl_order_order`
              WHERE `id` = '{$id_order}' 
-             AND `order_status` = '4' "; // payment -> finished
+             AND `order_status` = '2' "; // processing -> finished
             $result = db_qr($sql);
             $nums = db_nums($result);
 
             if ($nums > 0) {
                 while ($row = db_assoc($result)) {
-                    $time_payment = $row['order_check_time'];
+                    $time_processing = $row['order_check_time'];
                     $time_finished = time();
-                    $denta_payment = date('00:' . 'i:s', $time_finished - $time_payment);
+                    $denta_processing = date('00:' . 'i:s', $time_finished - $time_processing);
 
                     $id_business = $row['id_business'];
                 }
 
                 $sql_order_log = "INSERT INTO `tbl_order_log`
                           SET `id_order` = '{$id_order}',
-                              `log_status` = 'payment',
-                              `time_log` = '{$denta_payment}',
+                              `log_status` = 'processing',
+                              `time_log` = '{$denta_processing}',
                               `id_business` = '{$id_business}'
                             ";
                 if (db_qr($sql_order_log)) {
@@ -191,30 +240,21 @@ switch ($type_manager) {
                 }
 
                 $sql_update_order_status = "UPDATE `tbl_order_order` 
-                                    SET `order_status` = '5',
-                                        `order_check_time` = '{$time_finished}'
-                                    WHERE `id` = '{$id_order}'    
-                                    ";
+                                            SET `order_status` = '5',
+                                                `order_check_time` = '{$time_finished}'
+                                            WHERE `id` = '{$id_order}'    
+                                            ";
                 if (db_qr($sql_update_order_status)) {
                     $success['update_order_status'] = "true";
                 }
 
-                // //add poit customer here
-                // $sql_update_customer_point = "UPDATE `tbl_customer_customer` 
-                //         SET `customer_point` = '{$update_customer_point}'
-                //         WHERE `id` = '{$id_customer}' 
-                //         ";
-                // if (db_qr($sql_update_customer_point)) {
-                //     $success['customer_point'] = "true";
-                // }
-
-
-                $sql_update_table_status = "UPDATE `tbl_organization_table`
-                                            SET `table_status` = 'empty'
-                                            WHERE `table_title` = '{$order_table}'
-                                            ";
-                if (db_qr($sql_update_table_status)) {
-                    $success['table_status'] = "true";
+                $sql = "UPDATE `tbl_order_detail` 
+                        SET `detail_status` = 'Y'
+                        WHERE `id_order` = '{$id_order}'
+                        AND `detail_status` = 'N'
+                        ";
+                if (db_qr($sql)) {
+                    $success['finised'] = "true";
                 }
 
                 if (!empty($success)) {
@@ -224,64 +264,6 @@ switch ($type_manager) {
                 }
             } else {
                 returnSuccess("Đã qua trạng thái thanh toán");
-            }
-            break;
-        }
-    case "payment": {
-            if (isset($_REQUEST['id_order'])) {
-                if ($_REQUEST['id_order'] == '') {
-                    unset($_REQUEST['id_order']);
-                    returnError("Nhập id_order");
-                } else {
-                    $id_order = $_REQUEST['id_order'];
-                }
-            } else {
-                returnError("Nhập id_order");
-            }
-
-            $success = array();
-
-            $sql = "SELECT * FROM `tbl_order_order`
-                    WHERE `id` = '{$id_order}' 
-                    AND `order_status` = '2' "; // processing -> payment
-            $result = db_qr($sql);
-            $nums = db_nums($result);
-
-            if ($nums > 0) {
-                while ($row = db_assoc($result)) {
-                    $time_processing = $row['order_check_time'];
-                    $time_payment = time();
-                    $denta_processing = date('00:' . 'i:s', $time_payment - $time_processing);
-
-                    $id_business = $row['id_business'];
-                }
-
-                $sql_order_log = "INSERT INTO `tbl_order_log`
-                                    SET `id_order` = '{$id_order}',
-                                        `log_status` = 'payment',
-                                        `time_log` = '{$denta_processing}',
-                                        `id_business` = '{$id_business}'
-                                ";
-                if (db_qr($sql_order_log)) {
-                    $success['order_log'] = "true";
-                }
-
-                $sql_update_order_status = "UPDATE `tbl_order_order` 
-                                        SET `order_status` = '4',
-                                            `order_check_time` = '{$time_payment}'
-                                        WHERE `id` = '{$id_order}'    
-                                        ";
-                if (db_qr($sql_update_order_status)) {
-                    $success['update_order_status'] = "true";
-                }
-
-                if (!empty($success)) {
-                    returnSuccess("Cập nhật trạng thái payment thành công");
-                } else {
-                    returnError("Cập nhật thất bại");
-                }
-            } else {
-                returnSuccess("Đã qua trạng thái chế biến");
             }
             break;
         }
@@ -379,6 +361,17 @@ switch ($type_manager) {
                 $id_customer = 0;
             }
 
+            if (isset($_REQUEST['id_floor'])) {
+                if ($_REQUEST['id_floor'] == '') {
+                    unset($_REQUEST['id_floor']);
+                    $error['id_floor'] = "Nhập id_floor";
+                } else {
+                    $id_floor = $_REQUEST['id_floor'];
+                }
+            } else {
+                $error['id_floor'] = "Nhập id_floor";
+            }
+
             if (isset($_REQUEST['id_table'])) {
                 if ($_REQUEST['id_table'] == '') {
                     unset($_REQUEST['id_table']);
@@ -390,16 +383,6 @@ switch ($type_manager) {
                 $error['id_table'] = "Nhập id_table";
             }
 
-            if (isset($_REQUEST['id_floor'])) {
-                if ($_REQUEST['id_floor'] == '') {
-                    unset($_REQUEST['id_floor']);
-                    $error['id_floor'] = "Nhập id_floor";
-                } else {
-                    $id_floor = $_REQUEST['id_floor'];
-                }
-            } else {
-                $error['id_floor'] = "Nhập id_floor";
-            }
 
             if (isset($_REQUEST['order_floor'])) {
                 if ($_REQUEST['order_floor'] == '') {
@@ -435,12 +418,12 @@ switch ($type_manager) {
             if (isset($_REQUEST['order_direct_discount'])) {
                 if ($_REQUEST['order_direct_discount'] == '') {
                     unset($_REQUEST['order_direct_discount']);
-                    $error['order_direct_discount'] = "Nhập order_total_cost";
+                    $order_direct_discount = "0";
                 } else {
                     $order_direct_discount = $_REQUEST['order_direct_discount'];
                 }
             } else {
-                $error['order_direct_discount'] = "Nhập order_direct_discount";
+                $order_direct_discount = "0";
             }
 
             if (isset($_REQUEST['order_total_cost'])) {
@@ -468,19 +451,6 @@ switch ($type_manager) {
             if (empty($errorr)) {
                 $success = array();
 
-                // $sql = "SELECT * FROM `tbl_organization_table` WHERE `id` = '{$id_table}'";
-                // $result = db_qr($sql);
-                // $nums = db_nums($result);
-                // if ($nums > 0) {
-                //     while ($row = db_assoc($result)) {
-                //         if ($row['table_status'] == 'full') {
-                //             returnError("Bàn này đã có order");
-                //         }
-                //     }
-                // } else {
-                //     returnError("không phải loại mang đi");
-                // }
-
                 $sql = "SELECT * FROM `tbl_organization_floor` 
                             WHERE `id` = '{$id_floor}' 
                             ";
@@ -492,6 +462,22 @@ switch ($type_manager) {
                             returnError("Đây không phải tầng mang đi");
                         }
                     }
+                }
+
+                $sql = "SELECT * FROM `tbl_organization_table` 
+                            WHERE `id` = '{$id_table}' 
+                            ";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+
+                if ($nums > 0) {
+                    while ($row = db_assoc($result)) {
+                        if ($row['table_status'] == 'full') {
+                            returnError("Bàn này đã có order");
+                        }
+                    }
+                } else {
+                    returnError("Không tồn tại bàn");
                 }
 
                 $sql = "SELECT `tbl_business_store`.`store_prefix` 
@@ -547,7 +533,7 @@ switch ($type_manager) {
                                                 `detail_quantity` = '{$qty_product}',
                                                 `detail_cost` = '{$detail_cost_product}',
                                                 `id_business` = '{$id_business}',
-                                                `detail_status` = 'Y'       
+                                                `detail_status` = 'N'       
                                                 ";
                                     if ($extra_product != 'N') {
                                         $sql .=  ", `detail_extra` = '{$extra_product}'";
@@ -569,24 +555,141 @@ switch ($type_manager) {
                         }
                     }
                     if (!empty($success)) {
-                        $sql = "SELECT * FROM `tbl_order_detail` WHERE `id_order` = '{$id_insert}'";
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        $sql = "SELECT 
+                                `tbl_customer_customer`.`id` as `id_customer`,
+                                `tbl_customer_customer`.`customer_code` as `customer_code`,
+                    
+                                `tbl_account_account`.`id` as `id_account`,
+                                `tbl_account_account`.`account_username` as `account_username`,
+                    
+                                `tbl_order_order`.`id` as `id_order`,
+
+                                `tbl_order_order`.`order_code` as `order_code`,
+                                `tbl_order_order`.`order_status` as `order_status`,
+                                `tbl_order_order`.`order_floor` as `order_floor`,
+                                `tbl_order_order`.`order_table` as `order_table`,
+                                `tbl_order_order`.`order_direct_discount` as `order_direct_discount`,
+                                `tbl_order_order`.`order_created` as `order_created`,
+                                `tbl_order_order`.`order_comment` as `order_comment`,
+                                `tbl_order_order`.`order_total_cost` as `order_total_cost`
+                                FROM `tbl_order_order`
+                                LEFT JOIN `tbl_customer_customer` ON `tbl_customer_customer`.`id`= `tbl_order_order`.`id_customer`
+                                LEFT JOIN `tbl_account_account` ON `tbl_account_account`.`id`= `tbl_order_order`.`id_account`
+                                WHERE `tbl_order_order`.`id` = '{$id_insert}'";
+
+
+                        $order_arr = array();
+                        $order_arr['success'] = 'true';
+                        $order_arr['data'] = array();
                         $result = db_qr($sql);
                         $nums = db_nums($result);
-                        $detail_arr = array();
+                        // returnSuccess($nums);
                         if ($nums > 0) {
-                            $detail_arr['success'] = 'true';
-                            $detail_arr['data'] = array();
                             while ($row = db_assoc($result)) {
-                                $detail_item = array(
-                                    'id' => $row['id'],
+                                $order_item = array(
                                     'id_order' => $row['id_order'],
-                                    'id_product' => $row['id_product'],
-                                    'detail_quantity' => $row['detail_quantity'],
+                                    // 'id_floor' => $row['id_floor'],
+                                    // 'id_table' => $row['id_table'],
+                                    'id_customer' => "", //$row['id_customer']
+                                    'customer_code' => "", //$row['customer_code']
+                                    'id_account' => $row['id_account'],
+                                    'account_username' => $row['account_username'],
+                                    'order_code' => $row['order_code'],
+                                    'order_status' => $row['order_status'],
+                                    'order_floor' => $row['order_floor'],
+                                    'order_table' => $row['order_table'],
+                                    'order_created' => $row['order_created'],
+                                    'order_comment' => $row['order_comment'] != null ? $row['order_comment'] : "",
+                                    'total_product' => "",
+                                    'total_cost_tmp' => "",
+                                    'order_direct_discount' => $row['order_direct_discount'],
+                                    // 'order_total_cost' => $row['order_total_cost'],
+                                    'order_detail' => array()
                                 );
-                                array_push($detail_arr['data'], $detail_item);
+
+                                if ($row['id_customer'] > 0) {
+                                    $order_item['id_customer'] = $row['id_customer'];
+                                    $order_item['customer_code'] = $row['customer_code'];
+                                }
+                                $sql_order_detail = "SELECT 
+                                                    `tbl_product_product`.`id` as `id_product`,
+                                                    `tbl_product_product`.`product_title` as `product_title`,
+                                                    `tbl_product_product`.`product_img` as `product_img`,
+
+                                                    `tbl_order_detail`.`id` as `id_detail`,
+                                                    `tbl_order_detail`.`detail_extra` as `detail_extra`,
+                                                    `tbl_order_detail`.`detail_cost` as `detail_cost`,
+                                                    `tbl_order_detail`.`detail_quantity` as `detail_quantity`,
+                                                    `tbl_order_detail`.`detail_status` as `detail_status`
+                                                    FROM `tbl_order_detail` 
+                                                    LEFT JOIN `tbl_product_product` 
+                                                    ON `tbl_product_product`.`id` = `tbl_order_detail`.`id_product`
+                                                    WHERE `id_order` = '{$id_insert}'
+                                                    ORDER BY `tbl_order_detail`.`detail_status` ASC
+                                                    ";
+                                $total_order_detail = count(db_fetch_array($sql_order_detail));
+                                $order_item['total_product'] = strval($total_order_detail);
+
+                                $order_item['order_detail'] = array();
+
+                                $result_detail = db_qr($sql_order_detail);
+                                $nums_detail = db_nums($result_detail);
+                                if ($nums_detail > 0) {
+                                    $total_cost_tmp = 0;
+                                    while ($row_detail = db_assoc($result_detail)) {
+                                        $order_detail = array(
+                                            'id_detail' => $row_detail['id_detail'],
+                                            'id_product' => $row_detail['id_product'],
+                                            'product_title' => $row_detail['product_title'],
+                                            'product_img' => $row_detail['product_img'],
+                                            'detail_cost' => $row_detail['detail_cost'],
+                                            'detail_quantity' => $row_detail['detail_quantity'],
+                                            'detail_status' => $row_detail['detail_status'],
+                                            'product_extra' => array()
+                                        );
+
+                                        // total_tmp
+                                        $total_cost_tmp += $row_detail['detail_cost'] * $row_detail['detail_quantity'];
+
+
+                                        // product_extra
+                                        $id_extra_arr = explode(",", $row_detail['detail_extra']);
+                                        $product_extra = array();
+                                        for ($i = 0; $i < count($id_extra_arr); $i++) {
+                                            $sql_extra = "SELECT 
+                                            `tbl_product_product`.`id` as `id`,
+                                            `tbl_product_product`.`product_title` as `product_title_extra`
+                                            FROM `tbl_product_product` 
+                                            WHERE `id` = '{$id_extra_arr[$i]}'
+                                            ";
+                                            $result_extra = db_qr($sql_extra);
+                                            $nums_extra = db_nums($result_extra);
+                                            if ($nums_extra > 0) {
+                                                while ($row_extra = db_assoc($result_extra)) {
+                                                    $product_extra_item = array(
+                                                        'id' => $row_extra['id'],
+                                                        'product_title_extra' => $row_extra['product_title_extra'],
+                                                    );
+                                                }
+                                                array_push($product_extra, $product_extra_item);
+                                            }
+                                        }
+                                        // $total_cost_tmp *= $row_detail['detail_quantity'];
+
+                                        $order_detail['product_extra'] = $product_extra;
+                                        array_push($order_item['order_detail'], $order_detail);
+                                    }
+                                    $order_item['total_cost_tmp'] = strval($total_cost_tmp);
+                                }
+                                array_push($order_arr['data'], $order_item);
                             }
-                            reJson($detail_arr);
+                            reJson($order_arr);
+                        } else {
+                            returnSuccess("Danh sách trống");
                         }
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////
                         // returnSuccess("Tạo đơn hàng thành công");
                     } else {
                         returnError("Tao don hang khong thanh cong");

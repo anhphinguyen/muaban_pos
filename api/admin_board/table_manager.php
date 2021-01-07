@@ -14,23 +14,23 @@ if (isset($_REQUEST['type_manager'])) {
 
 switch ($type_manager) {
     case 'delete':{ 
-        // if (isset($_REQUEST['id_table'])) {
-        //     if ($_REQUEST['id_table'] == '') {
-        //         unset($_REQUEST['id_table']);
-        //         returnError("Truyền vào id_table");
-        //     } else {
-        //         $id_table  = $_REQUEST['id_table'];
-        //     }
-        // } else {
-        //     returnError("Truyền vào id_table");
-        // }
+        if (isset($_REQUEST['id_table'])) {
+            if ($_REQUEST['id_table'] == '') {
+                unset($_REQUEST['id_table']);
+                returnError("Truyền vào id_table");
+            } else {
+                $id_table  = $_REQUEST['id_table'];
+            }
+        } else {
+            returnError("Truyền vào id_table");
+        }
 
 
-        // $sql = "DELETE FROM `tbl_organization_table` WHERE `id` = '{$id_table}'";
-        // if(db_qr($sql)){
-        //     returnSuccess("Xóa thành công");
-        // }
-        // break;
+        $sql = "DELETE FROM `tbl_organization_table` WHERE `id` = '{$id_table}'";
+        if(db_qr($sql)){
+            returnSuccess("Xóa thành công");
+        }
+        break;
     }
     case 'update': {
             if (isset($_REQUEST['id_table'])) {

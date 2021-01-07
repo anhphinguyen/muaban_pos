@@ -13,6 +13,7 @@ if (isset($_REQUEST['id_business'])) {
 } else {
     returnError("Nhập id_business");
 }
+
 if (isset($_REQUEST['id_product'])) {
     if ($_REQUEST['id_product'] == '') {
         unset($_REQUEST['id_product']);

@@ -11,7 +11,7 @@
 //     if ($data->exp < time()) {
 //         $payload_tmp = array(
 //             'nbf' => time(),
-//             'exp' => time() + 60,
+//             'exp' => time() + 3600,
 //             'username' => $data->username,
 //             'fullname' => $data->fullname,
 //             'email' => $data->email,
@@ -137,7 +137,7 @@ if (empty($error)) {
 
             // $payload = array(
             //     "nbf" => time(),  //cho phép sử dụng token tại thời điểm này
-            //     "exp" => time() + 60, // token hết hạn
+            //     "exp" => time() + 3600, // token hết hạn
             //     'username' => $row['username'],
             //     'fullname' => $row['fullname'],
             //     'email' => $row['email'],

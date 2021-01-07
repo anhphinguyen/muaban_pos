@@ -276,54 +276,7 @@ switch ($type_manager) {
             }
             break;
         }
-    // case "delivery": {
-
-    //         $success = array();
-    //         $sql = "SELECT * FROM `tbl_order_order`
-    //                      WHERE `id` = '{$id_order}' 
-    //                      AND `order_status` = '2' "; // processing -> delivery
-    //         $result = db_qr($sql);
-    //         $nums = db_nums($result);
-
-    //         if ($nums > 0) {
-    //             while ($row = db_assoc($result)) {
-    //                 $time_processing = $row['order_check_time'];
-    //                 $time_delivery = time();
-    //                 $denta_processing = date('00:' . 'i:s', $time_delivery - $time_processing);
-
-    //                 $id_business = $row['id_business'];
-    //             }
-
-    //             $sql_order_log = "INSERT INTO `tbl_order_log`
-    //                                   SET `id_order` = '{$id_order}',
-    //                                       `log_status` = 'processing',
-    //                                       `time_log` = '{$denta_processing}',
-    //                                       `id_business` = '{$id_business}'
-    //                                     ";
-    //             if (db_qr($sql_order_log)) {
-    //                 $success['order_log'] = "true";
-    //             }
-
-    //             $sql_update_order_status = "UPDATE `tbl_order_order` 
-    //                                             SET `order_status` = '3',
-    //                                                 `order_check_time` = '{$time_delivery}'
-    //                                             WHERE `id` = '{$id_order}'    
-    //                                             ";
-    //             if (db_qr($sql_update_order_status)) {
-    //                 $success['update_order_status'] = "true";
-    //             }
-
-    //             if (!empty($success)) {
-    //                 returnSuccess("Cập nhật trạng thái delivery thành công");
-    //             } else {
-    //                 returnError("Cập nhật thất bại");
-    //             }
-    //         } else {
-    //             returnSuccess("Đã qua trạng thái chế biến");
-    //         }
-
-    //         break;
-    //     }
+    
     case "processing": {
 
             $success = array();

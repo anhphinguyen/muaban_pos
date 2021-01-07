@@ -377,6 +377,7 @@ if (isset($type_manager)) {
                     $id_customer = 0;
                 }
 
+
                 if (isset($_REQUEST['id_floor'])) {
                     if ($_REQUEST['id_floor'] == '') {
                         unset($_REQUEST['id_floor']);
@@ -398,8 +399,6 @@ if (isset($type_manager)) {
                 } else {
                     $error['id_table'] = "Nhập id_table";
                 }
-
-
 
                 if (isset($_REQUEST['order_floor'])) {
                     if ($_REQUEST['order_floor'] == '') {
@@ -446,22 +445,21 @@ if (isset($type_manager)) {
                 if (empty($error)) {
                     $success = array();
 
-                    // $sql = "SELECT * FROM `tbl_organization_table` 
-                    //         WHERE `id` = '{$id_table}' 
-                    //         ";
-                    // $result = db_qr($sql);
-                    // $nums = db_nums($result);
+                    $sql = "SELECT * FROM `tbl_organization_table` 
+                            WHERE `id` = '{$id_table}' 
+                            ";
+                    $result = db_qr($sql);
+                    $nums = db_nums($result);
 
-                    // if ($nums > 0) {
-                    //     while ($row = db_assoc($result)) {
-                    //         if ($row['table_status'] == 'full') {
-                    //             returnError("Bàn này đã có order");
-                    //         }
-                    //         // $id_floor = $row['id_floor'];
-                    //     }
-                    // }else{
-                    //     returnError("Không tồn tại bàn");
-                    // }
+                    if ($nums > 0) {
+                        while ($row = db_assoc($result)) {
+                            if ($row['table_status'] == 'full') {
+                                returnError("Bàn này đã có order");
+                            }
+                        }
+                    }else{
+                        returnError("Không tồn tại bàn");
+                    }
 
                     $sql = "SELECT * FROM `tbl_organization_floor` 
                             WHERE `id` = '{$id_floor}' 

@@ -102,12 +102,35 @@ if ($nums > 0) {
         $total_product_notyet = count(db_fetch_array($sql_total_product_notyet));
         if ($total_product_notyet > 0) {
 
+            $sql_id_floor = "SELECT `id` FROM `tbl_organization_floor` 
+                             WHERE `floor_title` = '{$row['order_floor']}'";
+            $result_id_floor = db_qr($sql_id_floor);
+            $nums_id_floor = db_nums($result_id_floor);
+            if($nums_id_floor > 0){
+                while($row_id_floor = db_assoc($result_id_floor)){
+                    $id_floor = $row_id_floor['id'];
+                }
+            }
+
+            $sql_id_table = "SELECT `id` FROM `tbl_organization_table` 
+                             WHERE `table_title` = '{$row['order_table']}'
+                             AND `id_floor` = '{$id_floor}'";
+            $result_id_table = db_qr($sql_id_table);
+            $nums_id_table = db_nums($result_id_table);
+            if($nums_id_table > 0){
+                while($row_id_table = db_assoc($result_id_table)){
+                    $id_table = $row_id_table['id'];
+                }
+            }
 
             $order_item = array(
                 'id_order' => $row['id_order'],
+                'id_floor' => isset($id_floor)?$id_floor:"",
+                'id_table' => isset($id_table)?$id_table:"",
                 'order_type' => $row['order_type'],
                 'order_status' => $row['order_status'],
                 'order_location' => $row['order_floor'] . " - " . $row['order_table'],
+                'table_title' => $row['order_table'],
                 'total_product_finished' => "",
                 'total_product_notyet' => "",
                 'order_check_time' => $row['order_check_time'],
@@ -128,5 +151,7 @@ if ($nums > 0) {
 
     reJson($order_arr);
 } else {
-    returnSuccess("Danh sách trống");
+    $order_arr['success'] = 'false';
+    $order_arr['data'] = array();
+    reJson($order_arr);
 }
