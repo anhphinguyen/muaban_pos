@@ -219,6 +219,20 @@ switch ($type_manager) {
     case "payment": {
             $success = array();
 
+            if (isset($_REQUEST['id_customer'])) {
+                if ($_REQUEST['id_customer'] == '') {
+                    unset($_REQUEST['id_customer']);
+                } else {
+                    $id_customer = $_REQUEST['id_customer'];
+                    $sql = "UPDATE `tbl_order_order`
+                            SET `id_customer` = '{$id_customer}'
+                            WHERE `id` = '{$id_order}'";
+                    if (db_qr($sql)) {
+                        $success['id_customer'] = "true";
+                    };
+                }
+            }
+
             if (isset($_REQUEST['order_direct_discount'])) {
                 if ($_REQUEST['order_direct_discount'] == '') {
                     unset($_REQUEST['order_direct_discount']);
@@ -232,6 +246,22 @@ switch ($type_manager) {
                     };
                 }
             }
+
+            if (isset($_REQUEST['order_total_cost'])) {
+                if ($_REQUEST['order_total_cost'] == '') {
+                    unset($_REQUEST['order_total_cost']);
+                } else {
+                    $order_total_cost = $_REQUEST['order_total_cost'];
+                    $sql = "UPDATE `tbl_order_order`
+                            SET `order_total_cost` = '{$order_total_cost}'
+                            WHERE `id` = '{$id_order}'";
+                    if (db_qr($sql)) {
+                        $success['order_total_cost'] = "true";
+                    };
+                }
+            }
+
+            
             $sql = "SELECT * FROM `tbl_order_order`
                      WHERE `id` = '{$id_order}' 
                      AND `order_status` = '3' "; // delivery -> payment

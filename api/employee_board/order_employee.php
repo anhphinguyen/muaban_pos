@@ -316,8 +316,9 @@ if (isset($type_manager)) {
                     }
                 }
                 if (!empty($success)) {
+                    $id_insert = mysqli_insert_id($conn);
                     $sql = "SELECT * FROM `tbl_order_detail` 
-                                    WHERE `id_order` = '{$id_order}'
+                                    WHERE `id` = '{$id_insert}'
                                     ORDER BY `id` ASC";
                     $result = db_qr($sql);
                     $nums = db_nums($result);
@@ -548,6 +549,15 @@ if (isset($type_manager)) {
                             }
                         }
                         if (!empty($success)) {
+                            // $sql = "SELECT * FROM `tbl_order_order` WHERE `id` = '{$id_insert}'";
+                            // $result = db_qr($sql);
+                            // $nums = db_nums($result);
+                            // if ($nums > 0) {
+                            //     while ($row = db_assoc($result)) {
+                            //         $order_code = $row['order_code'];
+                            //         $order_created = $row['order_created'];
+                            //     }
+                            // }
                             $sql = "SELECT * FROM `tbl_order_detail` WHERE `id_order` = '{$id_insert}'";
                             $result = db_qr($sql);
                             $nums = db_nums($result);
@@ -560,13 +570,14 @@ if (isset($type_manager)) {
                                         'id' => $row['id'],
                                         'id_order' => $row['id_order'],
                                         'id_product' => $row['id_product'],
+                                        // 'order_code' =>  $order_code,
+                                        // 'order_created' =>  $order_created,
                                         'detail_quantity' => $row['detail_quantity'],
                                     );
                                     array_push($detail_arr['data'], $detail_item);
                                 }
                                 reJson($detail_arr);
                             }
-                            // returnSuccess("Tạo đơn hàng thành công");
                         } else {
                             returnError("Tao don hang khong thanh cong");
                         }

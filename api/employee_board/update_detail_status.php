@@ -243,6 +243,32 @@ switch ($type_manager) {
                 $success['detail_status'] = "true";
             }
 
+            
+            // $sql = "SELECT `id_order` FROM `tbl_order_detail`
+            //         WHERE `id` = '{$id_detail}'
+            //         ";
+            // $result = db_qr($sql);
+            // $nums = db_nums($result);
+            // if($nums > 0){
+            //     while($row = db_assoc($result)){
+            //         $id_order = $row['id_order'];
+            //     }
+            // }
+
+            // $sql = "SELECT `id` FROM `tbl_order_detail`
+            //         WHERE `id_order` = '{$id_order}'
+            //         ";
+            // $total_product = count(db_fetch_array($sql));
+
+            // $sql = "SELECT `id` FROM `tbl_order_detail`
+            //         WHERE `id_order` = '{$id_order}'
+            //         AND `detail_status` = 'C'
+            //         ";
+            // $total_product_cancel = count(db_fetch_array($sql));
+
+            // if($total_product == $total_product_cancel)
+            
+
 
             if (!empty($success)) {
                 returnSuccess("Hủy món thành công");

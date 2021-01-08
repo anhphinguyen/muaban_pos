@@ -28,6 +28,7 @@ if (isset($_REQUEST['id_business'])) {
     $error['id_business'] = "Nhập id_business";
 }
 
+$sql .= " ORDER BY `floor_priority` ASC";
 $floor_arr = array();
 
 if (empty($error)) {

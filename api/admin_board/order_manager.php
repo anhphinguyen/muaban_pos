@@ -13,43 +13,43 @@ if (isset($_REQUEST['type_manager'])) {
 }
 
 switch ($type_manager) {
-    case "cancel_order":{ 
-        if (isset($_REQUEST['id_order'])) {
-            if ($_REQUEST['id_order'] == '') {
-                unset($_REQUEST['id_order']);
+    case "cancel_order": {
+            if (isset($_REQUEST['id_order'])) {
+                if ($_REQUEST['id_order'] == '') {
+                    unset($_REQUEST['id_order']);
+                    returnError("Nhập id_order");
+                } else {
+                    $id_order = $_REQUEST['id_order'];
+                }
+            } else {
                 returnError("Nhập id_order");
-            } else {
-                $id_order = $_REQUEST['id_order'];
             }
-        } else {
-            returnError("Nhập id_order");
-        }
 
-        if (isset($_REQUEST['order_comment'])) {
-            if ($_REQUEST['order_comment'] == '') {
-                unset($_REQUEST['order_comment']);
-            } else {
-                $order_comment = $_REQUEST['order_comment'];
+            if (isset($_REQUEST['order_comment'])) {
+                if ($_REQUEST['order_comment'] == '') {
+                    unset($_REQUEST['order_comment']);
+                } else {
+                    $order_comment = $_REQUEST['order_comment'];
+                }
             }
-        }
 
-        $sql = "UPDATE `tbl_order_order` 
+            $sql = "UPDATE `tbl_order_order` 
                 SET `order_status` = '6',
                     `order_comment` = '{$order_comment}'
                 WHERE `id` = '{$id_order}'
                 ";
-        if(db_qr($sql)){
-            returnSuccess("Hủy đơn thành công");
-        }else{
-            returnSuccess("Lỗi hủy đơn");
+            if (db_qr($sql)) {
+                returnSuccess("Hủy đơn thành công");
+            } else {
+                returnError("Lỗi hủy đơn");
+            }
+            break;
         }
-        break;
-    }
 
-    case "list_order_detail":{
-        include_once "./viewlist_board/list_order_detail.php";
-        break;
-    }
+    case "list_order_detail": {
+            include_once "./viewlist_board/list_order_detail.php";
+            break;
+        }
     case "list_order": {
             $sql = "SELECT
                     `tbl_organization_floor`.`floor_type` as `order_type`,
@@ -99,6 +99,15 @@ switch ($type_manager) {
                     $id_business = $_REQUEST['id_business'];
                     $sql .= " AND `tbl_order_order`.`id_business` = '{$id_business}'";
 
+
+                    if (isset($_REQUEST['filter'])) {
+                        if ($_REQUEST['filter'] == '') {
+                            unset($_REQUEST['filter']);
+                        } else {
+                            $filter = $_REQUEST['filter'];
+                            $sql .= " AND `tbl_order_order`.`order_code` LIKE '%{$filter}%'";
+                        }
+                    }
 
                     if (isset($_REQUEST['filter_status'])) {
                         if ($_REQUEST['filter_status'] == '') {
@@ -166,12 +175,37 @@ switch ($type_manager) {
                 $order_arr['data'] = array();
 
                 while ($row = db_assoc($result)) {
+
+                    $sql_total_cost_tmp = "SELECT * FROM `tbl_order_detail`
+                                                       WHERE `id_order` = '{$row['id_order']}'";
+                    $result_total_cost_tmp = db_qr($sql_total_cost_tmp);
+                    $nums_total_cost_tmp = db_nums($result_total_cost_tmp);
+                    $total_cost_tmp = 0;
+                    $total_acture = 0;
+                    if ($nums_total_cost_tmp > 0) {
+                        while ($row_total_cost_tmp = db_assoc($result_total_cost_tmp)) {
+                            //neus status == Y
+                            //=> ++  total
+                            //else
+                            if ($row_total_cost_tmp['detail_status'] == 'Y') {
+                                $total_acture += $row_total_cost_tmp['detail_cost'] * $row_total_cost_tmp['detail_quantity'];
+                            } else {
+                                $total_cost_tmp += $row_total_cost_tmp['detail_cost'] * $row_total_cost_tmp['detail_quantity'];
+                            }
+                        }
+                    }
+                    if ($total_acture > 0) {
+                        $total_cost_tmp = $total_acture;
+                    } else {
+                        $total_cost_tmp = $total_cost_tmp;
+                    }
+
                     $order_item = array(
                         'id' => $row['id_order'],
                         'order_type' => $row['order_type'],
                         'order_status' => $row['order_status'],
                         'order_code' => $row['order_code'],
-                        'order_total_cost' => $row['order_total_cost'],
+                        'order_total_cost' => ($row['order_status'] == 5)?$row['order_total_cost']:strval($total_cost_tmp),
                         'order_created' => $row['order_created'],
                         'total_detail' => ""
                     );

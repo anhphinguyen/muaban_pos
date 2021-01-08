@@ -15,8 +15,8 @@ $sql = "SELECT
             `tbl_order_order`.`order_table` as `order_table`,
             `tbl_order_order`.`order_direct_discount` as `order_direct_discount`,
             `tbl_order_order`.`order_created` as `order_created`,
-            `tbl_order_order`.`order_comment` as `order_comment`
-            -- `tbl_order_order`.`order_total_cost` as `order_total_cost`
+            `tbl_order_order`.`order_comment` as `order_comment`,
+            `tbl_order_order`.`order_total_cost` as `order_total_cost`
             FROM `tbl_order_order`
             LEFT JOIN `tbl_customer_customer` ON `tbl_customer_customer`.`id`= `tbl_order_order`.`id_customer`
             LEFT JOIN `tbl_account_account` ON `tbl_account_account`.`id`= `tbl_order_order`.`id_account`
@@ -53,8 +53,8 @@ if (empty($error)) {
                 'id_order' => $row['id_order'],
                 // 'id_floor' => $row['id_floor'],
                 // 'id_table' => $row['id_table'],
-                'id_customer' => "", //$row['id_customer']
-                'customer_code' => "", //$row['customer_code']
+                'id_customer' => (!empty($row['id_customer']))?$row['id_customer']:"0", //$row['id_customer']
+                'customer_code' => (!empty($row['customer_code']))?$row['customer_code']:"", //$row['customer_code']
                 'id_account' => $row['id_account'],
                 'account_username' => $row['account_username'],
                 'order_code' => $row['order_code'],
@@ -66,14 +66,14 @@ if (empty($error)) {
                 'total_product' => "",
                 'total_cost_tmp' => "",
                 'order_direct_discount' => $row['order_direct_discount'],
-                // 'order_total_cost' => $row['order_total_cost'],
+                'order_total_cost' => $row['order_total_cost'] != null ?  $row['order_total_cost']: "0",
                 'order_detail' => array()
             );
 
-            if ($row['id_customer'] > 0) {
-                $order_item['id_customer'] = $row['id_customer'];
-                $order_item['customer_code'] = $row['customer_code'];
-            }
+            // if ($row['id_customer'] > 0) {
+            //     $order_item['id_customer'] = $row['id_customer'];
+            //     $order_item['customer_code'] = $row['customer_code'];
+            // }
             $sql_order_detail = "SELECT 
                                 `tbl_product_product`.`id` as `id_product`,
                                 `tbl_product_product`.`product_title` as `product_title`,

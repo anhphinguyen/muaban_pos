@@ -50,6 +50,10 @@ switch ($detect) {
             include_once 'admin_board/account_manager.php';
             break;
         }
+    case 'product_sold_out_manager': {
+            include_once 'admin_board/product_sold_out_manager.php';
+            break;
+        }
     case 'product_category_manager': {
             include_once 'admin_board/product_category_manager.php';
             break;
@@ -132,6 +136,11 @@ switch ($detect) {
 
 
         // views
+  
+    case 'list_product_sold_out': {
+            include_once 'viewlist_board/list_product_sold_out.php';
+            break;
+        }
     case 'list_product_disable': {
             include_once 'viewlist_board/list_product_disable.php';
             break;

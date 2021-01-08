@@ -48,9 +48,9 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
-                returnSuccess("Xoa thanh cong");
+                returnSuccess("Xóa thành công");
             } else {
-                returnError("Xoa that bai");
+                returnError("Xóa thất bại");
             }
             break;
         }
@@ -194,21 +194,21 @@ switch ($type_manager) {
 
             // extra
 
-            if(isset($_REQUEST['id_product_extra']) && !empty($_REQUEST['id_product_extra'])){
+            if (isset($_REQUEST['id_product_extra']) && !empty($_REQUEST['id_product_extra'])) {
                 $sql = "DELETE FROM `tbl_product_extra` WHERE `id_product` = '{$id_product}'";
                 db_qr($sql);
-                $id_product_extra = explode(",",$_REQUEST['id_product_extra']);
-                if(!empty($id_product_extra)){
-                    foreach($id_product_extra as $id_item){
-                        if(!empty($id_item)){
+                $id_product_extra = explode(",", $_REQUEST['id_product_extra']);
+                if (!empty($id_product_extra)) {
+                    foreach ($id_product_extra as $id_item) {
+                        if (!empty($id_item)) {
                             $sql = "INSERT INTO `tbl_product_extra` SET
                                 `id_product` = '{$id_product}',
                                 `id_product_extra` = '{$id_item}',
                                 `id_business` = '{$id_business}'
                                 ";
-                        if(db_qr($sql)){
-                            $success['product_img'] = 'true';
-                        }
+                            if (db_qr($sql)) {
+                                $success['product_img'] = 'true';
+                            }
                         }
                     }
                 }
@@ -310,12 +310,12 @@ switch ($type_manager) {
             //     }
             // }
 
-            $id_extra_str = '';
-            if (isset($_REQUEST['id_extra_str'])) {
-                if ($_REQUEST['id_extra_str'] == '') {
-                    unset($_REQUEST['id_extra_str']);
+            // $id_product_extra = '';
+            if (isset($_REQUEST['id_product_extra'])) {
+                if ($_REQUEST['id_product_extra'] == '') {
+                    unset($_REQUEST['id_product_extra']);
                 } else {
-                    $id_extra_arr = explode(",", $_REQUEST['id_extra_str']);
+                    $id_extra_arr = explode(",", $_REQUEST['id_product_extra']);
                 }
             }
 
@@ -359,12 +359,14 @@ switch ($type_manager) {
 
                 if (isset($id_extra_arr) && !empty($id_extra_arr)) {
                     foreach ($id_extra_arr as $id_extra) {
-                        $sql_extra = "INSERT INTO `tbl_product_extra`
-                                        SET `id_product` = '{$id_insert}',
-                                            `id_product_extra` = '{$id_extra}',
-                                            `id_business` = '{$id_business}'
+                        if (!empty($id_extra)) {
+                            $sql_extra = "INSERT INTO `tbl_product_extra`
+                                            SET `id_product` = '{$id_insert}',
+                                                `id_product_extra` = '{$id_extra}',
+                                                `id_business` = '{$id_business}'
                                         ";
-                        db_qr($sql_extra);
+                            db_qr($sql_extra);
+                        }
                     }
                 }
 

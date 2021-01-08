@@ -421,7 +421,7 @@ function generateRandomString($length)
     return $randomString;
 }
 
-function pushNotification($title, $message, $action, $to, $type_send = 'topic', $server_key = 'AAAAR0TTTdw:APA91bGSCuXgt9LxZcETqJmUS4kB2i5V5cZCq-OspochhOpVmEf3VB46ZMmT8urCLPNGuH0rzdYJntoezw0qvRg_BSoUrIV5Gubx-r31iGCKGqsAJquYzxg1cdsU5TuUHraKl-hrDI6r')
+function pushNotification($title, $message, $action, $to, $type_send = 'topic', $server_key = 'AAAA0MM4ZB0:APA91bFYwE1Pusx0ftTdqeK3yKoiRU0DmhANyeYx4m74oQbP8UNnwP71c1K4PYmoszje9cl9SthdlyCy30KS1qTV8i088DGcA5jkacav0x56vO8mKldD6kxqIsNliORhtAdZfmepWQyj')
 {
     $message_data = array(
         'title' => $title,
