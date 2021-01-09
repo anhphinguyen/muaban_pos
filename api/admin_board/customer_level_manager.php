@@ -151,7 +151,8 @@ switch ($type_manager) {
             if (empty($error)) {
                 // check customer exist
                 $sql = "SELECT * FROM `tbl_customer_point` 
-                            WHERE convert(`customer_point`, decimal) = {$customer_point}";
+                            WHERE convert(`customer_point`, decimal) = {$customer_point} 
+                            AND `id_business` = '{$id_business}'";
                 $result = db_qr($sql);
                 $nums = db_nums($result);
                 if ($nums > 0) {

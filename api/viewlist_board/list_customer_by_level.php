@@ -45,7 +45,7 @@ if (isset($_REQUEST['id_level'])) {
 /////////////////////////////////////////
 // $sql = get_list_customer_by_level($id_level, $point_arr['point'], $point_arr['id_level']);
 $sql = "SELECT * FROM `tbl_customer_customer` 
-        WHERE 1=1
+        WHERE 1=1 AND `id_business` = '{$id_business}'
         ";
 
 if (isset($_REQUEST['filter'])) {
