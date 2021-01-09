@@ -185,7 +185,7 @@ switch ($type_manager) {
             } else {
                 returnError("Truyền vào id_business");
             }
-            $sql = "SELECT * FROM `tbl_organization_floor`";
+            $sql = "SELECT * FROM `tbl_organization_floor` WHERE `id_business` = '{$id_business}'";
             $result = db_qr($sql);
             $nums = db_nums($result);
             $floor_arr = array();

@@ -135,5 +135,5 @@ if ($nums > 0) {
     }
     reJson($customer_arr);
 } else {
-    returnError("Không có khách hàng");
+    returnSuccess("Không có khách hàng");
 }

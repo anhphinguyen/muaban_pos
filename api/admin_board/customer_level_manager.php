@@ -88,7 +88,7 @@ switch ($type_manager) {
             }
 
             if(!empty($success)){
-                returnSuccess("update thành công");
+                returnSuccess("Cập nhật thành công");
             }else{
                 returnSuccess("Không có thông tin cập nhật");
             }

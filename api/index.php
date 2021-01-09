@@ -50,10 +50,10 @@ switch ($detect) {
             include_once 'admin_board/account_manager.php';
             break;
         }
-    case 'product_sold_out_manager': {
-            include_once 'admin_board/product_sold_out_manager.php';
-            break;
-        }
+    // case 'product_sold_out_manager': {
+    //         include_once 'admin_board/product_sold_out_manager.php';
+    //         break;
+    //     }
     case 'product_category_manager': {
             include_once 'admin_board/product_category_manager.php';
             break;

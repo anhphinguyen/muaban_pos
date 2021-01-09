@@ -77,6 +77,9 @@ if (empty($error)) {
 
             `tbl_business_store`.`id` as `id_business`,
             `tbl_business_store`.`store_code` as `store_code`,
+            `tbl_business_store`.`store_name` as `store_name`,
+            `tbl_business_store`.`store_phone` as `store_phone`,
+            `tbl_business_store`.`store_address` as `store_address`,
             `tbl_business_store`.`store_prefix` as `store_prefix`,
 
             `tbl_account_account`.`id` as `id_account`,
@@ -118,7 +121,10 @@ if (empty($error)) {
                 'id_model' => $row['id_model'],
                 'business_model' => $row['business_model'],
                 'id_business' => $row['id_business'],
+                'store_name' => $row['store_name'],
                 'store_prefix' => $row['store_prefix'],
+                'store_phone' => $row['store_phone'],
+                'store_address' => $row['store_address'],
                 'id_type' => $row['id_type'],
                 'username' => $row['username'],
                 'fullname' => $row['fullname'],

@@ -71,7 +71,7 @@ switch ($type_manager) {
             break;
         }
     case "close_table": {
-            if (isset($_REQUEST['id_table'])) {
+            if (isset($_REQUEST['id_table'])) { ////////////////////////////////////
                 if ($_REQUEST['id_table'] == '') {
                     unset($_REQUEST['id_table']);
                     returnError("Nhập id_table");
@@ -81,47 +81,6 @@ switch ($type_manager) {
             } else {
                 returnError("Nhập id_table");
             }
-
-            $sql_update_table_status = "UPDATE `tbl_organization_table`
-                                            SET `table_status` = 'empty'
-                                            WHERE `id` = '{$id_table}'
-                                            ";
-            if (db_qr($sql_update_table_status)) {
-                returnSuccess("Đóng bàn thành công");
-            }
-           
-        }
-    case "finished": {
-            if (isset($_REQUEST['id_detail'])) {
-                if ($_REQUEST['id_detail'] == '') {
-                    unset($_REQUEST['id_detail']);
-                    returnError("Nhập id_detail");
-                } else {
-                    $id_detail = $_REQUEST['id_detail'];
-                }
-            } else {
-                returnError("Nhập id_detail");
-            }
-
-            // $sql = "SELECT * FROM `tbl_order_detail` 
-            //             WHERE `id` = '{$id_detail}'
-            //             AND `detail_status` = 'Y'
-            //             ";
-            // $result = db_qr($sql);
-            // $nums = db_nums($result);
-            // if($nums > 0){
-            //     returnError("Món này đã hoàn thành");
-            // }
-            $sql = "UPDATE `tbl_order_detail` 
-                        SET `detail_status` = 'Y'
-                        WHERE `id` = '{$id_detail}'
-                        ";
-            if (db_qr($sql)) {
-                returnSuccess("Đã làm xong món");
-            }
-            break;
-        }
-    case "finished_all": {
             if (isset($_REQUEST['id_order'])) {
                 if ($_REQUEST['id_order'] == '') {
                     unset($_REQUEST['id_order']);
@@ -132,64 +91,6 @@ switch ($type_manager) {
             } else {
                 returnError("Nhập id_order");
             }
-            
-            $sql = "SELECT `order_table` FROM `tbl_order_order` WHERE `id` = '{$id_order}'";  // use update table status
-            $result = db_qr($sql);
-            $nums = db_nums($result);
-            if ($nums > 0) {
-                while ($row = db_assoc($result)) {
-                    $order_table = $row['order_table'];   // order table
-                }
-            }
-
-            $success = array();
-            $sql = "SELECT * FROM `tbl_order_order`
-             WHERE `id` = '{$id_order}' 
-             AND `order_status` = '2' "; // processing -> finished
-            $result = db_qr($sql);
-            $nums = db_nums($result);
-
-            if ($nums > 0) {
-                while ($row = db_assoc($result)) {
-                    $time_processing = $row['order_check_time'];
-                    $time_finished = time();
-                    $denta_processing = date('00:' . 'i:s', $time_finished - $time_processing);
-
-                    $id_business = $row['id_business'];
-                }
-
-                $sql_order_log = "INSERT INTO `tbl_order_log`
-                          SET `id_order` = '{$id_order}',
-                              `log_status` = 'processing',
-                              `time_log` = '{$denta_processing}',
-                              `id_business` = '{$id_business}'
-                            ";
-                if (db_qr($sql_order_log)) {
-                    $success['order_log'] = "true";
-                }
-
-                $sql_update_order_status = "UPDATE `tbl_order_order` 
-                                            SET `order_status` = '5',
-                                                `order_check_time` = '{$time_finished}'
-                                            WHERE `id` = '{$id_order}'    
-                                            ";
-                if (db_qr($sql_update_order_status)) {
-                    $success['update_order_status'] = "true";
-                }
-
-                $sql = "UPDATE `tbl_order_detail` 
-                        SET `detail_status` = 'Y'
-                        WHERE `id_order` = '{$id_order}'
-                        AND `detail_status` = 'N'
-                        ";
-                if (db_qr($sql)) {
-                    $success['finised'] = "true";
-                }
-
-            } else {
-                returnSuccess("Đã qua trạng thái thanh toán");
-            }
-
 
             // add point customer
             $sql = " SELECT `id_customer` FROM `tbl_order_order`
@@ -263,6 +164,228 @@ switch ($type_manager) {
             }
 
             // end update point
+
+            $success = array();
+            $sql = "SELECT * FROM `tbl_order_order`
+                    WHERE `id` = '{$id_order}' ";
+
+            if (isset($_REQUEST['business_model'])) {
+                if ($_REQUEST['business_model'] == 'S') {
+                    $sql .= " AND `order_status` = '1'";
+                } else {
+                    $sql .= " AND `order_status` = '4' ";
+                    // finished (hiển thị payment) -> finished (đóng bàn)/////////////////
+                }
+            } else {
+                $sql .= " AND `order_status` = '4' ";
+            }
+
+             
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $time_processing = $row['order_check_time'];
+                    $time_finished = time();
+                    $denta_processing = date('00:' . 'i:s', $time_finished - $time_processing);
+
+                    $id_business = $row['id_business'];
+                }
+
+                $sql_order_log = "INSERT INTO `tbl_order_log`
+                          SET `id_order` = '{$id_order}',
+                              `log_status` = 'finished',
+                              `time_log` = '{$denta_processing}',
+                              `id_business` = '{$id_business}'
+                            ";
+                if (db_qr($sql_order_log)) {
+                    $success['order_log'] = "true";
+                }
+
+                $sql_update_order_status = "UPDATE `tbl_order_order` 
+                                            SET `order_status` = '5',
+                                                `order_check_time` = '{$time_finished}'
+                                            WHERE `id` = '{$id_order}'    
+                                            ";
+                if (db_qr($sql_update_order_status)) {
+                    $sql_update_table_status = "UPDATE `tbl_organization_table`
+                    SET `table_status` = 'empty'
+                    WHERE `id` = '{$id_table}'
+                    ";
+                    if (db_qr($sql_update_table_status)) {
+                        returnSuccess("Đóng bàn thành công");
+                    }
+                }
+            } else {
+                returnSuccess("Đã qua trạng thái thanh toán");
+            }
+        }
+    case "finished": { ///////////////////
+            if (isset($_REQUEST['id_detail'])) {
+                if ($_REQUEST['id_detail'] == '') {
+                    unset($_REQUEST['id_detail']);
+                    returnError("Nhập id_detail");
+                } else {
+                    $id_detail = $_REQUEST['id_detail'];
+                }
+            } else {
+                returnError("Nhập id_detail");
+            }
+            if (isset($_REQUEST['id_order'])) {
+                if ($_REQUEST['id_order'] == '') {
+                    unset($_REQUEST['id_order']);
+                    returnError("Nhập id_order");
+                } else {
+                    $id_order = $_REQUEST['id_order'];
+                }
+            } else {
+                returnError("Nhập id_order");
+            }
+            $success = array();
+            $sql = "UPDATE `tbl_order_detail` 
+                        SET `detail_status` = 'Y'
+                        WHERE `id` = '{$id_detail}'
+                        ";
+            if (db_qr($sql)) {
+                $success['detail_status'] = "true";
+            }
+
+            // if all product have been finished, change order_status to 4
+            $sql_detail = "SELECT * FROM `tbl_order_detail` 
+                            WHERE `id_order` = '{$id_order}'";
+            $total_detail = count(db_fetch_array($sql_detail));
+
+            $sql_detail_finished = "SELECT * FROM `tbl_order_detail` 
+                                    WHERE `id_order` = '{$id_order}' 
+                                    AND `detail_status` = 'Y'";
+            $total_detail_finished = count(db_fetch_array($sql_detail_finished));
+
+            if ($total_detail_finished == $total_detail) {
+
+                $sql = "SELECT * FROM `tbl_order_order`
+                        WHERE `id` = '{$id_order}' 
+                        AND `order_status` = '2' "; // processing -> finished (hiển thị payment)
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+
+                if ($nums > 0) {
+                    while ($row = db_assoc($result)) {
+                        $time_processing = $row['order_check_time'];
+                        $time_finished = time();
+                        $denta_processing = date('00:' . 'i:s', $time_finished - $time_processing);
+
+                        $id_business = $row['id_business'];
+                    }
+
+                    $sql_order_log = "INSERT INTO `tbl_order_log`
+                          SET `id_order` = '{$id_order}',
+                              `log_status` = 'processing',
+                              `time_log` = '{$denta_processing}',
+                              `id_business` = '{$id_business}'
+                            ";
+                    if (db_qr($sql_order_log)) {
+                        $success['order_log'] = "true";
+                    }
+
+                    $sql_update_order_status = "UPDATE `tbl_order_order` 
+                                            SET `order_status` = '4',
+                                                `order_check_time` = '{$time_finished}'
+                                            WHERE `id` = '{$id_order}'    
+                                            ";
+                    if (db_qr($sql_update_order_status)) {
+                        $success['update_order_status'] = "true";
+                    }
+
+                    $sql = "UPDATE `tbl_order_detail` 
+                        SET `detail_status` = 'Y'
+                        WHERE `id_order` = '{$id_order}'
+                        AND `detail_status` = 'N'
+                        ";
+                    if (db_qr($sql)) {
+                        $success['finised'] = "true";
+                    }
+                } else {
+                    returnSuccess("Đã qua trạng thái chế biến");
+                }
+            }
+            if (!empty($success)) {
+                returnSuccess("Đã làm xong món");
+            }
+            // change order_status to 5
+
+            break;
+        }
+    case "finished_all": {
+            if (isset($_REQUEST['id_order'])) {
+                if ($_REQUEST['id_order'] == '') {
+                    unset($_REQUEST['id_order']);
+                    returnError("Nhập id_order");
+                } else {
+                    $id_order = $_REQUEST['id_order'];
+                }
+            } else {
+                returnError("Nhập id_order");
+            }
+
+            $sql = "SELECT `order_table` FROM `tbl_order_order` WHERE `id` = '{$id_order}'";  // use update table status
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $order_table = $row['order_table'];   // order table
+                }
+            }
+
+            $success = array();
+            $sql = "SELECT * FROM `tbl_order_order`
+             WHERE `id` = '{$id_order}' 
+             AND `order_status` = '2' "; // processing -> finished (hiển thị payment)
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $time_processing = $row['order_check_time'];
+                    $time_finished = time();
+                    $denta_processing = date('00:' . 'i:s', $time_finished - $time_processing);
+
+                    $id_business = $row['id_business'];
+                }
+
+                $sql_order_log = "INSERT INTO `tbl_order_log`
+                          SET `id_order` = '{$id_order}',
+                              `log_status` = 'processing',
+                              `time_log` = '{$denta_processing}',
+                              `id_business` = '{$id_business}'
+                            ";
+                if (db_qr($sql_order_log)) {
+                    $success['order_log'] = "true";
+                }
+
+                $sql_update_order_status = "UPDATE `tbl_order_order` 
+                                            SET `order_status` = '4',
+                                                `order_check_time` = '{$time_finished}'
+                                            WHERE `id` = '{$id_order}'    
+                                            ";
+                if (db_qr($sql_update_order_status)) {
+                    $success['update_order_status'] = "true";
+                }
+
+                $sql = "UPDATE `tbl_order_detail` 
+                        SET `detail_status` = 'Y'
+                        WHERE `id_order` = '{$id_order}'
+                        AND `detail_status` = 'N'
+                        ";
+                if (db_qr($sql)) {
+                    $success['finised'] = "true";
+                }
+            } else {
+                returnSuccess("Đã qua trạng thái chế biến");
+            }
+
+
+
 
             if (!empty($success)) {
                 returnSuccess("Cập nhật trạng thái finished thành công");

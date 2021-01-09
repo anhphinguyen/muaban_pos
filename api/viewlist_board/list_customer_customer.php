@@ -35,9 +35,9 @@ if (isset($_REQUEST['id_business'])) {
                 unset($_REQUEST['filter']);
             } else {
                 $filter = htmlspecialchars($_REQUEST['filter']);
-                $sql .= " AND `customer_code` LIKE '%{$filter}%'";
+                $sql .= " AND ( `customer_code` LIKE '%{$filter}%'";
                 $sql .= " OR `customer_name` LIKE '%{$filter}%'";
-                $sql .= " OR `customer_phone` LIKE '%{$filter}%'";
+                $sql .= " OR `customer_phone` LIKE '%{$filter}%' )";
             }
         }
     }
@@ -121,7 +121,7 @@ if (empty($error)) {
         }
         reJson($customer_arr);
     } else {
-        returnError("Không có khách hàng");
+        returnSuccess("Không có khách hàng");
     }
 } else {
     $error['success'] = "false";

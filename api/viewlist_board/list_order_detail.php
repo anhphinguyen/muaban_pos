@@ -2,6 +2,7 @@
 $sql = "SELECT 
             `tbl_customer_customer`.`id` as `id_customer`,
             `tbl_customer_customer`.`customer_code` as `customer_code`,
+            `tbl_customer_customer`.`customer_name` as `customer_name`,
 
             `tbl_account_account`.`id` as `id_account`,
             `tbl_account_account`.`account_username` as `account_username`,
@@ -55,6 +56,7 @@ if (empty($error)) {
                 // 'id_table' => $row['id_table'],
                 'id_customer' => (!empty($row['id_customer']))?$row['id_customer']:"0", //$row['id_customer']
                 'customer_code' => (!empty($row['customer_code']))?$row['customer_code']:"", //$row['customer_code']
+                'customer_name' => (!empty($row['customer_name']))?$row['customer_name']:"", //$row['customer_code']
                 'id_account' => $row['id_account'],
                 'account_username' => $row['account_username'],
                 'order_code' => $row['order_code'],

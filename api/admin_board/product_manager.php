@@ -302,13 +302,6 @@ switch ($type_manager) {
                 }
             }
 
-            // if (isset($_REQUEST['id_extra_arr'])) {
-            //     if ($_REQUEST['id_extra_arr'] == '') {
-            //         unset($_REQUEST['id_extra_arr']);
-            //     } else {
-            //         $id_extra_arr = $_REQUEST['id_extra_arr'];
-            //     }
-            // }
 
             // $id_product_extra = '';
             if (isset($_REQUEST['id_product_extra'])) {
@@ -335,6 +328,7 @@ switch ($type_manager) {
             }
 
 
+            // $sql = "SELECT * FROM `tbl_product_product` WHERE `product_code` = '{$}'";
 
             $dir_save_thumb = handing_file_img($product_img, $dir_save_product_img);
             $sql = "INSERT INTO `tbl_product_product` SET 
@@ -376,6 +370,33 @@ switch ($type_manager) {
                 returnError("Tạo thất bại");
             }
 
+            break;
+        }
+    case "enable_product": {
+            if (isset($_REQUEST['id_product'])) {
+                if ($_REQUEST['id_product'] == '') {
+                    unset($_REQUEST['id_product']);
+                    returnError("Nhập id_product");
+                } else {
+                    $id_product = $_REQUEST['id_product'];
+                }
+            } else {
+                returnError("Nhập id_product");
+            }
+
+            $sql = "UPDATE `tbl_product_product` 
+                    SET `product_sold_out` = 'N'
+                    WHERE `id` = '{$id_product}'
+                    ";
+            if (db_qr($sql)) {
+                returnSuccess("Đã hồi phục thành công");
+            } else {
+                returnError("Lỗi hồi phục");
+            }
+            break;
+        }
+    case "list_product_sold_out": {
+            include_once "./viewlist_board/list_product_sold_out.php";
             break;
         }
     case "list_product_category": {

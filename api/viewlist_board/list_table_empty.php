@@ -37,11 +37,26 @@ if (isset($_REQUEST['id_table'])) {
 
 $sql .= " AND `table_status` = 'empty'";
 
+$sql_table_close = "SELECT * FROM  `tbl_organization_table` 
+                    WHERE `id_business` = '{$id_business}'
+                    AND `id_floor` = '{$id_floor}'
+                    AND `table_status` = 'empty'
+                    ";
+$total_table_close = count(db_fetch_array($sql_table_close));
+
+$sql_table_open = "SELECT * FROM  `tbl_organization_table` 
+                    WHERE `id_business` = '{$id_business}'
+                    AND `id_floor` = '{$id_floor}'
+                    AND `table_status` = 'full'
+                    ";
+$total_table_open = count(db_fetch_array($sql_table_open));
 
 
 
 $table_arr = array();
 $table_arr['success'] = 'true';
+$table_arr['total_table_open'] = strval($total_table_open);
+$table_arr['total_table_close'] = strval($total_table_close);
 $table_arr['data'] = array();
 $result = db_qr($sql);
 $nums = db_nums($result);

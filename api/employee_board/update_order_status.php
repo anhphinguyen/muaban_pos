@@ -264,7 +264,26 @@ switch ($type_manager) {
             
             $sql = "SELECT * FROM `tbl_order_order`
                      WHERE `id` = '{$id_order}' 
-                     AND `order_status` = '3' "; // delivery -> payment
+                     "; // delivery -> payment
+            if(isset($_REQUEST['business_model'])){
+                if ($_REQUEST['business_model'] == 'S') {
+                    $sql .= " AND `order_status` = '1'";
+                    //update detail status for small store
+                    $sql_update_detail = "UPDATE `tbl_order_detail` SET
+                                            `detail_status` = 'Y'
+                                            WHERE `id_order` = '{$id_order}'
+                                            AND `detail_status` = 'N'
+                                            ";
+                    db_qr($sql_update_detail);
+                }else{
+                    $sql .= " AND `order_status` = '3'";
+                }
+            }else{
+                $sql .= " AND `order_status` = '3'";
+            }
+            
+
+
             $result = db_qr($sql);
             $nums = db_nums($result);
 

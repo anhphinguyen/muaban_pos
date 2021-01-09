@@ -82,7 +82,7 @@ if (empty($error)) {
 
                     if ($row_table['table_status'] == 'full') {
 
-                        $sql_order = "SELECT * FROM `tbl_order_order`"; ///
+                        $sql_order = "SELECT * FROM `tbl_order_order` WHERE `id_business` = '{$id_business}' ORDER BY `id` DESC"; ///
                         $result_order = db_qr($sql_order);
                         $nums_order = db_nums($result_order);
                         if ($nums_order > 0) {

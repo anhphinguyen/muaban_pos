@@ -114,7 +114,7 @@ if (isset($type_manager)) {
                         ";
                 $result = db_qr($sql);
                 $nums = db_nums($result);
-                if($nums > 0){
+                if ($nums > 0) {
                     returnError("Bàn đang không có đơn");
                 }
 
@@ -217,10 +217,10 @@ if (isset($type_manager)) {
 
                 if (!empty($success)) {
                     $message = array(
-                            'success' => "true",
-                            'message' => "Chuyển bàn thành công",
-                            'data' => array()
-                        );
+                        'success' => "true",
+                        'message' => "Chuyển bàn thành công",
+                        'data' => array()
+                    );
                     $data = array(
                         'id_order' => $id_order,
                     );
@@ -282,6 +282,7 @@ if (isset($type_manager)) {
                     }
                 }
 
+                $id_detail_arr = array();
                 if (isset($element) && !empty($element)) {
                     $element_convert_arr = explode("|", $element);
                     for ($i = 0; $i < count($element_convert_arr); $i++) {
@@ -307,7 +308,8 @@ if (isset($type_manager)) {
                                     $sql .=  ", `detail_extra` = '{$extra_product}'";
                                 }
                                 if (db_qr($sql)) {
-                                    $success['order_add'] = "true";
+                                    array_push($id_detail_arr, mysqli_insert_id($conn));
+                                    $success['add_product'] = "true";
                                 }
                             } else {
                                 returnError("Lỗi dữ liệu");
@@ -315,29 +317,32 @@ if (isset($type_manager)) {
                         }
                     }
                 }
+
                 if (!empty($success)) {
-                    $id_insert = mysqli_insert_id($conn);
-                    $sql = "SELECT * FROM `tbl_order_detail` 
+                    $detail_arr = array();
+                    $detail_arr['success'] = 'true';
+                    $detail_arr['data'] = array();
+                    foreach ($id_detail_arr as $id_insert) {
+                        $sql = "SELECT * FROM `tbl_order_detail` 
                                     WHERE `id` = '{$id_insert}'
                                     ORDER BY `id` ASC";
-                    $result = db_qr($sql);
-                    $nums = db_nums($result);
-                    $detail_arr = array();
-                    if ($nums > 0) {
-                        $detail_arr['success'] = 'true';
-                        $detail_arr['data'] = array();
-                        while ($row = db_assoc($result)) {
-                            $detail_item = array(
-                                'id' => $row['id'],
-                                'id_order' => $row['id_order'],
-                                'id_product' => $row['id_product'],
-                                'detail_quantity' => $row['detail_quantity'],
-                            );
-                            array_push($detail_arr['data'], $detail_item);
+
+                        $result = db_qr($sql);
+                        $nums = db_nums($result);
+                        if ($nums > 0) {
+                            
+                            while ($row = db_assoc($result)) {
+                                $detail_item = array(
+                                    'id' => $row['id'],
+                                    'id_order' => $row['id_order'],
+                                    'id_product' => $row['id_product'],
+                                    'detail_quantity' => $row['detail_quantity'],
+                                );
+                                array_push($detail_arr['data'], $detail_item);
+                            }
                         }
-                        reJson($detail_arr);
                     }
-                    // returnSuccess("Tạo đơn hàng thành công");
+                    reJson($detail_arr);
                 } else {
                     returnError("Tao don hang khong thanh cong");
                 }
@@ -458,7 +463,7 @@ if (isset($type_manager)) {
                                 returnError("Bàn này đã có order");
                             }
                         }
-                    }else{
+                    } else {
                         returnError("Không tồn tại bàn");
                     }
 
@@ -549,15 +554,7 @@ if (isset($type_manager)) {
                             }
                         }
                         if (!empty($success)) {
-                            // $sql = "SELECT * FROM `tbl_order_order` WHERE `id` = '{$id_insert}'";
-                            // $result = db_qr($sql);
-                            // $nums = db_nums($result);
-                            // if ($nums > 0) {
-                            //     while ($row = db_assoc($result)) {
-                            //         $order_code = $row['order_code'];
-                            //         $order_created = $row['order_created'];
-                            //     }
-                            // }
+
                             $sql = "SELECT * FROM `tbl_order_detail` WHERE `id_order` = '{$id_insert}'";
                             $result = db_qr($sql);
                             $nums = db_nums($result);
@@ -570,8 +567,6 @@ if (isset($type_manager)) {
                                         'id' => $row['id'],
                                         'id_order' => $row['id_order'],
                                         'id_product' => $row['id_product'],
-                                        // 'order_code' =>  $order_code,
-                                        // 'order_created' =>  $order_created,
                                         'detail_quantity' => $row['detail_quantity'],
                                     );
                                     array_push($detail_arr['data'], $detail_item);

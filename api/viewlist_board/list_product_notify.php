@@ -56,6 +56,7 @@ if ($nums > 0) {
             'id_product' => $row['id_product'],
             'order_floor' => $row['order_floor'],
             'order_table' => $row['order_table'],
+            'order_location' => $row['order_floor'] ." - " .$row['order_table'],
             'product_title' => $row['product_title'],
             'detail_quantity' => $row['detail_quantity'],
             'detail_view' => $row['detail_view'],

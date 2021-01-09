@@ -1,6 +1,6 @@
 <?php
 
-$sql = "SELECT * FROM `tbl_order_order` WHERE `order_status` < '5'";
+$sql = "SELECT * FROM `tbl_order_order` WHERE 1=1 ";
 
 if (isset($_REQUEST['id_order'])) {
     if ($_REQUEST['id_order'] == '') {
@@ -79,22 +79,24 @@ if ($nums > 0) {
         }
 
 
-        if ($row['order_status'] < '5') {
-            $order_item = array(
-                'id_order' => $row['id'],
-                'total_table_empty' => (isset($total_table_empty))?strval($total_table_empty):"",
-                'total_table_full' => (isset($total_table_full))?strval($total_table_full):"",
-                'order_status' => $row['order_status'],
-                'order_floor' => $row['order_floor'],
-                'order_table' => $row['order_table'],
-                'total_product_finished' => strval($total_product_finished),
-                'total_product_notyet' => strval($total_product_notyet),
-                'order_check_time' => $row['order_check_time'],
-                'total_cost_tmp' => strval($total_cost_tmp),
-            );
 
-            array_push($order_arr['data'], $order_item);
-        }
+
+        $order_item = array(
+            'id_order' => $row['id'],
+            'order_status' => $row['order_status'],
+            'order_floor' => $row['order_floor'],
+            'order_table' => $row['order_table'],
+            'total_table_empty' => (isset($total_table_empty)) ? strval($total_table_empty) : "",
+            'total_table_full' => (isset($total_table_full)) ? strval($total_table_full) : "",
+            'total_product_finished' => strval($total_product_finished),
+            'total_product_notyet' => strval($total_product_notyet),
+            'order_check_time' => $row['order_check_time'],
+            'total_cost_tmp' => strval($total_cost_tmp),
+        );
+
+        array_push($order_arr['data'], $order_item);
     }
     reJson($order_arr);
+}else{
+    returnSuccess("Danh sách trống");
 }
