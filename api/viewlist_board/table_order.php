@@ -30,7 +30,7 @@ if ($nums > 0) {
     $order_arr['data'] = array();
     if (isset($id_floor) && !empty($id_floor)) {
         $sql_total_table = "SELECT * FROM `tbl_organization_table` 
-                        WHERE `id_floor` = '{$id_floor}'";
+                            WHERE `id_floor` = '{$id_floor}'";
         $total_table = count(db_fetch_array($sql_total_table));
 
         $sql_total_table_empty = "SELECT * FROM `tbl_organization_table` 

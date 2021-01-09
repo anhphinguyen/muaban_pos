@@ -74,7 +74,7 @@ if (empty($error)) {
     $nums = db_nums($result);
 
     // sắp xếp cấp độ
-    $sql_level = "SELECT * FROM `tbl_customer_point`";
+    $sql_level = "SELECT * FROM `tbl_customer_point` WHERE `id_business` = '{$id_business}'";
     $result_level = db_qr($sql_level);
     $nums_level = db_nums($result_level);
     if ($nums_level) {

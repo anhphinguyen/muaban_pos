@@ -64,6 +64,26 @@ if (isset($_REQUEST['id_order'])) {
     }
 }
 
+
+
+$sql_total = "SELECT
+        `tbl_organization_floor`.`floor_type` as `order_type`,
+
+        `tbl_order_order`.`id` as `id_order`,
+        `tbl_order_order`.`order_floor` as `order_floor`,
+        `tbl_order_order`.`order_table` as `order_table`,
+        `tbl_order_order`.`order_status` as `order_status`,
+        `tbl_order_order`.`order_check_time` as `order_check_time`,
+
+        `tbl_order_detail`.`detail_status` as `detail_status`
+        FROM `tbl_order_order`
+        LEFT JOIN `tbl_organization_floor` ON `tbl_order_order`.`order_floor` = `tbl_organization_floor`.`floor_title`
+        LEFT JOIN `tbl_order_detail` ON `tbl_order_order`.`id` = `tbl_order_detail`.`id_order`
+        WHERE `tbl_order_order`.`order_status` < '4' 
+        AND `tbl_order_order`.`id_business` = '{$id_business}'
+        AND `tbl_order_detail`.`detail_status` = 'N'
+        GROUP BY `tbl_order_order`.`id` 
+        ";
 $total = count(db_fetch_array($sql_total));
 
 switch ($type_manager) {
@@ -103,7 +123,9 @@ if ($nums > 0) {
         if ($total_product_notyet > 0) {
 
             $sql_id_floor = "SELECT `id` FROM `tbl_organization_floor` 
-                             WHERE `floor_title` = '{$row['order_floor']}'";
+                             WHERE `floor_title` = '{$row['order_floor']}'
+                             AND `id_business` = '{$id_business}'
+                             ";
             $result_id_floor = db_qr($sql_id_floor);
             $nums_id_floor = db_nums($result_id_floor);
             if($nums_id_floor > 0){
