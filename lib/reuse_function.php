@@ -1,7 +1,7 @@
 <?php
 
-function get_list_customer_by_level($id, $point_arr = array(), $id_level_arr = array()){
-    $sql_customer = "SELECT `customer_point` FROM `tbl_customer_customer` WHERE 1=1 ";
+function get_list_customer_by_level($id,$id_business, $point_arr = array(), $id_level_arr = array()){
+    $sql_customer = "SELECT `customer_point` FROM `tbl_customer_customer` WHERE `id_business` = '{$id_business}' ";
     for ($i = 0; $i < count($id_level_arr); $i++) {
         for ($j = $i + 1; $j <= count($id_level_arr); $j++) {
             if ($j == count($id_level_arr)) {
