@@ -58,7 +58,7 @@ if ($nums > 0) {
         // customer_customer_point
         $id_level = $row['id'];
         /////////////////////////////////////////////////////////
-        $sql_customer = get_list_customer_by_level($id_level, $point_arr['point'], $point_arr['id_level']);
+        $sql_customer = get_list_customer_by_level($id_level,$id_business, $point_arr['point'], $point_arr['id_level']);
         ///////////////////////////////////////////////////////////////
         // end 
         $customer_total = count(db_fetch_array($sql_customer));

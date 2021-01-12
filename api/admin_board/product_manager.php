@@ -315,9 +315,12 @@ switch ($type_manager) {
             if (isset($_REQUEST['product_point'])) {
                 if ($_REQUEST['product_point'] == '') {
                     unset($_REQUEST['product_point']);
+                    $product_point = "0";
                 } else {
                     $product_point = $_REQUEST['product_point'];
                 }
+            }else{
+                $product_point = "0";
             }
 
             if (isset($_FILES['product_img'])) { // up product_img

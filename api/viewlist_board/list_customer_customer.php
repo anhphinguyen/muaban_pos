@@ -74,10 +74,10 @@ if (empty($error)) {
     $nums = db_nums($result);
 
     // sắp xếp cấp độ
-    $sql_level = "SELECT * FROM `tbl_customer_point`";
+    $sql_level = "SELECT * FROM `tbl_customer_point` WHERE `id_business` = '{$id_business}'";
     $result_level = db_qr($sql_level);
     $nums_level = db_nums($result_level);
-    if ($nums_level) {
+    if ($nums_level > 0) {
         $point_arr = array();
         $point_arr['id_level'] = array();
         $point_arr['point'] = array();
@@ -110,9 +110,11 @@ if (empty($error)) {
                 'customer_taxcode' => htmlspecialchars_decode($row['customer_taxcode']),
             );
 
-            for($i = 0; $i < count($point_arr['point']); $i++){
-                if ($row['customer_point'] >= $point_arr['point'][$i]) {
-                    $customer_item['customer_level'] = $point_arr['level'][$i];
+            if (!empty($point_arr)) {
+                for ($i = 0; $i < count($point_arr['point']); $i++) {
+                    if ($row['customer_point'] >= $point_arr['point'][$i]) {
+                        $customer_item['customer_level'] = $point_arr['level'][$i];
+                    }
                 }
             }
 

@@ -34,7 +34,7 @@ if (isset($_REQUEST['id_business'])) {
                 unset($_REQUEST['date_begin']);
             } else {
                 $date_begin = $_REQUEST['date_begin'];
-                $sql .= " AND `order_created` >= '{$date_begin}'";
+                $sql .= " AND `order_created` >= '{$date_begin}"." 00:00:00'";
             }
         }else{
             $month = date("Y-m", time());
@@ -47,14 +47,13 @@ if (isset($_REQUEST['id_business'])) {
                 unset($_REQUEST['date_end']);
             } else {
                 $date_end = $_REQUEST['date_end'];
-                $sql .= " AND `order_created` <= '{$date_end}'";
+                $sql .= " AND `order_created` <= '{$date_end}"." 23:59:59'";
             }
         }else{
             $month = date("Y-m", time());
             $sql .= " AND `order_created` <= '".$month."-31 23:59:59'";
         }
 
-        
     }
 }else{
     $error['id_business'] = "Nhập id_business";

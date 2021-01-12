@@ -101,7 +101,7 @@ if (empty($error)) {
                           FROM `tbl_product_extra`
                           LEFT JOIN `tbl_product_product` 
                           ON `tbl_product_extra`.`id_product_extra` = `tbl_product_product`.`id`
-                          WHERE 1=1
+                          WHERE `tbl_product_product`.`id_business` = '{$id_business}'
                           ";
             $result_extra = db_qr($sql_extra);
             $nums_extra = db_nums($result_extra);

@@ -219,7 +219,8 @@ switch ($type_manager) {
             if (empty($error)) {
                 // check customer exist
                 $sql = "SELECT * FROM `tbl_customer_customer` 
-                            WHERE `customer_phone` = '{$customer_phone}'";
+                            WHERE `customer_phone` = '{$customer_phone}'
+                            AND `id_business` = '{$id_business}'";
                 $result = db_qr($sql);
                 $nums = db_nums($result);
                 if ($nums > 0) {

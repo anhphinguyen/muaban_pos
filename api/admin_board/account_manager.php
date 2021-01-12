@@ -336,7 +336,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
 
                         foreach ($rolePermission as $itemRole) {
                             if (! empty($itemRole)) {
-                                $sql_insert_role = "INSERT INTO tbl_account_authorize SET id_admin = '" . $idUser . "', grant_permission = '" . $itemRole . "'";
+                                $sql_insert_role = "INSERT INTO tbl_account_authorize SET id_admin = '" . $idUser . "', grant_permission = '" . $itemRole . "', id_business = {$id_business}";
 
                                 mysqli_query($conn, $sql_insert_role);
                             }
