@@ -55,90 +55,7 @@ function arrange_position($point_arr = array(), $level_arr = array(), $id_arr = 
     $result['level'] = $level_arr;
     return $result;
 }
-// update product extra
-function update_product_extra($id_extra_req, $id_product_extra_req, $id_product, $id_business)
-{
-    global $conn;
-    $success = array();
-    if (isset($id_extra_req) && !empty($id_extra_req)) {
-        $id_extra = explode(",", $id_extra_req);
-        if (isset($id_product_extra_req) && !empty($id_product_extra_req)) {
-            $id_product_extra = explode(",", $id_product_extra_req);
 
-            if (count($id_product_extra) >= count($id_extra)) {
-                while (count($id_extra) < count($id_product_extra)) {
-                    array_push($id_extra, "null");
-                }
-                for ($i = 0; $i < count($id_extra); $i++) {
-                    if ($id_extra[$i] == "null") {
-                        $sql = "INSERT INTO `tbl_product_extra` 
-                                        SET `id_product_extra` = '{$id_product_extra[$i]}',
-                                            `id_product` = '{$id_product}',
-                                            `id_business` = '{$id_business}'
-                                            ";
-                        if (mysqli_query($conn, $sql)) {
-                            $success['add_id_product_extra'] = 'true';
-                        }
-                    } else {
-                        $sql = "UPDATE `tbl_product_extra` 
-                                        SET `id_product_extra` = '{$id_product_extra[$i]}'
-                                        WHERE `id` = '{$id_extra[$i]}'";
-                        if (mysqli_query($conn, $sql)) {
-                            $success['edit_id_product_extra'] = 'true';
-                        }
-                    }
-                }
-            } else {
-
-                while (count($id_product_extra) < count($id_extra)) {
-                    array_push($id_product_extra, 0);
-                }
-                for ($i = 0; $i < count($id_extra); $i++) {
-
-                    $sql = "    UPDATE `tbl_product_extra` 
-                                        SET `id_product_extra` = '{$id_product_extra[$i]}'
-                                        WHERE `id` = '{$id_extra[$i]}'";
-                    if (mysqli_query($conn, $sql)) {
-                        $success['edit_id_product_extra'] = 'true';
-                    }
-                }
-
-                $sql = "DELETE FROM `tbl_product_extra` WHERE `id_product_extra` = '0'";
-                db_qr($sql);
-            }
-        } else {
-            for ($i = 0; $i < count($id_extra); $i++) {
-                $sql = "DELETE FROM `tbl_product_extra` 
-                                WHERE `id` = '{$id_extra[$i]}'";
-                if (mysqli_query($conn, $sql)) {
-                    $success['del_id_product_extra'] = 'true';
-                }
-            }
-        }
-    } else {
-        if (isset($id_product_extra_req) && !empty($id_product_extra_req)) {
-            $id_product_extra = explode(",", $id_product_extra_req);
-            foreach ($id_product_extra as $item) {
-                if (!empty($item)) {
-                    $sql = "INSERT INTO `tbl_product_extra` SET 
-                                    `id_product_extra` = '{$item}',
-                                    `id_product` = '{$id_product}',
-                                    `id_business` = '{$id_business}'
-                                    ";
-                    if (mysqli_query($conn, $sql)) {
-                        $success['add_id_product_extra'] = 'true';
-                    }
-                }
-            }
-        }
-    }
-    if (!empty($success)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-// xu ly hinh anh
 
 function handing_files_img($myfile, $dir_save)
 {   // myfile = file nhập vào, $max_size = kích thước lớn nhất của file, 
@@ -147,7 +64,7 @@ function handing_files_img($myfile, $dir_save)
     for ($i = 0; $i < $total; $i++) {
         if ($_FILES[$myfile]['error'][$i] == 0) {
             $target_dir = $dir_save;
-            $target_dir_4_upload = '../' . $dir_save;
+            $target_dir_4_upload = '../../' . $dir_save;
             $target_file = $target_dir . basename($_FILES[$myfile]['name'][$i]);
             $target_save_file = $target_dir_4_upload . basename($_FILES[$myfile]['name'][$i]);
 
@@ -205,7 +122,7 @@ function handing_file_img($myfile, $dir_save)
     // $allow_file_type = các đuôi file cho phép, $dir_save = thư mục lưu trữ
     if ($_FILES[$myfile]['error'] == 0) {
         $target_dir = $dir_save;
-        $target_dir_4_upload = '../' . $dir_save;
+        $target_dir_4_upload = '../../' . $dir_save;
         $target_file = $target_dir . basename($_FILES[$myfile]['name']);
         $target_save_file = $target_dir_4_upload . basename($_FILES[$myfile]['name']);
 
@@ -250,20 +167,6 @@ function handing_file_img($myfile, $dir_save)
     }
 }
 
-// function check_img_name($target_save_file, $img_info, $target_dir, $target_dir_4_upload){
-//     if (file_exists($target_save_file)) {
-//         $k = 0;
-//         $name_copy = $img_info['filename'] . "_Copy_" . $k;
-//         $target_file = $target_dir . $name_copy . "." . $img_info['extension'];
-//         $target_save_file = $target_dir_4_upload . $name_copy . "." . $img_info['extension'];
-//         while (file_exists($target_save_file)) {
-//             $k++;
-//             $name_copy = $img_info['filename'] . "_Copy_" . $k;
-//             $target_file = $target_dir . $name_copy . "." . $img_info['extension'];
-//             $target_save_file = $target_dir_4_upload . $name_copy . "." . $img_info['extension'];
-//         }
-//     }
-// }
 
 function db_assoc($result)
 {
@@ -385,7 +288,7 @@ function saveImage($file, $target_save = '')
         }
 
         $target_dir = $target_save;
-        $target_dir_4_upload = '../' . $target_save;
+        $target_dir_4_upload = '../../' . $target_save;
         $final_name = basename($file["name"]);
 
         $path = $file['name'];

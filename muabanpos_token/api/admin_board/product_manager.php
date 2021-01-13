@@ -33,8 +33,8 @@ switch ($type_manager) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     $product_img =  $row['product_img'];
                 }
-                if (file_exists("../" . $product_img)) {
-                    @unlink("../" . $product_img);
+                if (file_exists("../../" . $product_img)) {
+                    @unlink("../../" . $product_img);
                 }
             }
 
@@ -176,8 +176,8 @@ switch ($type_manager) {
                 if ($nums > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         $product_img = $row['product_img'];
-                        if (file_exists("../" . $product_img)) {
-                            @unlink("../" . $product_img);
+                        if (file_exists("../../" . $product_img)) {
+                            @unlink("../../" . $product_img);
                         }
                     }
                 }
@@ -213,10 +213,6 @@ switch ($type_manager) {
                     }
                 }
             }
-            // if (update_product_extra($_REQUEST['id_extra'], $_REQUEST['id_product_extra'], $id_product, $id_business)) {
-            //     $success['extra'] = "true";
-            //     returnError("ok");
-            // }
 
             // end extra
 
@@ -346,7 +342,7 @@ switch ($type_manager) {
             if (isset($product_point) && !empty($product_point)) {
                 $sql .= " ,`product_point` = '{$product_point}'";
             }
-            if (isset($product_point) && !empty($product_point)) {
+            if (isset($product_description) && !empty($product_description)) {
                 $sql .= " ,`product_description` = '{$product_description}'";
             }
 

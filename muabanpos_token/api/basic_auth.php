@@ -6,16 +6,20 @@ use \Firebase\JWT\JWT;
 
 $header_arr = apache_request_headers();
 global $secret_key;
-// returnError($header_arr);
 if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization'])) {
     $author = explode(" ", $header_arr['Authorization']);
+    if($author[0] != "Bearer"){
+        echo json_encode(array(
+            'success' => 'false',
+            'error_code' => '403',
+            'message' => 'Lỗi span token'
+        ));
+        exit();
+    }
     $author['token'] = $author[1];
 
     $token = $author['token'];
-    // returnError($token);
-    // $token = $header_arr['Authorization'];
     $data = JWT::decode($token, $secret_key, array('HS256'));
-    // returnSuccess($data);
     if ($data->exp < time()) {
         $payload_tmp = array(
             "nbf" => time(),  //cho phép sử dụng token tại thời điểm này
@@ -50,7 +54,7 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
     echo json_encode(array(
         'success' => 'false',
         'error_code' => '403',
-        'message' => 'Lỗi token'
+        'message' => 'Lỗi không tồn tại token'
     ));
     exit();
 }
