@@ -33,6 +33,8 @@ $floor_arr = array();
 
 if (empty($error)) {
     $floor_arr['success'] = 'true';
+    $floor_arr['refresh_token'] = $token;
+
     $floor_arr['data'] = array();
     $result = db_qr($sql);
     $nums = db_nums($result);
@@ -161,7 +163,7 @@ if (empty($error)) {
         }
         reJson($floor_arr);
     } else {
-        returnSuccess("Không tồn tại tầng");
+        returnSuccess("Không tồn tại tầng", $token);
     }
 } else {
     $error['success'] = 'false';

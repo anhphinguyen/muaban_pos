@@ -39,7 +39,7 @@ switch ($type_manager) {
                 WHERE `id` = '{$id_order}'
                 ";
             if (db_qr($sql)) {
-                returnSuccess("Hủy đơn thành công");
+                returnSuccess("Hủy đơn thành công", $token);
             } else {
                 returnError("Lỗi hủy đơn");
             }
@@ -169,6 +169,8 @@ switch ($type_manager) {
             $order_arr = array();
             if ($nums > 0) {
                 $order_arr['success'] = 'true';
+                $order_arr['refresh_token'] = $token;
+
                 $order_arr['total'] = strval($total);
                 $order_arr['total_pages'] = strval($total_pages);
                 $order_arr['limit'] = strval($limit);
@@ -222,7 +224,7 @@ switch ($type_manager) {
 
                 reJson($order_arr);
             } else {
-                returnSuccess("Danh sách trống");
+                returnSuccess("Danh sách trống", $token);
             }
             break;
         }

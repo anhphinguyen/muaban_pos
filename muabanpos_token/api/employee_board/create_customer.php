@@ -73,21 +73,21 @@ if (isset($_REQUEST['customer_taxcode'])) {
 }
 
 if (empty($error)) {
-// check customer exist
+    // check customer exist
     $sql = "SELECT * FROM `tbl_customer_customer` 
             WHERE `customer_phone` = '{$customer_phone}'
             AND `id_business` = '{$id_business}'
             ";
     $result = db_qr($sql);
     $nums = db_nums($result);
-    if($nums > 0){
-        returnSuccess("Đã tồn tại khách hàng này");
+    if ($nums > 0) {
+        returnSuccess("Đã tồn tại khách hàng này", $token);
     }
     $sql = "SELECT `store_prefix` FROM `tbl_business_store` WHERE `id` = '{$id_business}'";
     $result = db_qr($sql);
     $nums = db_nums($result);
-    if($nums > 0){
-        while($row = db_assoc($result)){
+    if ($nums > 0) {
+        while ($row = db_assoc($result)) {
             $store_prefix = $row['store_prefix'];
         }
     }
@@ -99,27 +99,29 @@ if (empty($error)) {
                                 `customer_code` = '{$customer_code}',
                                 `customer_phone` = '{$customer_phone}'
                                 ";
-    if(isset($customer_address) && !empty($customer_address)){
+    if (isset($customer_address) && !empty($customer_address)) {
         $sql .= " ,`customer_address` = '{$customer_address}'";
     }
-    if(isset($customer_email) && !empty($customer_email)){
+    if (isset($customer_email) && !empty($customer_email)) {
         $sql .= " ,`customer_email` = '{$customer_email}'";
     }
-    if(isset($customer_taxcode) && !empty($customer_taxcode)){
+    if (isset($customer_taxcode) && !empty($customer_taxcode)) {
         $sql .= " ,`customer_taxcode` = '{$customer_taxcode}'";
     }
 
-    if(mysqli_query($conn, $sql)){
+    if (mysqli_query($conn, $sql)) {
         $id_insert = mysqli_insert_id($conn);
 
         $sql = "SELECT * FROM `tbl_customer_customer` WHERE `id` = '{$id_insert}'";
         $result = db_qr($sql);
         $nums = db_nums($result);
         $customer_arr = array();
-        if($nums > 0){
+        if ($nums > 0) {
             $customer_arr['success'] = 'true';
+            $customer_arr['refresh_token'] = $token;
+
             $customer_arr['data'] = array();
-            while($row = db_assoc($result)){
+            while ($row = db_assoc($result)) {
                 $customer_item = array(
                     'id_customer' => $row['id'],
                     'customer_name' => htmlspecialchars_decode($row['customer_name']),
@@ -137,9 +139,9 @@ if (empty($error)) {
             }
             reJson($customer_arr);
         }
-    }else{
+    } else {
         returnError("Tạo khách hàng không thành công");
     }
-}else{
+} else {
     returnError("Điền đầy đủ thông tin");
 }

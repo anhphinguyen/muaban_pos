@@ -48,7 +48,7 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
-                returnSuccess("Xóa thành công");
+                returnSuccess("Xóa thành công", $token);
             } else {
                 returnError("Xóa thất bại");
             }
@@ -217,7 +217,7 @@ switch ($type_manager) {
             // end extra
 
             if (!empty($success)) {
-                returnSuccess("Cập nhật thông tin thành công");
+                returnSuccess("Cập nhật thông tin thành công", $token);
             } else {
                 returnError("Không có thông tin cập nhật");
             }
@@ -315,7 +315,7 @@ switch ($type_manager) {
                 } else {
                     $product_point = $_REQUEST['product_point'];
                 }
-            }else{
+            } else {
                 $product_point = "0";
             }
 
@@ -364,7 +364,7 @@ switch ($type_manager) {
                 }
 
 
-                returnSuccess("Tạo thành công");
+                returnSuccess("Tạo thành công", $token);
             } else {
                 returnError("Tạo thất bại");
             }
@@ -388,7 +388,7 @@ switch ($type_manager) {
                     WHERE `id` = '{$id_product}'
                     ";
             if (db_qr($sql)) {
-                returnSuccess("Đã hồi phục thành công");
+                returnSuccess("Đã hồi phục thành công", $token);
             } else {
                 returnError("Lỗi hồi phục");
             }
@@ -451,6 +451,8 @@ switch ($type_manager) {
 
             if (empty($error)) {
                 $product_arr['success'] = 'true';
+                $product_arr['refresh_token'] = $token;
+
                 $product_arr['total'] = strval($total);
                 $product_arr['total_page'] = strval($total_page);
                 $product_arr['limit'] = strval($limit);
@@ -502,7 +504,7 @@ switch ($type_manager) {
                     }
                     reJson($product_arr);
                 } else {
-                    returnSuccess("Danh sách trống");
+                    returnSuccess("Danh sách trống", $token);
                 }
             }
             break;
@@ -545,6 +547,8 @@ switch ($type_manager) {
             $nums = db_nums($result);
             if ($nums > 0) {
                 $product_arr['success'] = 'true';
+                $product_arr['refresh_token'] = $token;
+
                 $product_arr['data'] = array();
 
                 while ($row = db_assoc($result)) {
@@ -559,7 +563,7 @@ switch ($type_manager) {
                 }
                 reJson($product_arr);
             } else {
-                returnSuccess("Danh sách trống");
+                returnSuccess("Danh sách trống", $token);
             }
 
             break;
@@ -613,6 +617,8 @@ switch ($type_manager) {
 
 
             $product_arr['success'] = 'true';
+            $product_arr['refresh_token'] = $token;
+
             $product_arr['total'] = strval($total);
             $product_arr['total_page'] = strval($total_page);
             $product_arr['limit'] = strval($limit);
@@ -633,7 +639,7 @@ switch ($type_manager) {
                 }
                 reJson($product_arr);
             } else {
-                returnSuccess("Danh sách trống");
+                returnSuccess("Danh sách trống", $token);
             }
 
             break;

@@ -26,7 +26,7 @@ switch($type_manager){
 
         $sql = "UPDATE `tbl_order_detail` SET `detail_view` = 'Y' WHERE `id` = '{$id_detail}'";
         if(db_qr($sql)){
-            returnSuccess("Đã xem");
+            returnSuccess("Đã xem", $token);
         }
         break;
 
@@ -46,7 +46,7 @@ switch($type_manager){
 
         $sql = "UPDATE `tbl_order_detail` SET `detail_view` = 'Y' WHERE `id_business` = '{$id_business}'";
         if(db_qr($sql)){
-            returnSuccess("Đã xem");
+            returnSuccess("Đã xem", $token);
         }
         break;
     }

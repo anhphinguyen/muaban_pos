@@ -63,7 +63,7 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
-                returnSuccess("Hủy đơn hàng thành công");
+                returnSuccess("Hủy đơn hàng thành công", $token);
             } else {
                 returnError("Hủy đơn hàng thất bại");
             }
@@ -207,12 +207,12 @@ switch ($type_manager) {
                 }
 
                 if (!empty($success)) {
-                    returnSuccess("Cập nhật trạng thái finished thành công");
+                    returnSuccess("Cập nhật trạng thái finished thành công", $token);
                 } else {
                     returnError("Cập nhật thất bại");
                 }
             } else {
-                returnSuccess("Đã qua trạng thái thanh toán");
+                returnSuccess("Đã qua trạng thái thanh toán", $token);
             }
             break;
         }
@@ -316,12 +316,12 @@ switch ($type_manager) {
                 }
 
                 if (!empty($success)) {
-                    returnSuccess("Cập nhật trạng thái payment thành công");
+                    returnSuccess("Cập nhật trạng thái payment thành công", $token);
                 } else {
                     returnError("Cập nhật thất bại");
                 }
             } else {
-                returnSuccess("Đã qua trạng thái lên món");
+                returnSuccess("Đã qua trạng thái lên món", $token);
             }
             break;
         }
@@ -363,12 +363,12 @@ switch ($type_manager) {
                 }
 
                 if (!empty($success)) {
-                    returnSuccess("Cập nhật trạng thái processing thành công");
+                    returnSuccess("Cập nhật trạng thái processing thành công", $token);
                 } else {
                     returnError("Cập nhật thất bại");
                 }
             }else {
-                returnSuccess("Đã qua trạng thái chờ");
+                returnSuccess("Đã qua trạng thái chờ", $token);
             }
             break;
         }

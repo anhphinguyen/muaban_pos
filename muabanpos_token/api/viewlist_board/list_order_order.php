@@ -82,6 +82,8 @@ $sql .= " ORDER BY `tbl_order_order`.`id` DESC LIMIT {$start},{$limit}";
 
 if (empty($error)) {
     $order_arr['success'] = 'true';
+    $order_arr['refresh_token'] = $token;
+
     $order_arr['total'] = strval($total);
     $order_arr['total_page'] = strval($total_page);
     $order_arr['limit'] = strval($limit);
@@ -110,7 +112,7 @@ if (empty($error)) {
         }
         reJson($order_arr);
     } else {
-        returnSuccess("Danh sách trống");
+        returnSuccess("Danh sách trống", $token);
     }
 } else {
     $error['success'] = 'false';

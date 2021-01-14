@@ -24,6 +24,7 @@ $num_row = mysqli_num_rows($result);
 
 $result_arr = array();
 $result_arr['success'] = 'true';
+$result_arr['refresh_token'] = $token;
 
 if ($num_row > 0) {
     while ($row = $result->fetch_assoc()) {

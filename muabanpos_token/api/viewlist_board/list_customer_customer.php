@@ -5,7 +5,7 @@ $error = array();
 if (isset($_REQUEST['id_business'])) {
     if ($_REQUEST['id_business'] == '') {
         unset($_REQUEST['id_business']);
-        $error['id_business'] = "Nhập id_business";
+        returnError("Nhập id_business");
     } else {
         $id_business = $_REQUEST['id_business'];
         $sql .= " AND `id_business` = '{$id_business}'";
@@ -42,7 +42,8 @@ if (isset($_REQUEST['id_business'])) {
         }
     }
 } else {
-    $error['id_business'] = "Nhập id_business";
+    returnError("Nhập id_business");
+
 }
 
 $customer_arr = array();
@@ -65,6 +66,8 @@ $sql .= " ORDER BY `tbl_customer_customer`.`id` DESC LIMIT {$start},{$limit}";
 
 if (empty($error)) {
     $customer_arr['success'] = 'true';
+    $customer_arr['refresh_token'] = $token;
+    
     $customer_arr['total'] = strval($total);
     $customer_arr['total_page'] = strval($total_page);
     $customer_arr['limit'] = strval($limit);
@@ -123,10 +126,6 @@ if (empty($error)) {
         }
         reJson($customer_arr);
     } else {
-        returnSuccess("Không có khách hàng");
+        returnSuccess("Không có khách hàng", $token);
     }
-} else {
-    $error['success'] = "false";
-    $error['message'] = "Lấy danh sách không thành công";
-    reJson($error);
 }

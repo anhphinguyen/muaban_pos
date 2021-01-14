@@ -33,7 +33,7 @@ switch ($type_manager) {
 
             $sql = "DELETE FROM `tbl_organization_floor` WHERE `id` = '{$id_floor}'";
             if (db_qr($sql)) {
-                returnSuccess("Xóa thành công");
+                returnSuccess("Xóa thành công", $token);
             }
             break;
         }
@@ -83,9 +83,9 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
-                returnSuccess("Cập nhật thành công");
+                returnSuccess("Cập nhật thành công", $token);
             } else {
-                returnSuccess("Không có thông tin cập nhật");
+                returnSuccess("Không có thông tin cập nhật", $token);
             }
 
             break;
@@ -164,7 +164,7 @@ switch ($type_manager) {
                         `floor_title` = '{$floor_title}'
                         ";
                 if (db_qr($sql)) {
-                    returnSuccess("Tạo mới tầng thành công");
+                    returnSuccess("Tạo mới tầng thành công", $token);
                 } else {
                     returnError("Tạo mới thất bại");
                 }
@@ -191,6 +191,8 @@ switch ($type_manager) {
             $floor_arr = array();
             if ($nums > 0) {
                 $floor_arr['success'] = "true";
+                $floor_arr['refresh_token'] = $token;
+
                 $floor_arr['data'] = array();
                 while ($row = db_assoc($result)) {
                     $floor_item = array(
@@ -204,7 +206,7 @@ switch ($type_manager) {
                 }
                 reJson($floor_arr);
             } else {
-                returnSuccess("Danh sách trống");
+                returnSuccess("Danh sách trống",$token);
             }
             break;
         }

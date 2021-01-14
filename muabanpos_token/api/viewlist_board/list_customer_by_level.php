@@ -101,6 +101,8 @@ $sql .= " ORDER BY `tbl_customer_customer`.`id` DESC LIMIT {$start},{$limit}";
 // returnError($sql);
 
 $customer_arr['success'] = 'true';
+$customer_arr['refresh_token'] = $token;
+
 $customer_arr['total'] = strval($total);
 $customer_arr['total_page'] = strval($total_page);
 $customer_arr['limit'] = strval($limit);
@@ -135,5 +137,5 @@ if ($nums > 0) {
     }
     reJson($customer_arr);
 } else {
-    returnSuccess("Không có khách hàng");
+    returnSuccess("Không có khách hàng", $token);
 }

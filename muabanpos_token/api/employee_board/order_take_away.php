@@ -64,7 +64,7 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
-                returnSuccess("Hủy đơn hàng thành công");
+                returnSuccess("Hủy đơn hàng thành công", $token);
             } else {
                 returnError("Hủy đơn hàng thất bại");
             }
@@ -180,7 +180,7 @@ switch ($type_manager) {
                 $sql .= " AND `order_status` = '4' ";
             }
 
-             
+
             $result = db_qr($sql);
             $nums = db_nums($result);
 
@@ -214,14 +214,14 @@ switch ($type_manager) {
                     WHERE `id` = '{$id_table}'
                     ";
                     if (db_qr($sql_update_table_status)) {
-                        returnSuccess("Đóng bàn thành công");
+                        returnSuccess("Đóng bàn thành công", $token);
                     }
                 }
             } else {
-                returnSuccess("Đã qua trạng thái thanh toán");
+                returnSuccess("Đã qua trạng thái thanh toán", $token);
             }
         }
-    case "finished": { ///////////////////
+    case "finished": {
             if (isset($_REQUEST['id_detail'])) {
                 if ($_REQUEST['id_detail'] == '') {
                     unset($_REQUEST['id_detail']);
@@ -306,11 +306,11 @@ switch ($type_manager) {
                         $success['finised'] = "true";
                     }
                 } else {
-                    returnSuccess("Đã qua trạng thái chế biến");
+                    returnSuccess("Đã qua trạng thái chế biến", $token);
                 }
             }
             if (!empty($success)) {
-                returnSuccess("Đã làm xong món");
+                returnSuccess("Đã làm xong món", $token);
             }
             // change order_status to 5
 
@@ -381,14 +381,11 @@ switch ($type_manager) {
                     $success['finised'] = "true";
                 }
             } else {
-                returnSuccess("Đã qua trạng thái chế biến");
+                returnSuccess("Đã qua trạng thái chế biến", $token);
             }
 
-
-
-
             if (!empty($success)) {
-                returnSuccess("Cập nhật trạng thái finished thành công");
+                returnSuccess("Cập nhật trạng thái finished thành công", $token);
             } else {
                 returnError("Cập nhật thất bại");
             }
@@ -444,12 +441,12 @@ switch ($type_manager) {
                 }
 
                 if (!empty($success)) {
-                    returnSuccess("Cập nhật trạng thái processing thành công");
+                    returnSuccess("Cập nhật trạng thái processing thành công", $token);
                 } else {
                     returnError("Cập nhật thất bại");
                 }
             } else {
-                returnSuccess("Đã qua trạng thái chờ");
+                returnSuccess("Đã qua trạng thái chờ", $token);
             }
 
             break;
@@ -710,18 +707,17 @@ switch ($type_manager) {
 
                         $order_arr = array();
                         $order_arr['success'] = 'true';
+                        $order_arr['refresh_token'] = $token;
                         $order_arr['data'] = array();
                         $result = db_qr($sql);
                         $nums = db_nums($result);
-                        // returnSuccess($nums);
                         if ($nums > 0) {
                             while ($row = db_assoc($result)) {
                                 $order_item = array(
                                     'id_order' => $row['id_order'],
-                                    // 'id_floor' => $row['id_floor'],
-                                    // 'id_table' => $row['id_table'],
-                                    'id_customer' => "", //$row['id_customer']
-                                    'customer_code' => "", //$row['customer_code']
+                                    'id_customer' => (!empty($row['id_customer'])) ? $row['id_customer'] : "0", //$row['id_customer']
+                                    'customer_code' => (!empty($row['customer_code'])) ? $row['customer_code'] : "", //$row['customer_code']
+                                    'customer_name' => (!empty($row['customer_name'])) ? $row['customer_name'] : "", //$row['customer_code']
                                     'id_account' => $row['id_account'],
                                     'account_username' => $row['account_username'],
                                     'order_code' => $row['order_code'],
@@ -815,10 +811,9 @@ switch ($type_manager) {
                             }
                             reJson($order_arr);
                         } else {
-                            returnSuccess("Danh sách trống");
+                            returnSuccess("Danh sách trống", $token);
                         }
                         ////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        // returnSuccess("Tạo đơn hàng thành công");
                     } else {
                         returnError("Tao don hang khong thanh cong");
                     }

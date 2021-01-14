@@ -5,25 +5,25 @@ $sql = "SELECT * FROM  `tbl_organization_table` WHERE 1=1";
 if (isset($_REQUEST['id_business'])) {
     if ($_REQUEST['id_business'] == '') {
         unset($_REQUEST['id_business']);
-        returnSuccess("Nhập id_business");
+        returnError("Nhập id_business");
     } else {
         $id_business = $_REQUEST['id_business'];
         $sql .= " AND `id_business` = '{$id_business}'";
     }
 } else {
-    returnSuccess("Nhập id_business");
+    returnError("Nhập id_business");
 }
 
 if (isset($_REQUEST['id_floor'])) {
     if ($_REQUEST['id_floor'] == '') {
         unset($_REQUEST['id_floor']);
-        returnSuccess("Nhập id_floor");
+        returnError("Nhập id_floor");
     } else {
         $id_floor = $_REQUEST['id_floor'];
         $sql .= " AND `id_floor` = '{$id_floor}'";
     }
 } else {
-    returnSuccess("Nhập id_floor");
+    returnError("Nhập id_floor");
 }
 
 if (isset($_REQUEST['id_table'])) {
@@ -55,6 +55,8 @@ $total_table_open = count(db_fetch_array($sql_table_open));
 
 $table_arr = array();
 $table_arr['success'] = 'true';
+$table_arr['refresh_token'] = $token;
+
 $table_arr['total_table_open'] = strval($total_table_open);
 $table_arr['total_table_close'] = strval($total_table_close);
 $table_arr['data'] = array();
@@ -73,5 +75,5 @@ if ($nums > 0) {
     }
     reJson($table_arr);
 } else {
-    returnSuccess("Không tồn tại bàn");
+    returnSuccess("Không tồn tại bàn", $token);
 }

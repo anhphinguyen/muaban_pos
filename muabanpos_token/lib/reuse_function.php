@@ -188,9 +188,18 @@ function db_qr($sql)
     return false;
 }
 
+function errorToken($error_code, $data = array()){
+    echo json_encode(array(
+        'success' => 'true',
+        'error_code' => $error_code,
+        'data' => $data
+    ));
+    exit();
+}
 function return_error($message)
 {
     echo json_encode(array(
+
         'success' => 'false',
         'message' => $message,
     ));
@@ -209,10 +218,13 @@ function returnError($string)
     );
     exit();
 }
-function returnSuccess($string)
+function returnSuccess($string, $token="")
 {
     echo json_encode(
-        array('success' => 'true', 'message' => $string)
+        array(
+            'success' => 'true', 
+            'refresh_token' => $token, 
+            'message' => $string)
     );
     exit();
 }

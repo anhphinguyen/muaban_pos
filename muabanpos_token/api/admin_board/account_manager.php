@@ -85,6 +85,8 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
             // Check if any categories
 
             $employee_arr['success'] = 'true';
+            $employee_arr['refresh_token'] =  $token;
+
             $employee_arr['page'] = $page;
             $employee_arr['data'] = array();
 
@@ -214,7 +216,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                     }
                 }
 
-                returnSuccess("Tạo tài khoản thành công!");
+                returnSuccess("Tạo tài khoản thành công!", $token);
             } else {
                 returnError("Tạo tài khoản không thành công!");
             }
@@ -357,7 +359,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
             }
 
             if ($check == 0) {
-                returnSuccess("Cập nhật thành công!");
+                returnSuccess("Cập nhật thành công!", $token);
             } else {
                 returnError("Cập nhật không thành công");
             }
@@ -419,7 +421,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
 
                     //                 pushNotification($title, $bodyMessage, $action, $to, $type_send);
 
-                    returnSuccess("Cập nhật phân quyền thành công!");
+                    returnSuccess("Cập nhật phân quyền thành công!", $token);
                 }
             } else {
                 returnError("role_permission is missing!");
@@ -468,7 +470,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                             $sql_update_password = "UPDATE tbl_account_account SET account_password = '" . md5($new_password) . "' WHERE id = '" . $idUser . "'";
 
                             if ($conn->query($sql_update_password)) {
-                                returnSuccess("Cập nhật mật khẩu thành công!");
+                                returnSuccess("Cập nhật mật khẩu thành công!", $token);
                             } else {
                                 returnError("Cập nhật mật khẩu không thành công!");
                             }
@@ -516,7 +518,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                     $sql_update_status = "UPDATE tbl_account_account SET account_status = '" . $user_status . "' WHERE id = '" . $idUser . "'";
 
                     if ($conn->query($sql_update_status)) {
-                        returnSuccess("Cập nhật trạng thái thành công!");
+                        returnSuccess("Cập nhật trạng thái thành công!", $token);
                     } else {
                         returnError("Cập nhật trạng thái không thành công!");
                     }
@@ -562,7 +564,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $query .= "WHERE id = '" . $id_account . "'";
                 // check execute query
                 if ($conn->query($query)) {
-                    returnSuccess("Cập nhật mật khẩu thành công!");
+                    returnSuccess("Cập nhật mật khẩu thành công!", $token);
                 } else {
                     returnError("Cập nhật mật khẩu không thành công!");
                 }
@@ -609,7 +611,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                             WHERE  id = '" . $id_customer . "'
                           ";
                 if ($conn->query($sql_delete_customer)) {
-                    returnSuccess("Xóa tài khoản thành công!");
+                    returnSuccess("Xóa tài khoản thành công!", $token);
                 } else {
                     returnError("Xóa tài khoản không thành công!");
                 }

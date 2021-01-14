@@ -66,12 +66,9 @@ if(empty($error)){
     }
 
     if (!empty($success)) {
-        echo json_encode(array(
-            'success' => 'true',
-            'message' => 'Cập nhật thành công',
-        ));
+        returnSuccess("Cập nhật thành công", $token);
     }else{
-        returnSuccess("Không có thông tin cập nhật");
+        returnSuccess("Không có thông tin cập nhật", $token);
     }
 }else {
     returnError("Cập nhật không thành công");

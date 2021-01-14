@@ -45,6 +45,7 @@ $total = count(db_fetch_array($sql));
 $product_arr = array();
 if ($nums > 0) {
     $product_arr['success'] = 'true';
+    $product_arr['refresh_token'] = $token;
     $product_arr['total'] = strval($total);
 
     $product_arr['data'] = array();
@@ -94,5 +95,5 @@ if ($nums > 0) {
 
     reJson($product_arr);
 }else{
-    returnSuccess("Danh sách trống");
+    returnSuccess("Danh sách trống", $token);
 }

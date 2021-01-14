@@ -65,6 +65,7 @@ $sql .= " ORDER BY `tbl_product_product`.`id` DESC LIMIT {$start},{$limit}";
 
 if (empty($error)) {
     $product_arr['success'] = 'true';
+    $product_arr['refresh_token'] = $token;
     $product_arr['total'] = strval($total);
     $product_arr['total_page'] = strval($total_page);
     $product_arr['limit'] = strval($limit);
@@ -105,8 +106,8 @@ if (empty($error)) {
                           ";
             $result_extra = db_qr($sql_extra);
             $nums_extra = db_nums($result_extra);
-            if($nums > 0){
-                while($row_extra = db_assoc($result_extra)){
+            if ($nums > 0) {
+                while ($row_extra = db_assoc($result_extra)) {
                     $product_extra = array(
                         // 'id' => $row_extra['id'],
                         // 'id_product' => $row_extra['id_product'],
@@ -115,7 +116,7 @@ if (empty($error)) {
                         'product_extra_sales_price' => $row_extra['product_extra_sales_price'],
                     );
 
-                    if($row_extra['id_product'] == $row['id']){
+                    if ($row_extra['id_product'] == $row['id']) {
                         array_push($product_item['product_extra'], $product_extra);
                     }
                 }
@@ -127,7 +128,7 @@ if (empty($error)) {
         }
         reJson($product_arr);
     } else {
-        returnSuccess("Không tồn tại sản phẩm");
+        returnSuccess("Không tồn tại sản phẩm", $token);
     }
 } else {
     $error['success'] = 'false';

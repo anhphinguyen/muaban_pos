@@ -26,7 +26,7 @@ switch ($type_manager) {
 
         $sql = "DELETE FROM `tbl_customer_point` WHERE `id` = '{$id_level}'";
         if(db_qr($sql)){
-            returnSuccess("Xoa thanh cong");
+            returnSuccess("Xoa thanh cong", $token);
         }
         break;
     }
@@ -88,9 +88,9 @@ switch ($type_manager) {
             }
 
             if(!empty($success)){
-                returnSuccess("Cập nhật thành công");
+                returnSuccess("Cập nhật thành công", $token);
             }else{
-                returnSuccess("Không có thông tin cập nhật");
+                returnSuccess("Không có thông tin cập nhật", $token);
             }
             break;
         }
@@ -156,7 +156,7 @@ switch ($type_manager) {
                 $result = db_qr($sql);
                 $nums = db_nums($result);
                 if ($nums > 0) {
-                    returnSuccess("Đã tồn tại loại cấp độ này");
+                    returnSuccess("Đã tồn tại loại cấp độ này", $token);
                 }
 
                 $sql = "INSERT INTO `tbl_customer_point` SET 
@@ -171,7 +171,7 @@ switch ($type_manager) {
 
 
                 if (mysqli_query($conn, $sql)) {
-                    returnSuccess("Tạo cấp độ thành công");
+                    returnSuccess("Tạo cấp độ thành công", $token);
                     // $id_insert = mysqli_insert_id($conn);
 
                     // $sql = "SELECT * FROM `tbl_customer_point` WHERE `id` = '{$id_insert}'";

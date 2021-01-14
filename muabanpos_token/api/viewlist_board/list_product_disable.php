@@ -28,6 +28,8 @@ $nums = db_nums($result);
 $product_sold_old_arr = array();
 if ($nums > 0) {
     $product_sold_old_arr['success'] = 'true';
+    $product_sold_old_arr['refresh_token'] = $token;
+
     $product_sold_old_arr['data'] = array();
     while ($row = db_assoc($result)) {
         $product_sold_old_item = array(
@@ -40,5 +42,5 @@ if ($nums > 0) {
 
     reJson($product_sold_old_arr);
 } else {
-    returnSuccess("Không có sản phẩm");
+    returnSuccess("Không có sản phẩm", $token);
 }

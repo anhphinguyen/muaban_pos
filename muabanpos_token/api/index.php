@@ -29,12 +29,8 @@ $detect = $_REQUEST['detect'];
 
 switch ($detect) {
 
-        // admin
+        /* admin board */
 
-        // case 'update_time': {
-        //         include_once 'admin_board/update_time.php';
-        //         break;
-        //     }
     case 'force_signout': {
             include_once 'basic_auth.php';
             include_once 'admin_board/force_signout.php';
@@ -50,10 +46,7 @@ switch ($detect) {
             include_once 'admin_board/account_manager.php';
             break;
         }
-        // case 'product_sold_out_manager': {
-        //         include_once 'admin_board/product_sold_out_manager.php';
-        //         break;
-        //     }
+
     case 'product_category_manager': {
             include_once 'basic_auth.php';
             include_once 'admin_board/product_category_manager.php';
@@ -100,7 +93,8 @@ switch ($detect) {
             include_once 'admin_board/change_pass.php';
             break;
         }
-        // employee
+        /* employee board */
+
     case 'login_test': {
             include_once 'employee_board/login_test.php';
             break;
@@ -115,11 +109,7 @@ switch ($detect) {
             include_once 'employee_board/update_order_status.php';
             break;
         }
-    case 'list_chef_order': {
-            include_once 'basic_auth.php';
-            include_once 'employee_board/list_chef_order.php';
-            break;
-        }
+
     case 'check_view': {
             include_once 'basic_auth.php';
             include_once 'employee_board/check_view.php';
@@ -157,8 +147,13 @@ switch ($detect) {
         }
 
 
-        // views
+        /* viewlist board */
 
+    case 'list_chef_order': {
+            include_once 'basic_auth.php';
+            include_once 'viewlist_board/list_chef_order.php';
+            break;
+        }
     case 'list_product_sold_out': {
             include_once 'basic_auth.php';
             include_once 'viewlist_board/list_product_sold_out.php';
@@ -174,11 +169,7 @@ switch ($detect) {
             include_once 'viewlist_board/list_customer_by_level.php';
             break;
         }
-    case 'table_order': {
-            include_once 'basic_auth.php';
-            include_once 'viewlist_board/table_order.php';
-            break;
-        }
+
     case 'list_level': {
             include_once 'basic_auth.php';
             include_once 'viewlist_board/list_customer_level.php';
@@ -194,11 +185,7 @@ switch ($detect) {
             include_once 'viewlist_board/list_order_order.php';
             break;
         }
-    case 'list_table_empty': {
-            include_once 'basic_auth.php';
-            include_once 'viewlist_board/list_table_empty.php';
-            break;
-        }
+
     case 'list_floor': {
             include_once 'basic_auth.php';
             include_once 'viewlist_board/list_organization_floor.php';
@@ -224,7 +211,17 @@ switch ($detect) {
             include_once 'viewlist_board/list_customer_customer.php';
             break;
         }
-
+        /* socket board */
+    case 'table_order': {
+            include_once 'basic_auth.php';
+            include_once 'socket_board/table_order.php';
+            break;
+        }
+    case 'list_table_empty': {
+            include_once 'basic_auth.php';
+            include_once 'socket_board/list_table_empty.php';
+            break;
+        }
     default: {
             echo json_encode(array(
                 'success' => 'false',

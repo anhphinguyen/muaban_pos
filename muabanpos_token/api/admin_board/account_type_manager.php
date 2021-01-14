@@ -1,4 +1,7 @@
 <?php
+
+use \Firebase\JWT\JWT;
+
 $id_business = '';
 $type_manager = '';
 
@@ -12,6 +15,22 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
         switch ($type_manager) {
                 // check role
             case "check_role": {
+
+                    $header_arr = apache_request_headers();
+                    global $secret_key;
+                    if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization'])) {
+                        $author = explode(" ", $header_arr['Authorization']);
+                        if (count($author) != 2) {
+                            errorToken("4003");
+                        }
+                        if ($author[0] != "Bearer") {
+                            errorToken("4003");
+                        }
+                        $author['token'] = $author[1];
+
+                        $token = $author['token'];
+                    }
+
                     if (isset($_REQUEST['id_user']) && !empty($_REQUEST['id_user'])) {
                         $id_user = $_REQUEST['id_user'];
                     } else {
@@ -52,9 +71,10 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                     if ($nums > 0) {
                         $user_arr = array();
                         $user_arr['success'] = 'true';
+                        $user_arr['refresh_token'] =  $token;
                         $user_arr['data'] = array();
                         while ($row = db_assoc($result)) {
-                
+
                             $user_item = array(
                                 'id' => $row['id_account'],
                                 'id_model' => $row['id_model'],
@@ -71,18 +91,20 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                                 'account_status' => $row['account_status'],
                                 'type_account' => $row['type_account'],
                                 'type_description' => $row['type_description'],
+                                'token' => $token
                             );
-                
-                
+
+
                             if ($row['id_type'] == '1') {
                                 $user_item['role_permission'] = getRolePermission($row['id_account']);
                             }
-                
+
+
                             array_push($user_arr['data'], $user_item);
                         }
                         reJson($user_arr);
                     } else {
-                        returnSuccess("Không tìm thấy user");
+                        returnSuccess("Không tìm thấy user", $token);
                     }
                 }
                 //list module
@@ -95,6 +117,8 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $num = mysqli_num_rows($result);
 
                 $module_arr['success'] = 'true';
+                $module_arr['refresh_token'] =  $token;
+
                 $module_arr['data'] = array();
                 if ($num > 0) {
                     while ($row = $result->fetch_assoc()) {
@@ -136,7 +160,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $sql .= " WHERE id ='$id_module'";
 
                 if ($conn->query($sql)) {
-                    returnSuccess("Cập nhật thành công!");
+                    returnSuccess("Cập nhật thành công!". $token);
                 } else {
                     returnError("Cập nhật không thành công!");
                 }
@@ -153,6 +177,8 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $num = mysqli_num_rows($result);
 
                 $module_arr['success'] = 'true';
+                $module_arr['refresh_token'] =  $token;
+
                 $module_arr['data'] = array();
                 if ($num > 0) {
                     while ($row = $result->fetch_assoc()) {
@@ -194,7 +220,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $sql .= " WHERE id ='$id_type'";
 
                 if ($conn->query($sql)) {
-                    returnSuccess("Cập nhật thành công!");
+                    returnSuccess("Cập nhật thành công!", $token);
                 } else {
                     returnError("Cập nhật không thành công!");
                 }

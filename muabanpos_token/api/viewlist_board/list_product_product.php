@@ -1,5 +1,5 @@
 <?php
-
+// global $token;
 // Thực Đơn theo từng cửa hàng
 $sql = "SELECT `tbl_product_product`.*,
 
@@ -66,6 +66,8 @@ $sql .= " ORDER BY `tbl_product_product`.`id` DESC LIMIT {$start},{$limit}";
 
 if (empty($error)) {
     $product_arr['success'] = 'true';
+    $product_arr['refresh_token'] = $token;
+
     $product_arr['total'] = strval($total);
     $product_arr['total_page'] = strval($total_page);
     $product_arr['limit'] = strval($limit);
@@ -129,7 +131,7 @@ if (empty($error)) {
         }
         reJson($product_arr);
     } else {
-        returnSuccess("Không tồn tại sản phẩm");
+        returnSuccess("Không tồn tại sản phẩm", $token);
     }
 } else {
     $error['success'] = 'false';

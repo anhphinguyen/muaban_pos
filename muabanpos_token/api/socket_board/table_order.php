@@ -27,6 +27,7 @@ $result = db_qr($sql);
 $nums = db_nums($result);
 if ($nums > 0) {
     $order_arr['success'] = 'true';
+    $order_arr['refresh_token'] = $token;
     $order_arr['data'] = array();
     if (isset($id_floor) && !empty($id_floor)) {
         $sql_total_table = "SELECT * FROM `tbl_organization_table` 
@@ -98,5 +99,5 @@ if ($nums > 0) {
     }
     reJson($order_arr);
 }else{
-    returnSuccess("Danh sách trống");
+    returnSuccess("Danh sách trống", $token);
 }

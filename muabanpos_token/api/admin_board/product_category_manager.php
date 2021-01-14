@@ -16,6 +16,8 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $num = mysqli_num_rows($result);
 
                 $module_arr['success'] = 'true';
+                $module_arr['refresh_token'] = $token;
+
                 $module_arr['data'] = array();
                 if ($num > 0) {
                     while ($row = $result->fetch_assoc()) {
@@ -85,7 +87,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $sql .= " WHERE id ='$id_category'";
 
                 if ($conn->query($sql)) {
-                    returnSuccess("Cập nhật thành công!");
+                    returnSuccess("Cập nhật thành công!", $token);
                 } else {
                     returnError("Cập nhật không thành công!");
                 }
@@ -126,7 +128,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $sql .= " ,id_business = '$id_business'";
 
                 if ($conn->query($sql)) {
-                    returnSuccess("Tạo mới thành công!");
+                    returnSuccess("Tạo mới thành công!", $token);
                 } else {
                     returnError("Tạo mới không thành công!");
                 }
@@ -173,7 +175,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                             WHERE  id = '" . $id_category . "'
                           ";
                     if ($conn->query($sql_delete_category)) {
-                        returnSuccess("Xóa danh mục thành công!");
+                        returnSuccess("Xóa danh mục thành công!", $token);
                     } else {
                         returnError("Xóa danh mục không thành công!");
                     }

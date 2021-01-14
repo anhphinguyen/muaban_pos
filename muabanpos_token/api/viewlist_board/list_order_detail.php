@@ -29,13 +29,14 @@ $error = array();
 if (isset($_REQUEST['id_order'])) {
     if ($_REQUEST['id_order'] == '') {
         unset($_REQUEST['id_order']);
-        $error['id_order'] = "Nhập id_order";
+        returnError("Nhập id_order");
+
     } else {
         $id_order = $_REQUEST['id_order'];
         $sql .= " AND `tbl_order_order`.`id` = '{$id_order}'";
     }
 } else {
-    $error['id_order'] = "Nhập id_order";
+    returnError("Nhập id_order");
 }
 
 
@@ -44,6 +45,8 @@ if (isset($_REQUEST['id_order'])) {
 $order_arr = array();
 if (empty($error)) {
     $order_arr['success'] = 'true';
+    $order_arr['refresh_token'] = $token;
+
     $order_arr['data'] = array();
 
     $result = db_qr($sql);
@@ -161,9 +164,6 @@ if (empty($error)) {
         }
         reJson($order_arr);
     } else {
-        returnSuccess("Danh sách trống");
+        returnSuccess("Danh sách trống", $token);
     }
-} else {
-    $error['success'] = 'false';
-    reJson($error);
 }

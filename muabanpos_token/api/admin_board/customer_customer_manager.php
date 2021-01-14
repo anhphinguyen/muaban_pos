@@ -27,7 +27,7 @@ switch ($type_manager) {
 
         $sql = "DELETE FROM `tbl_customer_customer` WHERE `id` = '{$id_customer}'";
         if(db_qr($sql)){
-            returnSuccess("Xóa khách hàng thành công");
+            returnSuccess("Xóa khách hàng thành công", $token);
         }else{
             returnError("Không xóa được");
         }
@@ -121,12 +121,10 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
-                echo json_encode(array(
-                    'success' => 'true',
-                    'message' => 'Cập nhật thành công',
-                ));
+                returnSuccess("Cập nhật thành công", $token);
+
             }else{
-                returnSuccess("Không có thông tin cập nhật");
+                returnSuccess("Không có thông tin cập nhật", $token);
             }
             break;
         }
@@ -224,7 +222,7 @@ switch ($type_manager) {
                 $result = db_qr($sql);
                 $nums = db_nums($result);
                 if ($nums > 0) {
-                    returnSuccess("Đã tồn tại khách hàng này");
+                    returnSuccess("Đã tồn tại khách hàng này", $token);
                 }
                 $sql = "SELECT `store_prefix` FROM `tbl_business_store` WHERE `id` = '{$id_business}'";
                 $result = db_qr($sql);
@@ -267,6 +265,7 @@ switch ($type_manager) {
                     $customer_arr = array();
                     if ($nums > 0) {
                         $customer_arr['success'] = 'true';
+                        $customer_arr['refresh_token'] = $token;
                         $customer_arr['data'] = array();
                         while ($row = db_assoc($result)) {
                             $customer_item = array(
@@ -414,7 +413,7 @@ switch ($type_manager) {
                     }
                     reJson($order_arr);
                 } else {
-                    returnSuccess("Danh sách trống");
+                    returnSuccess("Danh sách trống", $token);
                 }
             }
 

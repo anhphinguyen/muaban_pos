@@ -81,7 +81,7 @@ class JWT
         $tks = \explode('.', $jwt);
         if (\count($tks) != 3) {
             // throw new UnexpectedValueException('Wrong number of segments')/
-            returnError("sorry, you can't login");
+            errorToken("4005","Error verify token");
         }
         list($headb64, $bodyb64, $cryptob64) = $tks;
         if (null === ($header = static::jsonDecode(static::urlsafeB64Decode($headb64)))) {
@@ -125,7 +125,7 @@ class JWT
         // Check the signature
         if (!static::verify("$headb64.$bodyb64", $sig, $key, $header->alg)) {
             throw new SignatureInvalidException('Signature verification failed');
-            returnError("sorry, you can't login");
+            errorToken("4005","Error verify token");
         }
 
 
@@ -305,7 +305,8 @@ class JWT
         }
 
         if ($errno = \json_last_error()) {
-            returnError("error");  // fix here
+            errorToken("4005","Error verify token");
+            // fix here
             // return false;
             // exit();
             // static::handleJsonError($errno);
