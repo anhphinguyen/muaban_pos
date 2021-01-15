@@ -48,10 +48,11 @@ switch ($type_manager) {
             } else {
                 returnError("Truyền vào id_floor");
             }
-
+            
             $success = array();
             if (isset($_REQUEST['floor_priority']) && !empty($_REQUEST['floor_priority'])) {
                 $floor_priority = $_REQUEST['floor_priority'];
+
                 $sql = "UPDATE `tbl_organization_floor` SET
                         `floor_priority` = '{$floor_priority}'
                         WHERE `id` = '{$id_floor}'
@@ -61,6 +62,7 @@ switch ($type_manager) {
                 }
             }
             if (isset($_REQUEST['floor_title']) && !empty($_REQUEST['floor_title'])) {
+
                 $floor_title = $_REQUEST['floor_title'];
                 $sql = "UPDATE `tbl_organization_floor` SET
                         `floor_title` = '{$floor_title}'

@@ -33,12 +33,60 @@ switch ($type_manager) {
                 }
             }
 
+            ////////////////////////////////////////////////////////////////////////
+            $sql = "SELECT * FROM `tbl_order_order` WHERE `id` = '{$id_order}'";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $order_table = $row['order_table'];
+                    $order_floor = $row['order_floor'];
+                    $id_business = $row['id_business'];
+                }
+            } else {
+                returnError("Không tìm thấy order");
+            }
+
+            $sql = "SELECT `id` FROM `tbl_organization_floor` 
+                    WHERE `floor_title` = '{$order_floor}'
+                    AND `id_business` = '{$id_business}'";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $id_floor = $row['id'];
+                }
+            } 
+
+            $success = array();
+
             $sql = "UPDATE `tbl_order_order` 
-                SET `order_status` = '6',
-                    `order_comment` = '{$order_comment}'
+                SET `order_status` = '6'
                 WHERE `id` = '{$id_order}'
                 ";
             if (db_qr($sql)) {
+                $success['order_status'] = "true";
+            }
+
+            $sql = "UPDATE `tbl_order_detail` 
+                SET `detail_status` = 'C'
+                WHERE `id_order` = '{$id_order}'
+                ";
+            if (db_qr($sql)) {
+                $success['detail_status'] = "true";
+            }
+
+            $sql = "UPDATE `tbl_organization_table`
+                    SET `table_status` = 'empty'
+                    WHERE `table_title` = '{$order_table}'
+                    AND `id_floor` = '{$id_floor}'
+                    ";
+            if (db_qr($sql)) {
+                $success['table_status'] = "true";
+            }
+            ////////////////////////////////////////////////////////////////////////
+            
+            if (!empty($success)) {
                 returnSuccess("Hủy đơn thành công", $token);
             } else {
                 returnError("Lỗi hủy đơn");

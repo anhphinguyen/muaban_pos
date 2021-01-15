@@ -44,10 +44,30 @@ switch ($type_manager) {
                 returnError("Truyền vào id_table");
             }
 
+            $sql = "SELECT `id_floor` FROM `tbl_organization_table` WHERE `id` = '{$id_table}'";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $id_floor = $row['id_floor'];
+                }
+            }
+
             $success = array();
 
             if (isset($_REQUEST['table_title']) && !empty($_REQUEST['table_title'])) {
                 $table_title = $_REQUEST['table_title'];
+
+                $sql = "SELECT `table_title` 
+                        FROM `tbl_organization_table` 
+                        WHERE `table_title` = '{$table_title}'
+                        AND `id_floor` = '{$id_floor}'";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if ($nums > 0) {
+                    returnError("Đã tồn tại bàn này");
+                }
+
                 $sql = "UPDATE `tbl_organization_table` SET
                         `table_title` = '{$table_title}'
                         WHERE `id` = '{$id_table}'
@@ -112,7 +132,7 @@ switch ($type_manager) {
                 $result = db_qr($sql);
                 $nums = db_nums($result);
                 if ($nums > 0) {
-                    returnSuccess("Đã tồn tại bàn này", $token);
+                    returnError("Đã tồn tại bàn này");
                 }
 
                 $sql = "INSERT INTO `tbl_organization_table`

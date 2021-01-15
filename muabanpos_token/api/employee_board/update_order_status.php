@@ -25,17 +25,29 @@ if (isset($_REQUEST['id_order'])) {
 
 switch ($type_manager) {
     case "cancel": {
-            $sql = "SELECT `order_table` FROM `tbl_order_order` WHERE `id` = '{$id_order}'";
+            $sql = "SELECT * FROM `tbl_order_order` WHERE `id` = '{$id_order}'";
             $result = db_qr($sql);
             $nums = db_nums($result);
             if ($nums > 0) {
                 while ($row = db_assoc($result)) {
                     $order_table = $row['order_table'];
+                    $order_floor = $row['order_floor'];
+                    $id_business = $row['id_business'];
                 }
             } else {
                 returnError("Không tìm thấy order");
             }
 
+            $sql = "SELECT `id` FROM `tbl_organization_floor` 
+                    WHERE `floor_title` = '{$order_floor}'
+                    AND `id_business` = '{$id_business}'";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $id_floor = $row['id'];
+                }
+            }
 
             $success = array();
             $sql = "UPDATE `tbl_order_order` 
@@ -57,6 +69,7 @@ switch ($type_manager) {
             $sql = "UPDATE `tbl_organization_table`
                     SET `table_status` = 'empty'
                     WHERE `table_title` = '{$order_table}'
+                    AND `id_floor` = '{$id_floor}'
                     ";
             if (db_qr($sql)) {
                 $success['table_status'] = "true";
@@ -261,11 +274,11 @@ switch ($type_manager) {
                 }
             }
 
-            
+
             $sql = "SELECT * FROM `tbl_order_order`
                      WHERE `id` = '{$id_order}' 
                      "; // delivery -> payment
-            if(isset($_REQUEST['business_model'])){
+            if (isset($_REQUEST['business_model'])) {
                 if ($_REQUEST['business_model'] == 'S') {
                     $sql .= " AND `order_status` = '1'";
                     //update detail status for small store
@@ -275,13 +288,13 @@ switch ($type_manager) {
                                             AND `detail_status` = 'N'
                                             ";
                     db_qr($sql_update_detail);
-                }else{
+                } else {
                     $sql .= " AND `order_status` = '3'";
                 }
-            }else{
+            } else {
                 $sql .= " AND `order_status` = '3'";
             }
-            
+
 
 
             $result = db_qr($sql);
@@ -325,7 +338,7 @@ switch ($type_manager) {
             }
             break;
         }
-    
+
     case "processing": {
 
             $success = array();
@@ -367,7 +380,7 @@ switch ($type_manager) {
                 } else {
                     returnError("Cập nhật thất bại");
                 }
-            }else {
+            } else {
                 returnSuccess("Đã qua trạng thái chờ", $token);
             }
             break;
