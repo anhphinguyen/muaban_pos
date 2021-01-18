@@ -84,8 +84,6 @@ switch ($type_manager) {
         }
     case "finished": {
 
-            // check detail status
-            // $sql = ""
             // add point customer
             $sql = " SELECT `id_customer` FROM `tbl_order_order`
                      WHERE `id` = '{$id_order}'
@@ -111,6 +109,7 @@ switch ($type_manager) {
 
                 $sql = "SELECT 
                     `id_product`,   
+                    `detail_quantity`,   
                     `detail_extra` 
                     FROM `tbl_order_detail` 
                     WHERE `id_order` = '{$id_order}'
@@ -119,32 +118,45 @@ switch ($type_manager) {
                 $result = db_qr($sql);
                 $nums = db_nums($result);
                 if ($nums > 0) {
-                    $id_str_tmp = "";
+                    $element_tmp = "";
                     while ($row = db_assoc($result)) {
-                        $id_str_tmp .= "," . $row['id_product'] . "," . $row['detail_extra'];
+                        $element_tmp .= $row['id_product'] . "," . $row['detail_extra'] . "-" . $row['detail_quantity'] . "|";
                     }
-                    $id_str = substr($id_str_tmp, 1);
+                    $element_str = substr($element_tmp, 0, -1);
                 }
 
-                if (!empty($id_str)) {
-                    $id_product_arr = explode(",", $id_str);
-                    // reJson(count($id_product_arr));
-                    $total_product_point = 0;
-                    for ($i = 0; $i < count($id_product_arr); $i++) {
+                if (!empty($element_str)) {
 
-                        if (!empty($id_product_arr[$i])) {
-                            $sql = "SELECT `product_point` 
+                    $element_arr = explode("|", $element_str);
+                    $total_product_point_arr = array();
+                    foreach ($element_arr as $element_item) {
+                        $total_product_point_tmp = 0;
+                        $element = explode("-", $element_item);
+                        $id_product_arr = explode(",", $element[0]);
+                        $detail_quantity = $element[1];
+                        for ($i = 0; $i < count($id_product_arr); $i++) {
+                            if (!empty($id_product_arr[$i])) {
+                                $sql = "SELECT `product_point` 
                                 FROM `tbl_product_product` 
                                 WHERE `id` = '{$id_product_arr[$i]}'";
-                            $result = db_qr($sql);
-                            $nums = db_nums($result);
-                            if ($nums > 0) {
-                                while ($row = db_assoc($result)) {
-                                    $total_product_point += $row['product_point'];
+                                $result = db_qr($sql);
+                                $nums = db_nums($result);
+                                if ($nums > 0) {
+                                    while ($row = db_assoc($result)) {
+                                        $total_product_point_tmp += $row['product_point'];
+                                    }
                                 }
                             }
                         }
+                        $total_product_point_tmp *= $detail_quantity;
+                        array_push($total_product_point_arr, $total_product_point_tmp);
                     }
+
+                    $total_product_point = 0;
+                    foreach ($total_product_point_arr as $total_point_item) {
+                        $total_product_point += $total_point_item;
+                    }
+
                     $update_customer_point = $customer_point + $total_product_point;
                     //add poit customer here
                     $sql_update_customer_point = "UPDATE `tbl_customer_customer` 

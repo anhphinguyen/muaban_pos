@@ -54,6 +54,29 @@ if(empty($error)){
             $success['customer_email'] = "true";
         }
     }
+
+    if (isset($_REQUEST['customer_birthday']) && !empty($_REQUEST['customer_birthday'])) {
+        $customer_birthday = htmlspecialchars($_REQUEST['customer_birthday']);
+        $sql = "UPDATE `tbl_customer_customer` SET";
+        $sql .= " `customer_birthday` = '{$customer_birthday}'";
+        $sql .= " WHERE `id` = '{$id_customer}'";
+
+        if (mysqli_query($conn, $sql)) {
+            $success['customer_birthday'] = "true";
+        }
+    }
+    
+    if (isset($_REQUEST['customer_sex']) && !empty($_REQUEST['customer_sex'])) {
+        $customer_sex = htmlspecialchars($_REQUEST['customer_sex']);
+        $sql = "UPDATE `tbl_customer_customer` SET";
+        $sql .= " `customer_sex` = '{$customer_sex}'";
+        $sql .= " WHERE `id` = '{$id_customer}'";
+
+        if (mysqli_query($conn, $sql)) {
+            $success['customer_sex'] = "true";
+        }
+    }
+    
     if (isset($_REQUEST['customer_taxcode'])&&!empty($_REQUEST['customer_taxcode'])) {
         $customer_taxcode = htmlspecialchars($_REQUEST['customer_taxcode']);
         $sql = "UPDATE `tbl_customer_customer` SET";

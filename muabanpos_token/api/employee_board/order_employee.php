@@ -126,6 +126,16 @@ if (isset($type_manager)) {
                     returnError("Nhập id_table_after");
                 }
 
+                $sql = "SELECT `table_status` FROM `tbl_organization_table`
+                        WHERE `id` = '{$id_table_after}' 
+                        AND `table_status` = 'full'
+                        ";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if ($nums > 0) {
+                    returnError("Không thể chuyển sang bàn đang có khách");
+                }
+
                 if (isset($_REQUEST['table_before'])) {
                     if ($_REQUEST['table_before'] == '') {
                         unset($_REQUEST['table_before']);
