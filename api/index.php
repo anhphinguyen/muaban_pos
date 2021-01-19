@@ -1,19 +1,16 @@
 <?php
-// require "../vendor/autoload.php";
 include_once 'basic_auth.php';
 include_once "../lib/database.php";
 include_once "../lib/connect.php";
 include_once "../lib/reuse_function.php";
 
 include_once "../lib/jwt/php-jwt-master/src/JWT.php";
-// include_once 'token.php';
 
 // Headers
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: POST');
 header("Access-Control-Allow-Methods: GET");
-// header("Access-Control-Max-Age: 3600");
 header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
 // check if data recived is from raw - if so, assign it to $_REQUEST
@@ -92,6 +89,10 @@ switch ($detect) {
             break;
         }
         // employee
+    case 'login_test': {
+            include_once 'employee_board/login_test.php';
+            break;
+        }
     case 'update_detail_status': {
             include_once 'employee_board/update_detail_status.php';
             break;

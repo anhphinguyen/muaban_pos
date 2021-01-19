@@ -73,7 +73,6 @@ if (empty($error)) {
                         'id_table' => $row_table['id'],
                         'id_floor' => $row_table['id_floor'],
                         'table_title' => $row_table['table_title'],
-                        // 'table_type' => $row_table['table_type'],
                         'table_status' => $row_table['table_status'],
                         'table_order' => array(),
                     );
@@ -123,7 +122,6 @@ if (empty($error)) {
                                 }else{
                                     $total_cost_tmp = $total_cost_tmp;
                                 }
-
 
                                 if ($row_order['order_status'] < '5') {
                                     $table_order = array(

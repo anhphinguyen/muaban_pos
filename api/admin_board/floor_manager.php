@@ -49,9 +49,29 @@ switch ($type_manager) {
                 returnError("Truyền vào id_floor");
             }
 
+            $sql = "SELECT `id_business` FROM `tbl_organization_floor` WHERE `id` = '{$id_floor}'";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $id_business = $row['id_business'];
+                }
+            }
+
             $success = array();
             if (isset($_REQUEST['floor_priority']) && !empty($_REQUEST['floor_priority'])) {
                 $floor_priority = $_REQUEST['floor_priority'];
+
+                $sql = "SELECT * FROM `tbl_organization_floor` 
+                        WHERE `id_business` = '{$id_business}'
+                        AND `id` != '{$id_floor}'
+                        AND `floor_priority` = '{$floor_priority}'";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if($nums > 0){
+                    returnError("Số thứ tự đã tồn tại");
+                }
+                
                 $sql = "UPDATE `tbl_organization_floor` SET
                         `floor_priority` = '{$floor_priority}'
                         WHERE `id` = '{$id_floor}'
@@ -61,7 +81,19 @@ switch ($type_manager) {
                 }
             }
             if (isset($_REQUEST['floor_title']) && !empty($_REQUEST['floor_title'])) {
+
                 $floor_title = $_REQUEST['floor_title'];
+
+                $sql = "SELECT * FROM `tbl_organization_floor` 
+                        WHERE `id_business` = '{$id_business}'
+                        AND `id` != '{$id_floor}'
+                        AND `floor_title` = '{$floor_title}'";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if($nums > 0){
+                    returnError("Tầng này đã tồn tại");
+                }
+
                 $sql = "UPDATE `tbl_organization_floor` SET
                         `floor_title` = '{$floor_title}'
                         WHERE `id` = '{$id_floor}'
@@ -71,16 +103,16 @@ switch ($type_manager) {
                 }
             }
 
-            if (isset($_REQUEST['floor_type']) && !empty($_REQUEST['floor_type'])) {
-                $floor_type = $_REQUEST['floor_type'];
-                $sql = "UPDATE `tbl_organization_floor` SET
-                        `floor_type` = '{$floor_type}'
-                        WHERE `id` = '{$id_floor}'
-                        ";
-                if (db_qr($sql)) {
-                    $success['floor_type'] = 'true';
-                }
-            }
+            // if (isset($_REQUEST['floor_type']) && !empty($_REQUEST['floor_type'])) {
+            //     $floor_type = $_REQUEST['floor_type'];
+            //     $sql = "UPDATE `tbl_organization_floor` SET
+            //             `floor_type` = '{$floor_type}'
+            //             WHERE `id` = '{$id_floor}'
+            //             ";
+            //     if (db_qr($sql)) {
+            //         $success['floor_type'] = 'true';
+            //     }
+            // }
 
             if (!empty($success)) {
                 returnSuccess("Cập nhật thành công");
@@ -149,10 +181,10 @@ switch ($type_manager) {
                 if ($nums > 0) {
                     while($row = db_assoc($result)){
                         if($row['floor_title'] == $floor_title){
-                            returnError("Đã tồn tại tầng này");
+                            returnError("Tầng này đã tồn tại");
                         }
                         if($row['floor_priority'] == $floor_priority){
-                            returnError("Đã tồn tại STT này");
+                            returnError("Số thứ tự đã tồn tại");
                         }
                     }
                 }
@@ -191,6 +223,7 @@ switch ($type_manager) {
             $floor_arr = array();
             if ($nums > 0) {
                 $floor_arr['success'] = "true";
+
                 $floor_arr['data'] = array();
                 while ($row = db_assoc($result)) {
                     $floor_item = array(

@@ -5,7 +5,7 @@ $secret_key = base64_encode(md5("my_name_is_JunoPhraend"));
 use \Firebase\JWT\JWT;
 
 $header_arr = apache_request_headers();
-global $secret_key;
+global $secret_key, $time_expire;
 if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization'])) {
     $author = explode(" ", $header_arr['Authorization']);
     if (count($author) != 2) {
@@ -24,7 +24,7 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
     
     $payload_tmp = array(
         "nbf" => time(),  //cho phép sử dụng token tại thời điểm này
-        "exp" => time() + 60, // token hết hạn
+        "exp" => time() + $time_expire, // token hết hạn
         'id_business' => $data->id_business,
         'username' => $data->username,
         'password' => $data->password,

@@ -14,23 +14,28 @@ if (isset($_REQUEST['type_manager'])) {
 switch ($type_manager) {
     case 'delete': {
 
-        if (isset($_REQUEST['id_customer'])) {
-            if ($_REQUEST['id_customer'] == '') {
-                unset($_REQUEST['id_customer']);
-                returnError("Nhập id_customer");
+            if (isset($_REQUEST['id_customer'])) {
+                if ($_REQUEST['id_customer'] == '') {
+                    unset($_REQUEST['id_customer']);
+                    returnError("Nhập id_customer");
+                } else {
+                    $id_customer = $_REQUEST['id_customer'];
+                }
             } else {
-                $id_customer = $_REQUEST['id_customer'];
+                returnError("Nhập id_customer");
             }
-        } else {
-            returnError("Nhập id_customer");
-        }
 
-        $sql = "DELETE FROM `tbl_customer_customer` WHERE `id` = '{$id_customer}'";
-        if(db_qr($sql)){
-            returnSuccess("Xóa khách hàng thành công");
-        }else{
-            returnError("Không xóa được");
-        }
+            $sql = "SELECT * FROM `tbl_order_order` WHERE `id_customer` = '{$id_customer}'";
+            if(count(db_fetch_array($sql)) > 0){
+                returnError("Khách đang có đơn hàng, không thể xóa");
+            }
+
+            $sql = "DELETE FROM `tbl_customer_customer` WHERE `id` = '{$id_customer}'";
+            if (db_qr($sql)) {
+                returnSuccess("Xóa khách hàng thành công");
+            } else {
+                returnError("Không xóa được");
+            }
 
             break;
         }
@@ -125,7 +130,7 @@ switch ($type_manager) {
                     'success' => 'true',
                     'message' => 'Cập nhật thành công',
                 ));
-            }else{
+            } else {
                 returnSuccess("Không có thông tin cập nhật");
             }
             break;
@@ -135,46 +140,46 @@ switch ($type_manager) {
             if (isset($_REQUEST['id_business'])) {
                 if ($_REQUEST['id_business'] == '') {
                     unset($_REQUEST['id_business']);
-                    $error['id_business'] = "Nhap id_business";
+                    returnSuccess("Nhap id_business");
                 } else {
                     $id_business = $_REQUEST['id_business'];
                 }
             } else {
-                $error['id_business'] = "Nhap id_business";
+                returnSuccess("Nhap id_business");
             }
 
             if (isset($_REQUEST['id_account'])) {
                 if ($_REQUEST['id_account'] == '') {
                     unset($_REQUEST['id_account']);
-                    $error['id_account'] = "Nhap id_account";
+                    returnSuccess("Nhap id_account");
                 } else {
                     $id_account = $_REQUEST['id_account'];
                 }
             } else {
-                $error['id_account'] = "Nhap id_account";
+                returnSuccess("Nhap id_account");
             }
 
             if (isset($_REQUEST['customer_name'])) {   //*
                 if ($_REQUEST['customer_name'] == '') {
                     unset($_REQUEST['customer_name']);
-                    $error['customer_name'] = "Nhap customer_name";
+                    returnSuccess("Nhap customer_name");
                 } else {
                     $customer_name = htmlspecialchars($_REQUEST['customer_name']);
                 }
             } else {
-                $error['customer_name'] = "Nhap customer_name";
+                returnSuccess("Nhap customer_name");
             }
 
 
             if (isset($_REQUEST['customer_phone'])) {  //*
                 if ($_REQUEST['customer_phone'] == '') {
                     unset($_REQUEST['customer_phone']);
-                    $error['customer_phone'] = "Nhap customer_phone";
+                    returnSuccess("Nhap customer_phone");
                 } else {
                     $customer_phone = htmlspecialchars($_REQUEST['customer_phone']);
                 }
             } else {
-                $error['customer_phone'] = "Nhap customer_phone";
+                returnSuccess("Nhap customer_phone");
             }
 
 
@@ -259,38 +264,37 @@ switch ($type_manager) {
                 }
 
                 if (mysqli_query($conn, $sql)) {
-                    $id_insert = mysqli_insert_id($conn);
+                    // $id_insert = mysqli_insert_id($conn);
 
-                    $sql = "SELECT * FROM `tbl_customer_customer` WHERE `id` = '{$id_insert}'";
-                    $result = db_qr($sql);
-                    $nums = db_nums($result);
-                    $customer_arr = array();
-                    if ($nums > 0) {
-                        $customer_arr['success'] = 'true';
-                        $customer_arr['data'] = array();
-                        while ($row = db_assoc($result)) {
-                            $customer_item = array(
-                                'id_customer' => $row['id'],
-                                'customer_name' => html_entity_decode($row['customer_name']),
-                                'customer_code' => html_entity_decode($row['customer_code']),
-                                'customer_phone' => html_entity_decode($row['customer_phone']),
-                                'customer_address' => html_entity_decode($row['customer_address']),
-                                'customer_email' => html_entity_decode($row['customer_email']),
-                                'customer_birthday' => html_entity_decode($row['customer_birthday']),
-                                'customer_sex' => html_entity_decode($row['customer_sex']),
-                                'customer_point' => html_entity_decode($row['customer_point']),
-                                'customer_level' => "",
-                                'customer_taxcode' => html_entity_decode($row['customer_taxcode']),
-                            );
-                            array_push($customer_arr['data'], $customer_item);
-                        }
-                        reJson($customer_arr);
-                    }
+                    // $sql = "SELECT * FROM `tbl_customer_customer` WHERE `id` = '{$id_insert}'";
+                    // $result = db_qr($sql);
+                    // $nums = db_nums($result);
+                    // $customer_arr = array();
+                    // if ($nums > 0) {
+                    //     $customer_arr['success'] = 'true';
+                    //     $customer_arr['data'] = array();
+                    //     while ($row = db_assoc($result)) {
+                    //         $customer_item = array(
+                    //             'id_customer' => $row['id'],
+                    //             'customer_name' => html_entity_decode($row['customer_name']),
+                    //             'customer_code' => html_entity_decode($row['customer_code']),
+                    //             'customer_phone' => html_entity_decode($row['customer_phone']),
+                    //             'customer_address' => html_entity_decode($row['customer_address']),
+                    //             'customer_email' => html_entity_decode($row['customer_email']),
+                    //             'customer_birthday' => html_entity_decode($row['customer_birthday']),
+                    //             'customer_sex' => html_entity_decode($row['customer_sex']),
+                    //             'customer_point' => html_entity_decode($row['customer_point']),
+                    //             'customer_level' => "",
+                    //             'customer_taxcode' => html_entity_decode($row['customer_taxcode']),
+                    //         );
+                    //         array_push($customer_arr['data'], $customer_item);
+                    //     }
+                    //     reJson($customer_arr);
+                    // }
+                    returnSuccess("Tạo khách hàng thành công");
                 } else {
                     returnError("Tạo khách hàng không thành công");
                 }
-            } else {
-                returnError("Điền đầy đủ thông tin");
             }
             break;
         }

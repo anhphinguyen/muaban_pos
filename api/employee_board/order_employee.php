@@ -129,6 +129,16 @@ if (isset($type_manager)) {
                     returnError("Nhập id_table_after");
                 }
 
+                $sql = "SELECT `table_status` FROM `tbl_organization_table`
+                        WHERE `id` = '{$id_table_after}' 
+                        AND `table_status` = 'full'
+                        ";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if ($nums > 0) {
+                    returnError("Không thể chuyển sang bàn đang có khách");
+                }
+
                 if (isset($_REQUEST['table_before'])) {
                     if ($_REQUEST['table_before'] == '') {
                         unset($_REQUEST['table_before']);
@@ -526,6 +536,7 @@ if (isset($type_manager)) {
                                         $extra_product = substr($element_item[2], 0, -1);
                                         $detail_cost_product = $element_item[3];
 
+
                                         $sql = "INSERT INTO `tbl_order_detail`
                                         SET `id_order` = '{$id_insert}',
                                             `id_product` = '{$id_product}',
@@ -571,13 +582,24 @@ if (isset($type_manager)) {
                                     );
                                     array_push($detail_arr['data'], $detail_item);
                                 }
+
+                                ///push notify
+                                $title = "Thông báo đơn hàng!!!";
+                                $bodyMessage = "Có đơn hàng vừa tạo";
+                                $action = "create_order";
+                                $type_send = 'topic';
+                                $to = 'chef_order_notifycation';
+                                pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                                /// end
+
+
                                 reJson($detail_arr);
                             }
                         } else {
-                            returnError("Tao don hang khong thanh cong");
+                            returnError("Tạo đơn hàng thành công");
                         }
                     } else {
-                        returnError("insert khong thanh cong");
+                        returnError("Tạo đơn hàng thất bại");
                     }
                 } else {
                     reJson($error);

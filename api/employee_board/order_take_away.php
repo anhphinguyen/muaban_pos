@@ -94,8 +94,8 @@ switch ($type_manager) {
 
             // add point customer
             $sql = " SELECT `id_customer` FROM `tbl_order_order`
-                 WHERE `id` = '{$id_order}'
-                ";
+                     WHERE `id` = '{$id_order}'
+                    ";
             $result = db_qr($sql);
             $nums = db_nums($result);
             if ($nums > 0) {
@@ -105,8 +105,8 @@ switch ($type_manager) {
             }
             if ($id_customer > 0) {
                 $sql = " SELECT `customer_point` FROM `tbl_customer_customer`
-                 WHERE `id` = '{$id_customer}'
-                ";
+                     WHERE `id` = '{$id_customer}'
+                    ";
                 $result = db_qr($sql);
                 $nums = db_nums($result);
                 if ($nums > 0) {
@@ -116,53 +116,66 @@ switch ($type_manager) {
                 }
 
                 $sql = "SELECT 
-                        `id_product`,   
-                        `detail_extra` 
-                        FROM `tbl_order_detail` 
-                        WHERE `id_order` = '{$id_order}'
-                        AND `detail_status` = 'Y'
-                        ";
+                    `id_product`,   
+                    `detail_quantity`,   
+                    `detail_extra` 
+                    FROM `tbl_order_detail` 
+                    WHERE `id_order` = '{$id_order}'
+                    AND `detail_status` = 'Y'
+                    ";
                 $result = db_qr($sql);
                 $nums = db_nums($result);
                 if ($nums > 0) {
-                    $id_str_tmp = "";
+                    $element_tmp = "";
                     while ($row = db_assoc($result)) {
-                        $id_str_tmp .= "," . $row['id_product'] . "," . $row['detail_extra'];
+                        $element_tmp .= $row['id_product'] . "," . $row['detail_extra'] . "-" . $row['detail_quantity'] . "|";
                     }
-                    $id_str = substr($id_str_tmp, 1);
+                    $element_str = substr($element_tmp, 0, -1);
                 }
 
-                if (!empty($id_str)) {
-                    $id_product_arr = explode(",", $id_str);
-                    $total_product_point = 0;
-                    for ($i = 0; $i < count($id_product_arr); $i++) {
+                if (!empty($element_str)) {
 
-                        if (!empty($id_product_arr[$i])) {
-                            $sql = "SELECT `product_point` 
-                            FROM `tbl_product_product` 
-                            WHERE `id` = '{$id_product_arr[$i]}'";
-                            $result = db_qr($sql);
-                            $nums = db_nums($result);
-                            if ($nums > 0) {
-                                while ($row = db_assoc($result)) {
-                                    $total_product_point += $row['product_point'];
+                    $element_arr = explode("|", $element_str);
+                    $total_product_point_arr = array();
+                    foreach ($element_arr as $element_item) {
+                        $total_product_point_tmp = 0;
+                        $element = explode("-", $element_item);
+                        $id_product_arr = explode(",", $element[0]);
+                        $detail_quantity = $element[1];
+                        for ($i = 0; $i < count($id_product_arr); $i++) {
+                            if (!empty($id_product_arr[$i])) {
+                                $sql = "SELECT `product_point` 
+                                FROM `tbl_product_product` 
+                                WHERE `id` = '{$id_product_arr[$i]}'";
+                                $result = db_qr($sql);
+                                $nums = db_nums($result);
+                                if ($nums > 0) {
+                                    while ($row = db_assoc($result)) {
+                                        $total_product_point_tmp += $row['product_point'];
+                                    }
                                 }
                             }
                         }
+                        $total_product_point_tmp *= $detail_quantity;
+                        array_push($total_product_point_arr, $total_product_point_tmp);
                     }
-                    $update_customer_point = $customer_point + $total_product_point;
-                    $sql_update_customer_point = "UPDATE `tbl_customer_customer` 
-                    SET `customer_point` = '{$update_customer_point}'
-                    WHERE `id` = '{$id_customer}' 
-                    ";
 
+                    $total_product_point = 0;
+                    foreach ($total_product_point_arr as $total_point_item) {
+                        $total_product_point += $total_point_item;
+                    }
+
+                    $update_customer_point = $customer_point + $total_product_point;
+                    //add poit customer here
+                    $sql_update_customer_point = "UPDATE `tbl_customer_customer` 
+                                                    SET `customer_point` = '{$update_customer_point}'
+                                                    WHERE `id` = '{$id_customer}' 
+                                                    ";
                     if (db_qr($sql_update_customer_point)) {
                         $success['customer_point'] = "true";
                     }
                 }
-                //add poit customer here
             }
-
             // end update point
 
             $success = array();
@@ -180,7 +193,7 @@ switch ($type_manager) {
                 $sql .= " AND `order_status` = '4' ";
             }
 
-             
+
             $result = db_qr($sql);
             $nums = db_nums($result);
 
@@ -813,6 +826,16 @@ switch ($type_manager) {
                                 }
                                 array_push($order_arr['data'], $order_item);
                             }
+
+                            ///push notify
+                            $title = "Thông báo đơn hàng!!!";
+                            $bodyMessage = "Có đơn hàng vừa tạo";
+                            $action = "create_order";
+                            $type_send = 'topic';
+                            $to = 'chef_order_notifycation';
+                            pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                            /// end
+                            
                             reJson($order_arr);
                         } else {
                             returnSuccess("Danh sách trống");

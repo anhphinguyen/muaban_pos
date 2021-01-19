@@ -33,12 +33,70 @@ switch ($type_manager) {
                 }
             }
 
+            ////////////////////////////////////////////////////////////////////////
+            $sql = "SELECT * FROM `tbl_order_order` WHERE `id` = '{$id_order}'";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $order_table = $row['order_table'];
+                    $order_floor = $row['order_floor'];
+                    $id_business = $row['id_business'];
+                }
+            } else {
+                returnError("Không tìm thấy order");
+            }
+
+            $sql = "SELECT `id` FROM `tbl_organization_floor` 
+                WHERE `floor_title` = '{$order_floor}'
+                AND `id_business` = '{$id_business}'";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $id_floor = $row['id'];
+                }
+            }
+
+            $success = array();
+
             $sql = "UPDATE `tbl_order_order` 
-                SET `order_status` = '6',
-                    `order_comment` = '{$order_comment}'
-                WHERE `id` = '{$id_order}'
+            SET `order_status` = '6'
+            WHERE `id` = '{$id_order}'
+            ";
+            if (db_qr($sql)) {
+                $success['order_status'] = "true";
+            }
+
+            if (isset($order_comment) && !empty($order_comment)) {
+                $sql = "UPDATE `tbl_order_order` 
+                        SET `order_comment` = '{$order_comment}'
+                        WHERE `id` = '{$id_order}'
+                        ";
+                if (db_qr($sql)) {
+                    $success['order_status'] = "true";
+                }
+            }
+
+            $sql = "UPDATE `tbl_order_detail` 
+            SET `detail_status` = 'C'
+            WHERE `id_order` = '{$id_order}'
+            ";
+            if (db_qr($sql)) {
+                $success['detail_status'] = "true";
+            }
+
+            $sql = "UPDATE `tbl_organization_table`
+                SET `table_status` = 'empty'
+                WHERE `table_title` = '{$order_table}'
+                AND `id_floor` = '{$id_floor}'
                 ";
             if (db_qr($sql)) {
+                $success['table_status'] = "true";
+            }
+            ////////////////////////////////////////////////////////////////////////
+
+            if (!empty($success)) {
                 returnSuccess("Hủy đơn thành công");
             } else {
                 returnError("Lỗi hủy đơn");
@@ -52,18 +110,20 @@ switch ($type_manager) {
         }
     case "list_order": {
             $sql = "SELECT
-                    `tbl_organization_floor`.`floor_type` as `order_type`,
+                        `tbl_organization_floor`.`floor_type` as `order_type`,
 
-                    `tbl_order_order`.`id` as `id_order`,
-                    `tbl_order_order`.`order_code` as `order_code`,
-                    `tbl_order_order`.`order_created` as `order_created`,
-                    `tbl_order_order`.`order_total_cost` as `order_total_cost`,
-                    `tbl_order_order`.`order_status` as `order_status`
+                        `tbl_order_order`.`id` as `id_order`,
+                        `tbl_order_order`.`order_code` as `order_code`,
+                        `tbl_order_order`.`order_created` as `order_created`,
+                        `tbl_order_order`.`order_total_cost` as `order_total_cost`,
+                        `tbl_order_order`.`order_status` as `order_status`
 
-                    FROM `tbl_order_order`
-                    LEFT JOIN `tbl_organization_floor` ON `tbl_order_order`.`order_floor` = `tbl_organization_floor`.`floor_title`
-                    WHERE 1=1
-                    ";
+                        FROM `tbl_order_order`
+                        LEFT JOIN `tbl_organization_floor` 
+                        ON `tbl_order_order`.`order_floor` = `tbl_organization_floor`.`floor_title`
+                        WHERE 1=1
+                        
+                                ";
 
             if (isset($_REQUEST['type_order'])) {
                 if ($_REQUEST['type_order'] == '') {
@@ -98,6 +158,7 @@ switch ($type_manager) {
                 } else {
                     $id_business = $_REQUEST['id_business'];
                     $sql .= " AND `tbl_order_order`.`id_business` = '{$id_business}'";
+                    $sql .= " AND `tbl_organization_floor`.`id_business` = '{$id_business}'";
 
 
                     if (isset($_REQUEST['filter'])) {
@@ -205,7 +266,7 @@ switch ($type_manager) {
                         'order_type' => $row['order_type'],
                         'order_status' => $row['order_status'],
                         'order_code' => $row['order_code'],
-                        'order_total_cost' => ($row['order_status'] == 5)?$row['order_total_cost']:strval($total_cost_tmp),
+                        'order_total_cost' => (($row['order_status'] == 5) || ($row['order_status'] == 6)) ? $row['order_total_cost'] : strval($total_cost_tmp),
                         'order_created' => $row['order_created'],
                         'total_detail' => ""
                     );

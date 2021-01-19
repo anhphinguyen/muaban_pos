@@ -68,6 +68,16 @@ switch ($type_manager) {
                 $success['order_status'] = "true";
             }
 
+            if (isset($order_comment) && !empty($order_comment)) {
+                $sql = "UPDATE `tbl_order_order` 
+                        SET `order_comment` = '{$order_comment}'
+                        WHERE `id` = '{$id_order}'
+                        ";
+                if (db_qr($sql)) {
+                    $success['order_status'] = "true";
+                }
+            }
+            
             $sql = "UPDATE `tbl_order_detail` 
                 SET `detail_status` = 'C'
                 WHERE `id_order` = '{$id_order}'

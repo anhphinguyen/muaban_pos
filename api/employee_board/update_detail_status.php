@@ -32,7 +32,7 @@ switch ($type_manager) {
             }
             break;
         }
- 
+
     case 'finished_all': {
             if (isset($_REQUEST['id_order'])) {
                 if ($_REQUEST['id_order'] == '') {
@@ -77,6 +77,8 @@ switch ($type_manager) {
                 if (db_qr($sql_update_order_status)) {
                     $success['update_order_status'] = "true";
                 }
+            } else {
+                returnSuccess("Chưa qua trạng thái chế biến");
             }
 
             $sql = "UPDATE `tbl_order_detail` SET
@@ -89,6 +91,15 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
+                ///push notify
+                $title = "Thông báo món ăn!!!";
+                $bodyMessage = "Đã có món ăn hoàn tất";
+                $action = "dish_finished";
+                $type_send = 'topic';
+                $to = 'order_notifycation';
+                pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                /// end
+                
                 returnSuccess("Cập nhật trạng thái delivery thành công");
             } else {
                 returnSuccess("Đã hoàn thành món");
@@ -151,7 +162,7 @@ switch ($type_manager) {
                 if (db_qr($sql_update_order_status)) {
                     $success['update_order_status'] = "true";
                 }
-            } 
+            }
             // else {
             //     returnError("Đơn chưa được processing");
             // }
@@ -165,6 +176,16 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
+
+                ///push notify
+                $title = "Thông báo món ăn!!!";
+                $bodyMessage = "Đã có món ăn hoàn tất";
+                $action = "dish_finished";
+                $type_send = 'topic';
+                $to = 'order_notifycation';
+                pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                /// end
+
                 returnSuccess("Cập nhật trạng thái delivery thành công");
             } else {
                 returnError("Cập nhật thất bại");
@@ -198,7 +219,7 @@ switch ($type_manager) {
                     WHERE `id` = '{$id_product}'
                     ";
             if (db_qr($sql)) {
-                $success['disable_product'] = "true";         
+                $success['disable_product'] = "true";
             }
 
             if (isset($id_order) && !empty($id_order)) {
@@ -212,11 +233,11 @@ switch ($type_manager) {
                 if (db_qr($sql)) {
                     $success['disable_product_order'] = "true";
                 }
-            } 
+            }
 
-            if(!empty($success)){
+            if (!empty($success)) {
                 returnSuccess("disable món thành công");
-            }else{
+            } else {
                 returnSuccess("disable loi");
             }
         }
@@ -243,7 +264,7 @@ switch ($type_manager) {
                 $success['detail_status'] = "true";
             }
 
-            
+
             // $sql = "SELECT `id_order` FROM `tbl_order_detail`
             //         WHERE `id` = '{$id_detail}'
             //         ";
@@ -267,7 +288,7 @@ switch ($type_manager) {
             // $total_product_cancel = count(db_fetch_array($sql));
 
             // if($total_product == $total_product_cancel)
-            
+
 
 
             if (!empty($success)) {

@@ -109,8 +109,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 }
                 //list module
             case "list_module":
-                $sql = "SELECT * FROM `tbl_account_permission`
-                        WHERE tbl_account_permission.id_business = '$id_business'";
+                $sql = "SELECT * FROM `tbl_account_permission`";
 
                 $result = $conn->query($sql);
                 // Get row count

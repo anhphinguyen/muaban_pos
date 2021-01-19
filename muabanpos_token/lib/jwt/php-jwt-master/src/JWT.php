@@ -85,8 +85,8 @@ class JWT
         }
         list($headb64, $bodyb64, $cryptob64) = $tks;
         if (null === ($header = static::jsonDecode(static::urlsafeB64Decode($headb64)))) {
-            throw new UnexpectedValueException('Invalid header encoding');
-            // returnError("sorry, you can't login");
+            // throw new UnexpectedValueException('Invalid header encoding');
+            returnError("sorry, you can't login");
 
         }
         if (null === $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64))) {

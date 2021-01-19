@@ -5,46 +5,53 @@ $error = array();
 if (isset($_REQUEST['id_business'])) {
     if ($_REQUEST['id_business'] == '') {
         unset($_REQUEST['id_business']);
-        $error['id_business'] = "Nhap id_business";
+        returnSuccess("Nhap id_business");
     } else {
         $id_business = $_REQUEST['id_business'];
     }
 } else {
-    $error['id_business'] = "Nhap id_business";
+    returnSuccess("Nhap id_business");
+
 }
 
 if (isset($_REQUEST['id_account'])) {
     if ($_REQUEST['id_account'] == '') {
         unset($_REQUEST['id_account']);
-        $error['id_account'] = "Nhap id_account";
+        returnSuccess("Nhap id_account");
+
     } else {
         $id_account = $_REQUEST['id_account'];
     }
 } else {
-    $error['id_account'] = "Nhap id_account";
+    returnSuccess("Nhap id_account");
+
 }
 
 if (isset($_REQUEST['customer_name'])) {   //*
     if ($_REQUEST['customer_name'] == '') {
         unset($_REQUEST['customer_name']);
-        $error['customer_name'] = "Nhap customer_name";
+        returnSuccess("Nhap customer_name");
+
     } else {
         $customer_name = htmlspecialchars($_REQUEST['customer_name']);
     }
 } else {
-    $error['customer_name'] = "Nhap customer_name";
+    returnSuccess("Nhap customer_name");
+
 }
 
 
 if (isset($_REQUEST['customer_phone'])) {  //*
     if ($_REQUEST['customer_phone'] == '') {
         unset($_REQUEST['customer_phone']);
-        $error['customer_phone'] = "Nhap customer_phone";
+        returnSuccess("Nhap customer_phone");
+
     } else {
         $customer_phone = htmlspecialchars($_REQUEST['customer_phone']);
     }
 } else {
-    $error['customer_phone'] = "Nhap customer_phone";
+    returnSuccess("Nhap customer_phone");
+
 }
 
 
@@ -140,6 +147,4 @@ if (empty($error)) {
     }else{
         returnError("Tạo khách hàng không thành công");
     }
-}else{
-    returnError("Điền đầy đủ thông tin");
 }

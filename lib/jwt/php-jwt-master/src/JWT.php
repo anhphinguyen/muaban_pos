@@ -306,6 +306,8 @@ class JWT
 
         if ($errno = \json_last_error()) {
             returnError("error");  // fix here
+            // return false;
+            // exit();
             // static::handleJsonError($errno);
         } elseif ($obj === null && $input !== 'null') {
             throw new DomainException('Null result with non-null input');
