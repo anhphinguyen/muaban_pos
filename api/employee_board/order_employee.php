@@ -96,7 +96,6 @@ if (isset($type_manager)) {
             //     }
         case "update_change_table": {
 
-
                 if (isset($_REQUEST['id_table_before'])) {
                     if ($_REQUEST['id_table_before'] == '') {
                         unset($_REQUEST['id_table_before']);
@@ -352,9 +351,17 @@ if (isset($type_manager)) {
                             }
                         }
                     }
+                    ///push notify
+                    $title = "Thông báo đơn hàng!!!";
+                    $bodyMessage = "Có đơn hàng vừa được gọi thêm";
+                    $action = "create_order";
+                    $type_send = 'topic';
+                    $to = 'chef_order_notifycation';
+                    pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                    /// end
                     reJson($detail_arr);
                 } else {
-                    returnError("Tao don hang khong thanh cong");
+                    returnError("Tạo đơn hàng không thành công");
                 }
             }
         case "create": {

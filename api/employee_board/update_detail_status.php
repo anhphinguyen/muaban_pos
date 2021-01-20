@@ -77,9 +77,8 @@ switch ($type_manager) {
                 if (db_qr($sql_update_order_status)) {
                     $success['update_order_status'] = "true";
                 }
-            } else {
-                returnSuccess("Chưa qua trạng thái chế biến");
-            }
+            } 
+
 
             $sql = "UPDATE `tbl_order_detail` SET
                         `detail_status` = 'Y'
@@ -91,6 +90,7 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
+
                 ///push notify
                 $title = "Thông báo món ăn!!!";
                 $bodyMessage = "Đã có món ăn hoàn tất";
@@ -170,7 +170,7 @@ switch ($type_manager) {
             $sql = "UPDATE `tbl_order_detail` SET
                         `detail_status` = 'Y'
                         WHERE `id` = '{$id_detail}'
-                ";
+                    ";
             if (db_qr($sql)) {
                 $success['finised'] = "true";
             }

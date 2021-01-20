@@ -29,13 +29,13 @@ $error = array();
 if (isset($_REQUEST['id_order'])) {
     if ($_REQUEST['id_order'] == '') {
         unset($_REQUEST['id_order']);
-        $error['id_order'] = "Nhập id_order";
+        returnError("Nhập id_order");
     } else {
         $id_order = $_REQUEST['id_order'];
         $sql .= " AND `tbl_order_order`.`id` = '{$id_order}'";
     }
 } else {
-    $error['id_order'] = "Nhập id_order";
+    returnError("Nhập id_order");
 }
 
 
@@ -90,8 +90,13 @@ if (empty($error)) {
                                  LEFT JOIN `tbl_product_product` 
                                  ON `tbl_product_product`.`id` = `tbl_order_detail`.`id_product`
                                  WHERE `id_order` = '{$id_order}'
-                                 ORDER BY `tbl_order_detail`.`detail_status` ASC
+                                
                                  ";
+            // $sql_total_order_detail = $sql_order_detail." GROUP BY `tbl_order_detail`.`id_order`,
+            //                                                        `tbl_order_detail`.`id_product`,
+            //                                                        `tbl_order_detail`.`detail_extra` ";
+
+            $sql_order_detail .= " ORDER BY `tbl_order_detail`.`detail_status` ASC";
             $total_order_detail = count(db_fetch_array($sql_order_detail));
             $order_item['total_product'] = strval($total_order_detail);
 
@@ -163,7 +168,4 @@ if (empty($error)) {
     } else {
         returnSuccess("Danh sách trống");
     }
-} else {
-    $error['success'] = 'false';
-    reJson($error);
 }

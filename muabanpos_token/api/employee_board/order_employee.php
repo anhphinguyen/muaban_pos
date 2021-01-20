@@ -333,7 +333,7 @@ if (isset($type_manager)) {
                         $result = db_qr($sql);
                         $nums = db_nums($result);
                         if ($nums > 0) {
-                            
+
                             while ($row = db_assoc($result)) {
                                 $detail_item = array(
                                     'id' => $row['id'],
@@ -345,6 +345,14 @@ if (isset($type_manager)) {
                             }
                         }
                     }
+                    ///push notify
+                    $title = "Thông báo đơn hàng!!!";
+                    $bodyMessage = "Có đơn hàng vừa được gọi thêm";
+                    $action = "create_order";
+                    $type_send = 'topic';
+                    $to = 'chef_order_notifycation';
+                    pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                    /// end
                     reJson($detail_arr);
                 } else {
                     returnError("Tao don hang khong thanh cong");
@@ -575,6 +583,15 @@ if (isset($type_manager)) {
                                     );
                                     array_push($detail_arr['data'], $detail_item);
                                 }
+
+                                ///push notify
+                                $title = "Thông báo đơn hàng!!!";
+                                $bodyMessage = "Có đơn hàng vừa tạo";
+                                $action = "create_order";
+                                $type_send = 'topic';
+                                $to = 'chef_order_notifycation';
+                                pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                                /// end
                                 reJson($detail_arr);
                             }
                         } else {

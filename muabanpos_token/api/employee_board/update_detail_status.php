@@ -89,6 +89,16 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
+
+                ///push notify
+                $title = "Thông báo món ăn!!!";
+                $bodyMessage = "Đã có món ăn hoàn tất";
+                $action = "dish_finished";
+                $type_send = 'topic';
+                $to = 'order_notifycation';
+                pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                /// end
+                
                 returnSuccess("Cập nhật trạng thái delivery thành công", $token);
             } else {
                 returnSuccess("Đã hoàn thành món", $token);
@@ -152,9 +162,7 @@ switch ($type_manager) {
                     $success['update_order_status'] = "true";
                 }
             } 
-            // else {
-            //     returnError("Đơn chưa được processing");
-            // }
+
 
             $sql = "UPDATE `tbl_order_detail` SET
                         `detail_status` = 'Y'
@@ -165,6 +173,16 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
+
+                ///push notify
+                $title = "Thông báo món ăn!!!";
+                $bodyMessage = "Đã có món ăn hoàn tất";
+                $action = "dish_finished";
+                $type_send = 'topic';
+                $to = 'order_notifycation';
+                pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                /// end
+
                 returnSuccess("Cập nhật trạng thái delivery thành công", $token);
             } else {
                 returnError("Cập nhật thất bại");

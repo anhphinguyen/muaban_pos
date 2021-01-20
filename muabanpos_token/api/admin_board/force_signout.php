@@ -29,11 +29,11 @@ $action = "check_sign_out";
 $type_send = 'topic';
 $to = 'muaban_pos_notification';
 switch ($target) {
-    case 'customer':
-        $to = "muaban_pos_notification_customer";
+    case 'admin':
+        $to = "muaban_pos_notification_admin";
         
-        $query = "UPDATE tbl_customer_customer SET ";
-        $query .= " force_sign_out  = '1' WHERE `id_business` = '{$id_business}'";
+        $query = "UPDATE tbl_account_account SET ";
+        $query .= " force_sign_out  = '1' WHERE id_type = '1' AND `id_business` = '{$id_business}'";
         $conn->query($query);
         
         break;

@@ -317,6 +317,15 @@ switch ($type_manager) {
                         ";
                     if (db_qr($sql)) {
                         $success['finised'] = "true";
+
+                        ///push notify
+                        $title = "Thông báo món ăn!!!";
+                        $bodyMessage = "Đã hoàn tất đơn mang đi";
+                        $action = "dish_finished";
+                        $type_send = 'topic';
+                        $to = 'order_take_away_notifycation';
+                        pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                        /// end
                     }
                 } else {
                     returnSuccess("Đã qua trạng thái chế biến", $token);
@@ -398,6 +407,14 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
+                ///push notify
+                $title = "Thông báo món ăn!!!";
+                $bodyMessage = "Đã hoàn tất đơn mang đi";
+                $action = "dish_finished";
+                $type_send = 'topic';
+                $to = 'order_take_away_notifycation';
+                pushNotification($title, $bodyMessage, $action, $to, $type_send);
+                /// end
                 returnSuccess("Cập nhật trạng thái finished thành công", $token);
             } else {
                 returnError("Cập nhật thất bại");
