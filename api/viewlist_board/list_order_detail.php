@@ -17,7 +17,8 @@ $sql = "SELECT
             `tbl_order_order`.`order_direct_discount` as `order_direct_discount`,
             `tbl_order_order`.`order_created` as `order_created`,
             `tbl_order_order`.`order_comment` as `order_comment`,
-            `tbl_order_order`.`order_total_cost` as `order_total_cost`
+            `tbl_order_order`.`order_total_cost` as `order_total_cost`,
+            `tbl_order_order`.`id_business` as `id_business`
             FROM `tbl_order_order`
             LEFT JOIN `tbl_customer_customer` ON `tbl_customer_customer`.`id`= `tbl_order_order`.`id_customer`
             LEFT JOIN `tbl_account_account` ON `tbl_account_account`.`id`= `tbl_order_order`.`id_account`
@@ -48,16 +49,21 @@ if (empty($error)) {
 
     $result = db_qr($sql);
     $nums = db_nums($result);
+
+
+
     if ($nums > 0) {
         while ($row = db_assoc($result)) {
             $order_item = array(
                 'id_order' => $row['id_order'],
                 // 'id_floor' => $row['id_floor'],
                 // 'id_table' => $row['id_table'],
-                'id_customer' => (!empty($row['id_customer']))?$row['id_customer']:"0", //$row['id_customer']
-                'customer_code' => (!empty($row['customer_code']))?$row['customer_code']:"", //$row['customer_code']
-                'customer_name' => (!empty($row['customer_name']))?$row['customer_name']:"", //$row['customer_code']
-                'id_account' => $row['id_account'],
+                'id_customer' => (!empty($row['id_customer'])) ? $row['id_customer'] : "0", //$row['id_customer']
+                'customer_code' => (!empty($row['customer_code'])) ? $row['customer_code'] : "", //$row['customer_code']
+                'customer_name' => (!empty($row['customer_name'])) ? $row['customer_name'] : "", //$row['customer_code']
+                'customer_level' => "",
+                'id_account' => $row['id_account'], 
+                'id_business' => $row['id_business'], 
                 'account_username' => $row['account_username'],
                 'order_code' => $row['order_code'],
                 'order_status' => $row['order_status'],
@@ -68,14 +74,49 @@ if (empty($error)) {
                 'total_product' => "",
                 'total_cost_tmp' => "",
                 'order_direct_discount' => $row['order_direct_discount'],
-                'order_total_cost' => $row['order_total_cost'] != null ?  $row['order_total_cost']: "0",
+                'order_total_cost' => $row['order_total_cost'] != null ?  $row['order_total_cost'] : "0",
                 'order_detail' => array()
             );
 
-            // if ($row['id_customer'] > 0) {
-            //     $order_item['id_customer'] = $row['id_customer'];
-            //     $order_item['customer_code'] = $row['customer_code'];
-            // }
+            if ($row['id_customer'] > 0) {
+                // sắp xếp cấp độ
+                $sql_level = "SELECT * FROM `tbl_customer_point` WHERE `id_business` = '{$row['id_business']}'";
+                $result_level = db_qr($sql_level);
+                $nums_level = db_nums($result_level);
+                if ($nums_level > 0) {
+                    $point_arr = array();
+                    $point_arr['id_level'] = array();
+                    $point_arr['point'] = array();
+                    $point_arr['level'] = array();
+                    while ($row_level = db_assoc($result_level)) {
+                        $id_level = $row_level['id'];
+                        $customer_point = $row_level['customer_point'];
+                        $customer_level = $row_level['customer_level'];
+
+                        array_push($point_arr['id_level'], $id_level);
+                        array_push($point_arr['point'], $customer_point);
+                        array_push($point_arr['level'], $customer_level);
+                    }
+                    $point_arr = arrange_position($point_arr['point'], $point_arr['level'], $point_arr['id_level']);
+                }
+                // kết thúc sắp xếp cấp độ
+
+                $sql_customer = "SELECT * FROM `tbl_customer_customer` WHERE `id` = '{$row['id_customer']}'";
+                // returnError($sql_customer);
+                $result_customer = db_qr($sql_customer);
+                $nums_customer = db_nums($result_customer);
+                if ($nums_customer > 0) {
+                    while ($row_customer = db_assoc($result_customer)) {
+                        if (!empty($point_arr)) {
+                            for ($i = 0; $i < count($point_arr['point']); $i++) {
+                                if ($row_customer['customer_point'] >= $point_arr['point'][$i]) {
+                                    $order_item['customer_level'] = $point_arr['level'][$i];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             $sql_order_detail = "SELECT 
                                 `tbl_product_product`.`id` as `id_product`,
                                 `tbl_product_product`.`product_title` as `product_title`,

@@ -75,10 +75,10 @@ if (empty($error)) {
                 'order_detail' => array()
             );
 
-            // if ($row['id_customer'] > 0) {
-            //     $order_item['id_customer'] = $row['id_customer'];
-            //     $order_item['customer_code'] = $row['customer_code'];
-            // }
+            if ($row['id_customer'] > 0) {
+                $order_item['id_customer'] = $row['id_customer'];
+                $order_item['customer_code'] = $row['customer_code'];
+            }
             $sql_order_detail = "SELECT 
                                 `tbl_product_product`.`id` as `id_product`,
                                 `tbl_product_product`.`product_title` as `product_title`,

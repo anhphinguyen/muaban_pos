@@ -33,7 +33,9 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
             $sql = "SELECT count( tbl_account_account.id) as employee_total  FROM  tbl_account_account WHERE 1=1 ";
 
             if (! empty($filter)) {
-                $sql .= " AND (account_fullname LIKE '%" . $filter . "%' OR account_username LIKE '%" . $filter . "%')";
+                $sql .= " AND (account_fullname LIKE '%{$filter}%'
+                          OR account_username LIKE '%{$filter}%' 
+                          OR account_phone LIKE '%{$filter}%')";
             }
 
             $result = mysqli_query($conn, $sql);
@@ -72,7 +74,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                  WHERE tbl_account_account.id_business = '$id_business'";
 
             if (! empty($filter)) {
-                $sql .= " AND (tbl_account_account.account_fullname LIKE '%" . $filter . "%' OR account_username LIKE '%" . $filter . "%')";
+                $sql .= " AND (tbl_account_account.account_fullname LIKE '%" . $filter . "%' OR account_username LIKE '%" . $filter . "%' OR account_phone LIKE '%" . $filter . "%')";
             }
 
             $sql .= " ORDER BY tbl_account_account.id DESC  LIMIT $start,$limit";

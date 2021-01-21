@@ -37,6 +37,15 @@ switch ($type_manager) {
                     @unlink("../../" . $product_img);
                 }
             }
+            $sql = "SELECT * FROM `tbl_order_order` 
+                    WHERE `id_product` = '{$id_product}'
+                    OR `detail_extra` LIKE '%{$id_product}%'
+                    ";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if ($nums > 0) {
+                returnError("Không thể xóa sản phẩm");
+            }
 
             $sql = "DELETE FROM `tbl_product_extra` WHERE `id_product` = '{$id_product}'";
             if (db_qr($sql)) {

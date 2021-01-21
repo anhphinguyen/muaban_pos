@@ -26,6 +26,17 @@ switch ($type_manager) {
             }
 
 
+            $sql = "SELECT * FROM `tbl_organization_table` WHERE `id` = '{$id_table}'";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if($nums > 0){
+                while($row = db_assoc($result)){
+                    if($row['table_status'] == 'full'){
+                        returnError("Bàn đang mở, không được xóa");
+                    }
+                }
+            }
+
             $sql = "DELETE FROM `tbl_organization_table` WHERE `id` = '{$id_table}'";
             if (db_qr($sql)) {
                 returnSuccess("Xóa thành công", $token);

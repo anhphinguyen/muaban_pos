@@ -21,13 +21,14 @@ if (isset($_REQUEST['id_floor'])) {
         $id_floor = $_REQUEST['id_floor'];
     }
 }
+
 $order_arr = array();
 
 $result = db_qr($sql);
 $nums = db_nums($result);
 if ($nums > 0) {
     $order_arr['success'] = 'true';
-    $order_arr['refresh_token'] = $token;
+    $order_arr['refresh_token'] = (isset($token) && !empty($token)) ? $token : "";
     $order_arr['data'] = array();
     if (isset($id_floor) && !empty($id_floor)) {
         $sql_total_table = "SELECT * FROM `tbl_organization_table` 
@@ -94,10 +95,9 @@ if ($nums > 0) {
             'order_check_time' => $row['order_check_time'],
             'total_cost_tmp' => strval($total_cost_tmp),
         );
-
         array_push($order_arr['data'], $order_item);
     }
     reJson($order_arr);
-}else{
-    returnSuccess("Danh sách trống", $token);
+} else {
+    returnSuccess("Danh sách trống", (isset($token) && !empty($token)) ? $token : "");
 }

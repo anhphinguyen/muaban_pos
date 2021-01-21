@@ -7,6 +7,12 @@ global $secret_key, $time_expire;
 // returnError($secret_key);
 if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization'])) {
     $author = explode(" ", $header_arr['Authorization']);
+    if (count($author) != 2) {
+        errorToken("4003");
+    }
+    if ($author[0] != "Bearer") {
+        errorToken("4003");
+    }
     $author['token'] = $author[1];
 
     $token = $author['token'];
@@ -86,12 +92,11 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
                 $user_item['role_permission'] = getRolePermission($row['id_account']);
             }
 
-
             array_push($user_arr['data'], $user_item);
         }
         reJson($user_arr);
     }else{
-        errorToken("403", "Error token");
+        errorToken("4003", "Error token");
     }
     array_push($user_arr['data'], $user_item);
     reJson($user_arr);

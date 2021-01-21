@@ -324,6 +324,7 @@ if (isset($type_manager)) {
                 if (!empty($success)) {
                     $detail_arr = array();
                     $detail_arr['success'] = 'true';
+                    $detail_arr['refresh_token'] = $token;
                     $detail_arr['data'] = array();
                     foreach ($id_detail_arr as $id_insert) {
                         $sql = "SELECT * FROM `tbl_order_detail` 

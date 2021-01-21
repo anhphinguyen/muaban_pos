@@ -1,6 +1,7 @@
 <?php
 
-function get_list_customer_by_level($id,$id_business, $point_arr = array(), $id_level_arr = array()){
+function get_list_customer_by_level($id, $id_business, $point_arr = array(), $id_level_arr = array())
+{
     $sql_customer = "SELECT `customer_point` FROM `tbl_customer_customer` WHERE `id_business` = '{$id_business}' ";
     for ($i = 0; $i < count($id_level_arr); $i++) {
         for ($j = $i + 1; $j <= count($id_level_arr); $j++) {
@@ -188,9 +189,11 @@ function db_qr($sql)
     return false;
 }
 
-function errorToken($error_code, $data = array()){
+function errorToken($error_code, $data = array())
+{
     echo json_encode(array(
-        'success' => 'true',
+        'success' => ($error_code == '4001')?'true':'false',
+        'message' => (!empty($data)) ? $data : "",
         'error_code' => $error_code,
         'data' => $data
     ));
@@ -218,13 +221,14 @@ function returnError($string)
     );
     exit();
 }
-function returnSuccess($string, $token="")
+function returnSuccess($string, $token = "")
 {
     echo json_encode(
         array(
-            'success' => 'true', 
-            'refresh_token' => $token, 
-            'message' => $string)
+            'success' => 'true',
+            'refresh_token' => $token,
+            'message' => $string
+        )
     );
     exit();
 }

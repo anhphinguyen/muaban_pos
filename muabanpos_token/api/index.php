@@ -25,6 +25,12 @@ if (!isset($_REQUEST['detect'])) {
     }
 }
 // handle detect value
+// handle socket refresh token
+if (isset($_REQUEST['type_socket']) && !empty($_REQUEST['type_socket'])) {
+    $type_socket = $_REQUEST['type_socket'];
+}
+
+
 $detect = $_REQUEST['detect'];
 
 switch ($detect) {
@@ -149,11 +155,7 @@ switch ($detect) {
 
         /* viewlist board */
 
-    case 'list_chef_order': {
-            include_once 'basic_auth.php';
-            include_once 'viewlist_board/list_chef_order.php';
-            break;
-        }
+
     case 'list_product_sold_out': {
             include_once 'basic_auth.php';
             include_once 'viewlist_board/list_product_sold_out.php';
@@ -212,14 +214,32 @@ switch ($detect) {
             break;
         }
         /* socket board */
+    case 'list_chef_order': {
+            if (isset($type_socket) && !empty($type_socket)) {
+                include_once 'socket_board/list_chef_order.php';
+            } else {
+                include_once 'basic_auth.php';
+                include_once 'socket_board/list_chef_order.php';
+            }
+
+            break;
+        }
     case 'table_order': {
-            include_once 'basic_auth.php';
-            include_once 'socket_board/table_order.php';
+            if (isset($type_socket) && !empty($type_socket)) {
+                include_once 'socket_board/table_order.php';
+            } else {
+                include_once 'basic_auth.php';
+                include_once 'socket_board/table_order.php';
+            }
             break;
         }
     case 'list_table_empty': {
-            include_once 'basic_auth.php';
-            include_once 'socket_board/list_table_empty.php';
+            if (isset($type_socket) && !empty($type_socket)) {
+                include_once 'socket_board/list_table_empty.php';
+            } else {
+                include_once 'basic_auth.php';
+                include_once 'socket_board/list_table_empty.php';
+            }
             break;
         }
     default: {
