@@ -17,18 +17,19 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
 
     $token = $author['token'];
     $data = JWT::decode($token, $secret_key, array('HS256'));
+    // returnSuccess($_SESSION,$data->destroy_count);
 
     if(isset($_SESSION['destroy_token']['destroy_count'])){
         if ($data->id_account == $_SESSION['destroy_token']['id_account']) {
-            if ((int)$data->destroy_count < (int)$_SESSION['destroy_token']['destroy_count']) {
-                errorToken("4001","4001");
+            if ((int)$data->destroy_count != (int)$_SESSION['destroy_token']['destroy_count']) {
+                errorToken("4001","token đã cũ");
             }
         }
         $_SESSION['destroy_token']['destroy_count'] = strval((int)$_SESSION['destroy_token']['destroy_count'] + 1);
     }
 
     if ($data->exp < time()) {
-        errorToken("4001","4001");
+        errorToken("4001","hết phiên đăng nhập");
     }
 
     $payload_tmp = array(
@@ -256,11 +257,10 @@ if (empty($error)) {
                 'destroy_count' => '0'
             );
 
-
-            array_push($_SESSION, $_SESSION['destroy_token']);
             array_push($user_arr['data'], $user_item);
         }
-        // returnError($_SESSION['destroy_token']['destroy_count']);
+        
+        // reJson($_SESSION);
         reJson($user_arr);
     } else {
         returnError("Sai tên đăng nhập hoặc mật khẩu");

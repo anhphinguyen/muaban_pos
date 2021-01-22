@@ -9,31 +9,23 @@ global $secret_key, $time_expire;
 if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization'])) {
     $author = explode(" ", $header_arr['Authorization']);
     if (count($author) != 2) {
-        errorToken("4003","4003");
+        errorToken("4003", "4003");
     }
     if ($author[0] != "Bearer") {
-        errorToken("4003","4003");
+        errorToken("4003", "4003");
     }
     $author['token'] = $author[1];
 
     $token = $author['token'];
     $data = JWT::decode($token, $secret_key, array('HS256'));
 
-    
-    if(isset($_SESSION['destroy_token']['destroy_count'])){
-        if ($data->id_account == $_SESSION['destroy_token']['id_account']) {
-            if ($data->destroy_count < $_SESSION['destroy_token']['destroy_count']) {
-                errorToken("4001","4001");
-            }
-        }
-        $_SESSION['destroy_token']['destroy_count'] += 1;
-    }
+    $_SESSION['destroy_token']['destroy_count'] = strval((int)$_SESSION['destroy_token']['destroy_count'] + 1);
 
 
     if ($data->exp < time()) {
-        errorToken("4001","4001");
+        errorToken("4001", "4001");
     }
-    
+
     $payload_tmp = array(
         "nbf" => time(),  //cho phép sử dụng token tại thời điểm này
         "exp" => time() + $time_expire, // token hết hạn
@@ -44,10 +36,11 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
         'email' => $data->email,
         'id_type' =>  $data->id_type,
         'store_code' => $data->store_code,
-        'destroy_count' =>$data->destroy_count + 1  
+        'destroy_count' => $data->destroy_count + 1
     );
     $token = JWT::encode($payload_tmp, $secret_key);
 
+    // returnSuccess($_SESSION['destroy_token'],$data->destroy_count);
 
     $sql = "SELECT * FROM `tbl_account_account` WHERE `account_username` = '{$data->username}' 
             AND `account_password` = '$data->password' AND `id_business` = '{$data->id_business}'";
@@ -55,8 +48,8 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
     $result = db_qr($sql);
     $nums = db_nums($result);
     if ($nums == 0) {
-        errorToken("4003","4003");
+        errorToken("4003", "4003");
     }
 } else {
-    errorToken("4003","4003");
+    errorToken("4003", "4003");
 }
