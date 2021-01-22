@@ -103,16 +103,6 @@ switch ($type_manager) {
                 }
             }
 
-            // if (isset($_REQUEST['floor_type']) && !empty($_REQUEST['floor_type'])) {
-            //     $floor_type = $_REQUEST['floor_type'];
-            //     $sql = "UPDATE `tbl_organization_floor` SET
-            //             `floor_type` = '{$floor_type}'
-            //             WHERE `id` = '{$id_floor}'
-            //             ";
-            //     if (db_qr($sql)) {
-            //         $success['floor_type'] = 'true';
-            //     }
-            // }
 
             if (!empty($success)) {
                 returnSuccess("Cập nhật thành công", $token);
@@ -193,6 +183,7 @@ switch ($type_manager) {
                         SET 
                         `id_business` = '{$id_business}',
                         `floor_priority` = '{$floor_priority}',
+                        `floor_type` = '{$floor_type}',
                         `floor_title` = '{$floor_title}'
                         ";
                 if (db_qr($sql)) {

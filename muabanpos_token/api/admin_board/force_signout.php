@@ -48,4 +48,4 @@ switch ($target) {
 }
 
 pushNotification($title, $bodyMessage, $action, $to, $type_send);
-returnSuccess("Gửi thông báo thành công!");
+returnSuccess("Gửi thông báo thành công!", $token);

@@ -95,7 +95,7 @@ $nums = db_nums($result);
 $order_arr = array();
 if ($nums > 0) {
     $order_arr['success'] = 'true';
-    $order_arr['refresh_token'] = $token;
+    $order_arr['refresh_token'] = (isset($token) && !empty($token)) ? $token : "";
 
     $order_arr['total'] = strval($total);
     $order_arr['data'] = array();
@@ -161,6 +161,7 @@ if ($nums > 0) {
     reJson($order_arr);
 } else {
     $order_arr['success'] = 'true';
+    $order_arr['refresh_token'] = (isset($token) && !empty($token)) ? $token : "";
     $order_arr['data'] = array();
     reJson($order_arr);
 }

@@ -26,7 +26,7 @@ switch ($type_manager) {
 
         $sql = "DELETE FROM `tbl_customer_point` WHERE `id` = '{$id_level}'";
         if(db_qr($sql)){
-            returnSuccess("Xoa thanh cong", $token);
+            returnSuccess("Xóa thành công", $token);
         }
         break;
     }

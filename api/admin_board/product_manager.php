@@ -26,6 +26,27 @@ switch ($type_manager) {
 
             $success = array();
 
+            $sql = "SELECT * FROM `tbl_order_detail` 
+                    ";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if($nums > 0){
+                while($row = db_assoc($result)){
+                    if($row['id_product'] == $id_product){
+                        returnError("Sản phẩm đã được bán, không thể xóa");
+                    }
+                    
+                    if(!empty($row['detail_extra'])){
+                        foreach(explode(",", $row['detail_extra']) as $detail_extra){
+                            if($detail_extra == $id_product){
+                                returnError("Sản phẩm đã được bán, không thể xóa");
+                            }
+                        }
+                    }
+                }
+            }
+
+            
             $sql = "SELECT `tbl_product_product`.`product_img` FROM `tbl_product_product` WHERE `id` = '{$id_product}'";
             $result = mysqli_query($conn, $sql);
             $nums = mysqli_num_rows($result);
@@ -38,19 +59,19 @@ switch ($type_manager) {
                 }
             }
 
-            $sql = "SELECT * FROM `tbl_order_order` 
-                    WHERE `id_product` = '{$id_product}'
-                    OR `detail_extra` LIKE '%{$id_product}%'
-                    ";
-            $result = db_qr($sql);
-            $nums = db_nums($result);
-            if($nums > 0){
-                returnError("Không thể xóa sản phẩm");
-            }
-
+            
             $sql = "DELETE FROM `tbl_product_extra` WHERE `id_product` = '{$id_product}'";
             if (db_qr($sql)) {
                 $success['delete_extra'] = "true";
+            }
+            $sql = "SELECT * FROM `tbl_product_extra` WHERE `id_product_extra` = '{$id_product}'";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if($nums > 0){
+                $sql_extra = "DELETE FROM `tbl_product_extra` WHERE `id_product_extra` = '{$id_product}'";
+                if (db_qr($sql_extra)) {
+                    $success['delete_id_extra'] = "true";
+                }
             }
             $sql = "DELETE FROM `tbl_product_product` WHERE `id` = '{$id_product}'";
             if (db_qr($sql)) {

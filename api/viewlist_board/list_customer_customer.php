@@ -110,7 +110,7 @@ if (empty($error)) {
                 'customer_taxcode' => htmlspecialchars_decode($row['customer_taxcode']),
             );
 
-            if (!empty($point_arr)) {
+            if (isset($point_arr)&&!empty($point_arr)) {
                 for ($i = 0; $i < count($point_arr['point']); $i++) {
                     if ($row['customer_point'] >= $point_arr['point'][$i]) {
                         $customer_item['customer_level'] = $point_arr['level'][$i];

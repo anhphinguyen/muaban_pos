@@ -189,11 +189,11 @@ function db_qr($sql)
     return false;
 }
 
-function errorToken($error_code, $data = array())
+function errorToken($error_code, $msg = "", $data = array())
 {
     echo json_encode(array(
         'success' => ($error_code == '4001')?'true':'false',
-        'message' => (!empty($data)) ? $data : "",
+        'message' => $msg,
         'error_code' => $error_code,
         'data' => $data
     ));

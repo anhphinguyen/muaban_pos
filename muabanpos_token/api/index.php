@@ -1,4 +1,5 @@
 <?php
+
 include_once 'secret_key.php';
 include_once "../lib/database.php";
 include_once "../lib/connect.php";

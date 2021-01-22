@@ -9,17 +9,17 @@ global $secret_key, $time_expire;
 if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization'])) {
     $author = explode(" ", $header_arr['Authorization']);
     if (count($author) != 2) {
-        errorToken("4003");
+        errorToken("4003","4003");
     }
     if ($author[0] != "Bearer") {
-        errorToken("4003");
+        errorToken("4003","4003");
     }
     $author['token'] = $author[1];
 
     $token = $author['token'];
     $data = JWT::decode($token, $secret_key, array('HS256'));
     if ($data->exp < time()) {
-        errorToken("4001");
+        errorToken("4001","4001");
     }
     
     $payload_tmp = array(
@@ -29,6 +29,7 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
         'username' => $data->username,
         'password' => $data->password,
         'email' => $data->email,
+        'store_code' => $data->store_code,
         'id_type' =>  $data->id_type
     );
     $token = JWT::encode($payload_tmp, $secret_key);
@@ -40,8 +41,8 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
     $result = db_qr($sql);
     $nums = db_nums($result);
     if ($nums == 0) {
-        errorToken("4003");
+        errorToken("4003","4003");
     }
 } else {
-    errorToken("4003");
+    errorToken("4003","4003");
 }

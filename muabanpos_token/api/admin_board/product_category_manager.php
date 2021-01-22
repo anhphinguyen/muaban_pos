@@ -165,8 +165,10 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                     while ($rowItem = $result_check->fetch_assoc()) {
                         $category_icon = $rowItem['category_icon'];
 
-                        if (file_exists('../../' . $category_icon)) {
-                            unlink('../../' . $category_icon);
+                        if(!empty($category_icon)){
+                            if (file_exists('../../' . $category_icon)) {
+                                unlink('../../' . $category_icon);
+                            }
                         }
                     }
 

@@ -69,6 +69,16 @@ if (isset($type_manager)) {
 
                 $success = array();
 
+                $sql = "SELECT `detail_status` FROM `tbl_order_detail` WHERE `id` = '{$id_detail}'";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if($nums > 0){
+                    while($row = db_assoc($result)){
+                        if($row['detail_status']  == 'Y'){
+                            returnError("Món đã được chế biến, không thể thay đổi số lượng");
+                        }
+                    }
+                }
                 if (isset($_REQUEST['detail_quantity'])) {
                     if ($_REQUEST['detail_quantity'] == '') {
                         unset($_REQUEST['detail_quantity']);
@@ -86,7 +96,7 @@ if (isset($type_manager)) {
                 if (!empty($success)) {
                     returnSuccess("Tạo đơn hàng thành công", $token);
                 } else {
-                    returnError("Tao don hang khong thanh cong");
+                    returnError("Tạo đơn hàng không thành công");
                 }
                 break;
             }

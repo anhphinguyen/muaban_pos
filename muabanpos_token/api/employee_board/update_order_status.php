@@ -128,12 +128,16 @@ switch ($type_manager) {
                 if (!empty($element_str)) {
 
                     $element_arr = explode("|", $element_str);
+
                     $total_product_point_arr = array();
                     foreach ($element_arr as $element_item) {
                         $total_product_point_tmp = 0;
                         $element = explode("-", $element_item);
+
                         $id_product_arr = explode(",", $element[0]);
+
                         $detail_quantity = $element[1];
+
                         for ($i = 0; $i < count($id_product_arr); $i++) {
                             if (!empty($id_product_arr[$i])) {
                                 $sql = "SELECT `product_point` 
@@ -143,11 +147,12 @@ switch ($type_manager) {
                                 $nums = db_nums($result);
                                 if ($nums > 0) {
                                     while ($row = db_assoc($result)) {
-                                        $total_product_point_tmp += $row['product_point'];
+                                        $total_product_point_tmp += (int)$row['product_point'];
                                     }
                                 }
                             }
                         }
+
                         $total_product_point_tmp *= $detail_quantity;
                         array_push($total_product_point_arr, $total_product_point_tmp);
                     }
@@ -158,6 +163,7 @@ switch ($type_manager) {
                     }
 
                     $update_customer_point = $customer_point + $total_product_point;
+
                     //add poit customer here
                     $sql_update_customer_point = "UPDATE `tbl_customer_customer` 
                                                     SET `customer_point` = '{$update_customer_point}'
@@ -232,6 +238,7 @@ switch ($type_manager) {
                 }
 
                 if (!empty($success)) {
+
                     returnSuccess("Cập nhật trạng thái finished thành công", $token);
                 } else {
                     returnError("Cập nhật thất bại");
