@@ -151,7 +151,7 @@ switch ($type_manager) {
                                 $nums = db_nums($result);
                                 if ($nums > 0) {
                                     while ($row = db_assoc($result)) {
-                                        $total_product_point_tmp += (int)$row['product_point'];
+                                        $total_product_point_tmp += $row['product_point'];
                                     }
                                 }
                             }

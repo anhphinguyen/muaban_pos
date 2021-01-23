@@ -55,7 +55,7 @@ $total_table_open = count(db_fetch_array($sql_table_open));
 
 $table_arr = array();
 $table_arr['success'] = 'true';
-$table_arr['refresh_token'] = (isset($token) && !empty($token)) ? $token : "";
+$table_arr['refresh_token'] = $token;
 
 $table_arr['total_table_open'] = strval($total_table_open);
 $table_arr['total_table_close'] = strval($total_table_close);
@@ -75,5 +75,5 @@ if ($nums > 0) {
     }
     reJson($table_arr);
 } else {
-    returnSuccess("Không tồn tại bàn", (isset($token) && !empty($token)) ? $token : "");
+    returnSuccess("Không tồn tại bàn", $token);
 }

@@ -8,33 +8,48 @@ global $secret_key, $time_expire;
 if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization'])) {
     $author = explode(" ", $header_arr['Authorization']);
     if (count($author) != 2) {
-        errorToken("4003","4003");
+        errorToken("4003", "4003");
     }
     if ($author[0] != "Bearer") {
-        errorToken("4003","4003");
+        errorToken("4003", "4003");
     }
     $author['token'] = $author[1];
 
     $token = $author['token'];
     $data = JWT::decode($token, $secret_key, array('HS256'));
+    // returnSuccess($_SESSION,$data->destroy_count);
+
+    // if(isset($_SESSION['destroy_token']['destroy_count'])){
+    //     if ($data->id_account == $_SESSION['destroy_token']['id_account']) {
+    //         if ((int)$data->destroy_count != (int)$_SESSION['destroy_token']['destroy_count']) {
+    //             errorToken("4001","token đã cũ");
+    //         }
+    //     }
+    //     $_SESSION['destroy_token']['destroy_count'] = strval((int)$_SESSION['destroy_token']['destroy_count'] + 1);
+    // }
+    // if ((int)$data->destroy_count != (int)$data->token_count) {
+    //     errorToken("4001", "token đã cũ");
+    // }
+
     if ($data->exp < time()) {
-        errorToken("4001","4001");
+        errorToken("4001", "hết phiên đăng nhập");
     }
 
-
     $payload_tmp = array(
+        "iat" => time() - $time_expire,  //cho phép sử dụng token tại thời điểm này
         "nbf" => time(),  //cho phép sử dụng token tại thời điểm này
         "exp" => time() + $time_expire, // token hết hạn
         'id_business' => $data->id_business,
+        'id_account' => $data->id_account,
         'username' => $data->username,
         'password' => $data->password,
         'email' => $data->email,
+        'id_type' =>  $data->id_type,
         'store_code' => $data->store_code,
-        'id_type' =>  $data->id_type
+        'destroy_count' => strval((int)$data->destroy_count + 1)
     );
     $token = JWT::encode($payload_tmp, $secret_key);
 
-    
     $sql = "SELECT 
             `tbl_business_model`.`id` as `id_model`,
             `tbl_business_model`.`business_model` as `business_model`,
@@ -81,6 +96,17 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
             $query .= " force_sign_out  = '0' WHERE id = '" . $row['id_account'] . "'";
             db_qr($query);
 
+            if ((int)$data->destroy_count != (int)$row['token_count']) { // $row['token_count'] = 1 (has been update)
+                errorToken("4001", "token đã cũ");
+            }
+
+            $add_token_count = strval((int)$row['token_count'] + 1);
+            $query = "UPDATE tbl_account_account SET ";
+            $query .= " token_count  = '$add_token_count' WHERE id = '" . $row['id_account'] . "'";
+            db_qr($query);
+
+            
+
             $user_item = array(
                 'id' => $row['id_account'],
                 'id_model' => $row['id_model'],
@@ -109,7 +135,7 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
             array_push($user_arr['data'], $user_item);
         }
         reJson($user_arr);
-    }else{
+    } else {
         errorToken("4003", "4003");
     }
     array_push($user_arr['data'], $user_item);
@@ -199,6 +225,9 @@ if (empty($error)) {
             $query = "UPDATE tbl_account_account SET ";
             $query .= " force_sign_out  = '0' WHERE id = '" . $row['id_account'] . "'";
             db_qr($query);
+            $query = "UPDATE tbl_account_account SET ";
+            $query .= " token_count  = '0' WHERE id = '" . $row['id_account'] . "'";
+            db_qr($query);
 
             $user_item = array(
                 'id' => $row['id_account'],
@@ -229,18 +258,28 @@ if (empty($error)) {
                 "nbf" => time(),  //cho phép sử dụng token tại thời điểm này
                 "exp" => time() + $time_expire, // token hết hạn
                 'id_business' => $row['id_business'],
+                'id_account' => $row['id_account'],
                 'store_code' => $row['store_code'],
                 'username' => $row['username'],
                 'password' => $row['password'],
                 'email' => $row['email'],
                 'id_type' => $row['id_type'],
+                // 'token_count' => $row['token_count'], //0
+                'destroy_count' => '0'
             );
 
             $token = JWT::encode($payload, $secret_key);
             $user_item['token'] = $token;
 
+            // $_SESSION['destroy_token'] = array(
+            //     'id_account' => $row['id_account'],
+            //     'destroy_count' => '0'
+            // );
+
             array_push($user_arr['data'], $user_item);
         }
+
+        // reJson($_SESSION);
         reJson($user_arr);
     } else {
         returnError("Sai tên đăng nhập hoặc mật khẩu");

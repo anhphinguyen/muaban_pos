@@ -90,8 +90,8 @@ class JWT
 
         }
         if (null === $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64))) {
-            throw new UnexpectedValueException('Invalid claims encoding');
-            // returnError("sorry, you can't login");
+            // throw new UnexpectedValueException('Invalid claims encoding');
+            returnError("sorry, you can't login");
 
         }
         if (false === ($sig = static::urlsafeB64Decode($cryptob64))) {
@@ -132,9 +132,11 @@ class JWT
         // Check the nbf if it is defined. This is the time that the
         // token can actually be used. If it's not yet that time, abort.
         if (isset($payload->nbf) && $payload->nbf > ($timestamp + static::$leeway)) {
-            throw new BeforeValidException(
-                'Cannot handle token prior to ' . \date(DateTime::ISO8601, $payload->nbf)
-            );
+            // throw new BeforeValidException(
+            //     'Cannot handle token prior to ' . \date(DateTime::ISO8601, $payload->nbf)
+            // );
+            errorToken("4001","Expire token");
+
         }
 
         // Check that this token has been created before 'now'. This prevents
@@ -142,8 +144,9 @@ class JWT
         // correctly used the nbf claim).
         if (isset($payload->iat) && $payload->iat > ($timestamp + static::$leeway)) {
             throw new BeforeValidException(
-                'Cannot handle token prior to ' . \date(DateTime::ISO8601, $payload->iat)
+                'Cannot handle token prior to ' . \date("DateTime::ISO8601", $payload->iat)
             );
+            errorToken("4001","Expire token");
         }
 
         // Check if this token has expired.
@@ -151,6 +154,7 @@ class JWT
             // throw new ExpiredException('Expired token');
             // returnError("Đã hết phiên đăng nhập");
             // break;
+            errorToken("4001","Expire token");
         }
 
         return $payload;
