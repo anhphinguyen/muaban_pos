@@ -96,7 +96,7 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
             $query .= " force_sign_out  = '0' WHERE id = '" . $row['id_account'] . "'";
             db_qr($query);
 
-            if ((int)$data->destroy_count != (int)$row['token_count']) { // $row['token_count'] = 1 (has been update)
+            if ((int)$data->destroy_count > (int)$row['token_count']) { // $row['token_count'] = 1 (has been update)
                 errorToken("4001", "token đã cũ");
             }
 

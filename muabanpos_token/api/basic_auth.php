@@ -57,13 +57,13 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
     $nums = db_nums($result);
     if ($nums > 0) {
         while($row = db_assoc($result)){
-            if ((int)$data->destroy_count != (int)$row['token_count']) { // $row['token_count'] = 1 (has been update)
+            if ((int)$data->destroy_count > (int)$row['token_count']) { // $row['token_count'] = 1 (has been update)
                 errorToken("4001", "token đã cũ");
             }
 
             $add_token_count = strval((int)$row['token_count'] + 1);
             $query = "UPDATE tbl_account_account SET ";
-            $query .= " token_count  = '$add_token_count' WHERE id = '" . $data->id_account . "'";
+            $query .= " token_count  = '{$add_token_count}' WHERE id = '" . $data->id_account . "'";
             db_qr($query);
         }
     }else{
