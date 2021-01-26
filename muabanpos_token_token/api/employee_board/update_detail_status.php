@@ -174,6 +174,8 @@ switch ($type_manager) {
 
             if (!empty($success)) {
 
+                echo $id_business;
+                exit();
                 ///push notify
                 $title = "Thông báo món ăn!!!";
                 $bodyMessage = "Đã có món ăn hoàn tất";

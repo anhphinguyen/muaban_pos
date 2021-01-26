@@ -57,7 +57,7 @@ if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization']))
     $nums = db_nums($result);
     if ($nums > 0) {
         while($row = db_assoc($result)){
-            if ((int)$data->destroy_count > (int)$row['token_count']) { // $row['token_count'] = 1 (has been update)
+            if ((int)$data->destroy_count != (int)$row['token_count']) { // $row['token_count'] = 1 (has been update)
                 errorToken("4001", "token đã cũ");
             }
 

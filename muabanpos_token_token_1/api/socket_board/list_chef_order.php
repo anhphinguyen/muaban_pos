@@ -161,6 +161,7 @@ if ($nums > 0) {
     reJson($order_arr);
 } else {
     $order_arr['success'] = 'true';
+    $order_arr['refresh_token'] = $token;
     $order_arr['data'] = array();
     reJson($order_arr);
 }

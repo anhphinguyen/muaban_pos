@@ -591,13 +591,10 @@ switch ($type_manager) {
             if (isset($_REQUEST['order_direct_discount'])) {
                 if ($_REQUEST['order_direct_discount'] == '') {
                     unset($_REQUEST['order_direct_discount']);
-                    $order_direct_discount = "0";
                 } else {
                     $order_direct_discount = $_REQUEST['order_direct_discount'];
                 }
-            } else {
-                $order_direct_discount = "0";
-            }
+            } 
 
             if (isset($_REQUEST['order_total_cost'])) {
                 if ($_REQUEST['order_total_cost'] == '') {

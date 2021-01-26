@@ -169,7 +169,20 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 //list type account
             case "list_type":
                 $sql = "SELECT * FROM `tbl_account_type`
-                        WHERE tbl_account_type.id_business = '$id_business'";
+                        -- WHERE tbl_account_type.id_business = '$id_business'
+                        WHERE 1=1
+                        ";
+                
+                if (isset($_REQUEST['business_model'])) {
+                    if ($_REQUEST['business_model'] == '') {
+                        unset($_REQUEST['business_model']);
+                    } else {
+                        $business_model = $_REQUEST['business_model'];
+                        if( $business_model == 'S'){
+                            $sql .= " AND tbl_account_type.id < 3";
+                        }
+                    }
+                }
 
                 $result = $conn->query($sql);
                 // Get row count
