@@ -39,7 +39,6 @@ switch ($detect) {
         /* admin board */
 
     case 'app_deploy_manager': {
-            include_once 'basic_auth.php';
             include_once 'admin_board/app_deploy_manager.php';
             break;
         }

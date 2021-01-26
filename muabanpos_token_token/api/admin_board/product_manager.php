@@ -53,8 +53,8 @@ switch ($type_manager) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     $product_img =  $row['product_img'];
                 }
-                if (file_exists("../../" . $product_img)) {
-                    @unlink("../../" . $product_img);
+                if (file_exists("../" . $product_img)) {
+                    @unlink("../" . $product_img);
                 }
             }
 
@@ -207,8 +207,8 @@ switch ($type_manager) {
                 if ($nums > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         $product_img = $row['product_img'];
-                        if (file_exists("../../" . $product_img)) {
-                            @unlink("../../" . $product_img);
+                        if (file_exists("../" . $product_img)) {
+                            @unlink("../" . $product_img);
                         }
                     }
                 }

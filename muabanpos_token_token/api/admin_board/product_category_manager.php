@@ -71,8 +71,8 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $result_tmp = mysqli_query($conn, $sql_tmp);
                 while ($row_tmp = $result_tmp->fetch_assoc()) {
                     $p_img = $row_tmp['category_icon'];
-                    if (! empty($p_img) && file_exists('../../' . $p_img)) {
-                        unlink('../../' . $p_img);
+                    if (! empty($p_img) && file_exists('../' . $p_img)) {
+                        unlink('../' . $p_img);
                     }
                 }
 
@@ -166,8 +166,8 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                         $category_icon = $rowItem['category_icon'];
 
                         if(!empty($category_icon)){
-                            if (file_exists('../../' . $category_icon)) {
-                                unlink('../../' . $category_icon);
+                            if (file_exists('../' . $category_icon)) {
+                                unlink('../' . $category_icon);
                             }
                         }
                     }

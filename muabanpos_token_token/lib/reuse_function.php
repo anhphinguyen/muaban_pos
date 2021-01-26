@@ -65,7 +65,7 @@ function handing_files_img($myfile, $dir_save)
     for ($i = 0; $i < $total; $i++) {
         if ($_FILES[$myfile]['error'][$i] == 0) {
             $target_dir = $dir_save;
-            $target_dir_4_upload = '../../' . $dir_save;
+            $target_dir_4_upload = '../' . $dir_save;
             $target_file = $target_dir . basename($_FILES[$myfile]['name'][$i]);
             $target_save_file = $target_dir_4_upload . basename($_FILES[$myfile]['name'][$i]);
 
@@ -123,7 +123,7 @@ function handing_file_img($myfile, $dir_save)
     // $allow_file_type = các đuôi file cho phép, $dir_save = thư mục lưu trữ
     if ($_FILES[$myfile]['error'] == 0) {
         $target_dir = $dir_save;
-        $target_dir_4_upload = '../../' . $dir_save;
+        $target_dir_4_upload = '../' . $dir_save;
         $target_file = $target_dir . basename($_FILES[$myfile]['name']);
         $target_save_file = $target_dir_4_upload . basename($_FILES[$myfile]['name']);
 
@@ -304,7 +304,7 @@ function saveImage($file, $target_save = '')
         }
 
         $target_dir = $target_save;
-        $target_dir_4_upload = '../../' . $target_save;
+        $target_dir_4_upload = '../' . $target_save;
         $final_name = basename($file["name"]);
 
         $path = $file['name'];

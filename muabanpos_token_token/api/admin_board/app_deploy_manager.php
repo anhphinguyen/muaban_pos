@@ -37,7 +37,7 @@ switch ($typeManager) {
         }
         // Create post
         if ($conn->query($query)) {
-            returnSuccess("Cập nhật thành công!", $token);
+            returnSuccess("Cập nhật thành công!");
         }
         
         break;
@@ -83,7 +83,6 @@ switch ($typeManager) {
         
         $result_arr = array();
         $result_arr['success'] = 'true';
-        $result_arr['refresh_token'] = $token;
         $result_arr['data'] = array();
         
         if ($num > 0) {
