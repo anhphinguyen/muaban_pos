@@ -188,6 +188,11 @@ switch ($type_manager) {
             if (isset($_REQUEST['business_model'])) {
                 if ($_REQUEST['business_model'] == 'S') {
                     $sql .= " AND `order_status` = '1'";
+
+                    $sql_finished = "UPDATE `tbl_order_detail` SET `detail_status` = 'Y'
+                                     WHERE `id_order` = '{$id_order}'
+                                     AND `detail_status` = 'N' ";
+                    db_qr($sql_finished);
                 } else {
                     $sql .= " AND `order_status` = '4' ";
                     // finished (hiển thị payment) -> finished (đóng bàn)/////////////////
