@@ -32,7 +32,7 @@ switch ($type_manager) {
             }
             break;
         }
- 
+
     case 'finished_all': {
             if (isset($_REQUEST['id_order'])) {
                 if ($_REQUEST['id_order'] == '') {
@@ -90,15 +90,24 @@ switch ($type_manager) {
 
             if (!empty($success)) {
 
+                $sql = "SELECT * FROM `tbl_order_order` WHERE `id` ='{$id_order}'";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if ($nums > 0) {
+                    while ($row = db_assoc($result)) {
+                        $order_floor = $row['order_floor'];
+                        $order_table = $row['order_table'];
+                    }
+                }
                 ///push notify
                 $title = "Thông báo món ăn!!!";
-                $bodyMessage = "Đã có món ăn hoàn tất";
+                $bodyMessage = $order_floor . " - " . $order_table . " đã làm xong";
                 $action = "dish_finished";
                 $type_send = 'topic';
-                $to = 'order_notifycation_'.strval($id_business);
+                $to = 'order_notifycation_' . strval($id_business);
                 pushNotification($title, $bodyMessage, $action, $to, $type_send);
                 /// end
-                
+
                 returnSuccess("Cập nhật trạng thái delivery thành công", $token);
             } else {
                 returnSuccess("Đã hoàn thành món", $token);
@@ -161,7 +170,7 @@ switch ($type_manager) {
                 if (db_qr($sql_update_order_status)) {
                     $success['update_order_status'] = "true";
                 }
-            } 
+            }
 
 
             $sql = "UPDATE `tbl_order_detail` SET
@@ -174,14 +183,35 @@ switch ($type_manager) {
 
             if (!empty($success)) {
 
-                echo $id_business;
-                exit();
+                $sql = "SELECT * FROM `tbl_order_order` WHERE `id` ='{$id_order}'";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if ($nums > 0) {
+                    while ($row = db_assoc($result)) {
+                        $order_floor = $row['order_floor'];
+                        $order_table = $row['order_table'];
+                    }
+                }
+
+                $sql = "SELECT
+                                `tbl_product_product`.`product_title`
+                                FROM `tbl_order_detail`
+                                LEFT JOIN `tbl_product_product` ON `tbl_product_product`.`id` = `tbl_order_detail`.`id_product`
+                                WHERE `tbl_order_detail`.`id` = '{$id_detail}'
+                                ";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if ($nums > 0) {
+                    while ($row = db_assoc($result)) {
+                        $product_title = $row['product_title'];
+                    }
+                }
                 ///push notify
                 $title = "Thông báo món ăn!!!";
-                $bodyMessage = "Đã có món ăn hoàn tất";
+                $bodyMessage = $order_floor . " - " . $order_table . " - " . $product_title . " vừa hoàn thành";
                 $action = "dish_finished";
                 $type_send = 'topic';
-                $to = 'order_notifycation_'.strval($id_business);
+                $to = 'order_notifycation_' . strval($id_business);
                 pushNotification($title, $bodyMessage, $action, $to, $type_send);
                 /// end
 
@@ -218,7 +248,7 @@ switch ($type_manager) {
                     WHERE `id` = '{$id_product}'
                     ";
             if (db_qr($sql)) {
-                $success['disable_product'] = "true";         
+                $success['disable_product'] = "true";
             }
 
             if (isset($id_order) && !empty($id_order)) {
@@ -232,11 +262,11 @@ switch ($type_manager) {
                 if (db_qr($sql)) {
                     $success['disable_product_order'] = "true";
                 }
-            } 
+            }
 
-            if(!empty($success)){
+            if (!empty($success)) {
                 returnSuccess("Món ăn đã được khóa", $token);
-            }else{
+            } else {
                 returnSuccess("disable loi", $token);
             }
         }

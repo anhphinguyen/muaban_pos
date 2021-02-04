@@ -356,9 +356,18 @@ if (isset($type_manager)) {
                             }
                         }
                     }
+                    $sql = "SELECT * FROM `tbl_order_order` WHERE `id` ='{$id_order}'";
+                    $result = db_qr($sql);
+                    $nums = db_nums($result);
+                    if($nums > 0){
+                        while($row = db_assoc($result)){
+                            $order_floor = $row['order_floor'];
+                            $order_table = $row['order_table'];
+                        }
+                    }
                     ///push notify
                     $title = "Thông báo đơn hàng!!!";
-                    $bodyMessage = "Có đơn hàng vừa được gọi thêm";
+                    $bodyMessage = $order_floor." - ".$order_table. " vừa gọi món";
                     $action = "create_order";
                     $type_send = 'topic';
                     $to = 'chef_order_notifycation_'.strval($id_business);
@@ -597,7 +606,7 @@ if (isset($type_manager)) {
 
                                 ///push notify
                                 $title = "Thông báo đơn hàng!!!";
-                                $bodyMessage = "Có đơn hàng vừa tạo";
+                                $bodyMessage = $order_floor." - ".$order_table. " vừa gọi món";
                                 $action = "create_order";
                                 $type_send = 'topic';
                                 $to = 'chef_order_notifycation_'.strval($id_business);

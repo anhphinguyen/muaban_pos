@@ -273,7 +273,7 @@ switch ($type_manager) {
                 $success['detail_status'] = "true";
             }
 
-            
+
             // if all product have been finished, change order_status to 4
             $sql_detail = "SELECT * FROM `tbl_order_detail` 
                             WHERE `id_order` = '{$id_order}'";
@@ -328,12 +328,35 @@ switch ($type_manager) {
                     if (db_qr($sql)) {
                         $success['finised'] = "true";
 
+                        $sql = "SELECT * FROM `tbl_order_order` WHERE `id` ='{$id_order}'";
+                        $result = db_qr($sql);
+                        $nums = db_nums($result);
+                        if ($nums > 0) {
+                            while ($row = db_assoc($result)) {
+                                $order_floor = $row['order_floor'];
+                                $order_table = $row['order_table'];
+                            }
+                        }
+
+                        $sql = "SELECT
+                                `tbl_product_product`.`product_title`
+                                FROM `tbl_order_detail`
+                                LEFT JOIN `tbl_product_product` ON `tbl_product_product`.`id` = `tbl_order_detail`.`id_product`
+                                WHERE `tbl_order_detail`.`id` = '{$id_detail}'
+                                ";
+                        $result = db_qr($sql);
+                        $nums = db_nums($result);
+                        if ($nums > 0) {
+                            while ($row = db_assoc($result)) {
+                                $product_title = $row['product_title'];
+                            }
+                        }
                         ///push notify
                         $title = "Thông báo món ăn!!!";
-                        $bodyMessage = "Có món ăn vừa hoàn thành";
+                        $bodyMessage = $order_floor." - ".$order_table." - ".$product_title." vừa hoàn thành";
                         $action = "dish_finished";
                         $type_send = 'topic';
-                        $to = 'order_take_away_notifycation_'.strval($id_business);
+                        $to = 'order_take_away_notifycation_' . strval($id_business);
                         pushNotification($title, $bodyMessage, $action, $to, $type_send);
                         /// end
                     }
@@ -349,18 +372,18 @@ switch ($type_manager) {
             break;
         }
     case "finished_all": {
-        if (isset($_REQUEST['id_business'])) {
-            if ($_REQUEST['id_business'] == '') {
-                unset($_REQUEST['id_business']);
-                returnError("Nhập id_business");
+            if (isset($_REQUEST['id_business'])) {
+                if ($_REQUEST['id_business'] == '') {
+                    unset($_REQUEST['id_business']);
+                    returnError("Nhập id_business");
+                } else {
+                    $id_business = $_REQUEST['id_business'];
+                }
             } else {
-                $id_business = $_REQUEST['id_business'];
+                returnError("Nhập id_business");
             }
-        } else {
-            returnError("Nhập id_business");
-        }
 
-        
+
 
             if (isset($_REQUEST['id_order'])) {
                 if ($_REQUEST['id_order'] == '') {
@@ -430,12 +453,21 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
+                $sql = "SELECT * FROM `tbl_order_order` WHERE `id` ='{$id_order}'";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if ($nums > 0) {
+                    while ($row = db_assoc($result)) {
+                        $order_floor = $row['order_floor'];
+                        $order_table = $row['order_table'];
+                    }
+                }
                 ///push notify
                 $title = "Thông báo món ăn!!!";
-                $bodyMessage = "Đã hoàn tất đơn mang đi";
+                $bodyMessage = $order_floor." - ".$order_table. " đã làm xong";
                 $action = "dish_finished";
                 $type_send = 'topic';
-                $to = 'order_take_away_notifycation_'.strval($id_business);
+                $to = 'order_take_away_notifycation_' . strval($id_business);
                 pushNotification($title, $bodyMessage, $action, $to, $type_send);
                 /// end
                 returnSuccess("Cập nhật trạng thái finished thành công", $token);
@@ -599,7 +631,7 @@ switch ($type_manager) {
                 } else {
                     $order_direct_discount = $_REQUEST['order_direct_discount'];
                 }
-            } 
+            }
 
             if (isset($_REQUEST['order_total_cost'])) {
                 if ($_REQUEST['order_total_cost'] == '') {
@@ -861,10 +893,10 @@ switch ($type_manager) {
                             }
                             ///push notify
                             $title = "Thông báo đơn hàng!!!";
-                            $bodyMessage = "Có đơn hàng vừa tạo";
+                            $bodyMessage = $order_floor . " - " . $order_table . " vừa gọi món";
                             $action = "create_order";
                             $type_send = 'topic';
-                            $to = 'chef_order_notifycation_'.strval($id_business);
+                            $to = 'chef_order_notifycation_' . strval($id_business);
                             pushNotification($title, $bodyMessage, $action, $to, $type_send);
                             /// end
                             reJson($order_arr);
