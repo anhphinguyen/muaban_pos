@@ -1,71 +1,5 @@
 <?php
 
-// use \Firebase\JWT\JWT;
-
-// $header_arr = apache_request_headers();
-// global $secret_key;
-// // returnError($secret_key);
-// if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization'])) {
-//     $author = explode(" ", $header_arr['Authorization']);
-//     $author['token'] = $author[1];
-
-//     $token = $author['token'];
-//     // returnError($token);
-//     // $token = $header_arr['Authorization'];
-//     $data = JWT::decode($token, $secret_key, array('HS256'));
-//     if ($data->exp < time()) {
-//         $payload_tmp = array(
-//             'nbf' => time(),
-//             'exp' => time() + 30,
-//             'id' => $data->id,
-//             'id_model' => $data->id_model,
-//             'business_model' => $data->business_model,
-//             'id_business' => $data->id_business,
-//             'store_name' => $data->store_name,
-//             'store_prefix' => $data->store_prefix,
-//             'store_phone' => $data->store_phone,
-//             'store_address' => $data->store_address,
-//             'id_type' => $data->id_type,
-//             'username' => $data->username,
-//             'fullname' => $data->fullname,
-//             'email' => $data->email,
-//             'account_status' => $data->account_status,
-//             'type_account' => $data->type_account,
-//             'type_description' => $data->type_description,
-//             'role_permission' => $data->role_permission,
-//         );
-//         $token = JWT::encode($payload_tmp, $secret_key);
-//         // returnSuccess($token);
-//         $result_arr['success'] = "true";
-//         $result_arr['data'] = array();
-
-//         array_push($result_arr['data'], $result_item = ['token' => $token]);
-
-//         reJson($result_arr);
-//     }
-//     $user_arr['success'] = "true";
-//     $user_arr['data'] = array();
-//     $user_item = array(
-//         'id' => $data->id,
-//         'id_model' => $data->id_model,
-//         'business_model' => $data->business_model,
-//         'id_business' => $data->id_business,
-//         'store_name' => $data->store_name,
-//         'store_prefix' => $data->store_prefix,
-//         'store_phone' => $data->store_phone,
-//         'store_address' => $data->store_address,
-//         'id_type' => $data->id_type,
-//         'username' => $data->username,
-//         'fullname' => $data->fullname,
-//         'email' => $data->email,
-//         'account_status' => $data->account_status,
-//         'type_account' => $data->type_account,
-//         'type_description' => $data->type_description,
-//         'role_permission' => $data->role_permission,
-//     );
-//     array_push($user_arr['data'], $user_item);
-//     reJson($user_arr);
-// }
 
 $error = array();
 if (isset($_REQUEST['store_code'])) {
@@ -173,29 +107,6 @@ if (empty($error)) {
                 $user_item['role_permission'] = getRolePermission($row['id_account']);
             }
 
-            // $payload = array(
-            //     "nbf" => time(),  //cho phép sử dụng token tại thời điểm này
-            //     "exp" => time() + 30, // token hết hạn
-            //     'id' => $row['id_account'],
-            //     'id_model' => $row['id_model'],
-            //     'business_model' => $row['business_model'],
-            //     'id_business' => $row['id_business'],
-            //     'store_name' => $row['store_name'],
-            //     'store_prefix' => $row['store_prefix'],
-            //     'store_phone' => $row['store_phone'],
-            //     'store_address' => $row['store_address'],
-            //     'id_type' => $row['id_type'],
-            //     'username' => $row['username'],
-            //     'fullname' => $row['fullname'],
-            //     'email' => $row['email'],
-            //     'account_status' => $row['account_status'],
-            //     'type_account' => $row['type_account'],
-            //     'type_description' => $row['type_description'],
-            //     'role_permission' => (isset($user_item['role_permission'])) ? $user_item['role_permission'] : "",
-            // );
-
-            // $token = JWT::encode($payload, $secret_key);
-            // $user_item['token'] = $token;
 
             array_push($user_arr['data'], $user_item);
         }

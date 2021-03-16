@@ -1,0 +1,3 @@
+Ngày 16-03-2021
+ * bổ sung chức năng : hiển thị danh sách các sản phẩm theo món ( hiển thị tổng số món đã order nhưng chưa được bếp làm ) => 
+ $sql = "SELECT SUM(detail_quantity), id_product, detail_extra FROM tbl_order_detail WHERE detail_status = 'y'  GROUP BY id_product, detail_extra";

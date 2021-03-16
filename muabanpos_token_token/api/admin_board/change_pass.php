@@ -1,21 +1,5 @@
 <?php
 
-$error = array();
-
-// if (isset($_REQUEST['id_business'])) {
-//     if ($_REQUEST['id_business'] == '') {
-//         unset($_REQUEST['id_business']);
-//         returnError("Nhập id_business");
-//     }
-// }
-
-// if (!isset($_REQUEST['id_business'])) {
-//     returnError("Nhập id_business");
-// }
-
-// $id_business = $_REQUEST['id_business'];
-
-
 if (isset($_REQUEST['id_account'])) {
     if ($_REQUEST['id_account'] == '') {
         unset($_REQUEST['id_account']);

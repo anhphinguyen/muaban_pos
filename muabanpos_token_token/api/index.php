@@ -1,6 +1,7 @@
 <?php
 
 include_once 'secret_key.php';
+include_once "basic_auth.php";
 include_once "../lib/database.php";
 include_once "../lib/connect.php";
 include_once "../lib/reuse_function.php";
@@ -106,10 +107,18 @@ switch ($detect) {
         }
         /* employee board */
 
-    case 'login_test': {
-            include_once 'employee_board/login_test.php';
+    case 'update_product_status': {
+            include_once 'employee_board/update_product_status.php';
             break;
         }
+    case 'chef_list_product': {
+            include_once 'employee_board/chef_list_product.php';
+            break;
+        }
+    // case 'login_test': {
+    //         include_once 'employee_board/login_test.php';
+    //         break;
+    //     }
     case 'update_detail_status': {
             include_once 'basic_auth.php';
             include_once 'employee_board/update_detail_status.php';
