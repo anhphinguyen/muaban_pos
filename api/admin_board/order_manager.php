@@ -48,22 +48,22 @@ switch ($type_manager) {
             }
 
             $sql = "SELECT `id` FROM `tbl_organization_floor` 
-                WHERE `floor_title` = '{$order_floor}'
-                AND `id_business` = '{$id_business}'";
+                    WHERE `floor_title` = '{$order_floor}'
+                    AND `id_business` = '{$id_business}'";
             $result = db_qr($sql);
             $nums = db_nums($result);
             if ($nums > 0) {
                 while ($row = db_assoc($result)) {
                     $id_floor = $row['id'];
                 }
-            }
+            } 
 
             $success = array();
 
             $sql = "UPDATE `tbl_order_order` 
-            SET `order_status` = '6'
-            WHERE `id` = '{$id_order}'
-            ";
+                SET `order_status` = '6'
+                WHERE `id` = '{$id_order}'
+                ";
             if (db_qr($sql)) {
                 $success['order_status'] = "true";
             }
@@ -77,27 +77,27 @@ switch ($type_manager) {
                     $success['order_status'] = "true";
                 }
             }
-
+            
             $sql = "UPDATE `tbl_order_detail` 
-            SET `detail_status` = 'C'
-            WHERE `id_order` = '{$id_order}'
-            ";
+                SET `detail_status` = 'C'
+                WHERE `id_order` = '{$id_order}'
+                ";
             if (db_qr($sql)) {
                 $success['detail_status'] = "true";
             }
 
             $sql = "UPDATE `tbl_organization_table`
-                SET `table_status` = 'empty'
-                WHERE `table_title` = '{$order_table}'
-                AND `id_floor` = '{$id_floor}'
-                ";
+                    SET `table_status` = 'empty'
+                    WHERE `table_title` = '{$order_table}'
+                    AND `id_floor` = '{$id_floor}'
+                    ";
             if (db_qr($sql)) {
                 $success['table_status'] = "true";
             }
             ////////////////////////////////////////////////////////////////////////
-
+            
             if (!empty($success)) {
-                returnSuccess("Hủy đơn thành công");
+                returnSuccess("Hủy đơn thành công", $token);
             } else {
                 returnError("Lỗi hủy đơn");
             }
@@ -119,8 +119,7 @@ switch ($type_manager) {
                         `tbl_order_order`.`order_status` as `order_status`
 
                         FROM `tbl_order_order`
-                        LEFT JOIN `tbl_organization_floor` 
-                        ON `tbl_order_order`.`order_floor` = `tbl_organization_floor`.`floor_title`
+                        LEFT JOIN `tbl_organization_floor` ON `tbl_order_order`.`order_floor` = `tbl_organization_floor`.`floor_title`
                         WHERE 1=1
                         
                                 ";
@@ -228,6 +227,8 @@ switch ($type_manager) {
             $order_arr = array();
             if ($nums > 0) {
                 $order_arr['success'] = 'true';
+                $order_arr['refresh_token'] = $token;
+
                 $order_arr['total'] = strval($total);
                 $order_arr['total_pages'] = strval($total_pages);
                 $order_arr['limit'] = strval($limit);
@@ -266,7 +267,7 @@ switch ($type_manager) {
                         'order_type' => $row['order_type'],
                         'order_status' => $row['order_status'],
                         'order_code' => $row['order_code'],
-                        'order_total_cost' => (($row['order_status'] == 5) || ($row['order_status'] == 6)) ? $row['order_total_cost'] : strval($total_cost_tmp),
+                        'order_total_cost' => (($row['order_status'] == 5)||($row['order_status'] == 6)) ? $row['order_total_cost'] : strval($total_cost_tmp),
                         'order_created' => $row['order_created'],
                         'total_detail' => ""
                     );
@@ -281,7 +282,7 @@ switch ($type_manager) {
 
                 reJson($order_arr);
             } else {
-                returnSuccess("Danh sách trống");
+                returnSuccess("Danh sách trống", $token);
             }
             break;
         }

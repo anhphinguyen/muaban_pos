@@ -44,7 +44,6 @@ if(empty($error)){
             $success['customer_address'] = "true";
         }
     }
-
     if (isset($_REQUEST['customer_email'])&&!empty($_REQUEST['customer_email'])) {
         $customer_email = htmlspecialchars($_REQUEST['customer_email']);
         $sql = "UPDATE `tbl_customer_customer` SET";
@@ -77,7 +76,7 @@ if(empty($error)){
             $success['customer_sex'] = "true";
         }
     }
-
+    
     if (isset($_REQUEST['customer_taxcode'])&&!empty($_REQUEST['customer_taxcode'])) {
         $customer_taxcode = htmlspecialchars($_REQUEST['customer_taxcode']);
         $sql = "UPDATE `tbl_customer_customer` SET";
@@ -90,12 +89,9 @@ if(empty($error)){
     }
 
     if (!empty($success)) {
-        echo json_encode(array(
-            'success' => 'true',
-            'message' => 'Cập nhật thành công',
-        ));
+        returnSuccess("Cập nhật thành công", $token);
     }else{
-        returnSuccess("Không có thông tin cập nhật");
+        returnSuccess("Không có thông tin cập nhật", $token);
     }
 }else {
     returnError("Cập nhật không thành công");

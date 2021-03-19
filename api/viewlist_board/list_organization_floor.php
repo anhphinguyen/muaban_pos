@@ -33,6 +33,8 @@ $floor_arr = array();
 
 if (empty($error)) {
     $floor_arr['success'] = 'true';
+    $floor_arr['refresh_token'] = $token;
+
     $floor_arr['data'] = array();
     $result = db_qr($sql);
     $nums = db_nums($result);
@@ -73,6 +75,7 @@ if (empty($error)) {
                         'id_table' => $row_table['id'],
                         'id_floor' => $row_table['id_floor'],
                         'table_title' => $row_table['table_title'],
+                        // 'table_type' => $row_table['table_type'],
                         'table_status' => $row_table['table_status'],
                         'table_order' => array(),
                     );
@@ -123,6 +126,7 @@ if (empty($error)) {
                                     $total_cost_tmp = $total_cost_tmp;
                                 }
 
+
                                 if ($row_order['order_status'] < '5') {
                                     $table_order = array(
                                         'id_order' => $row_order['id'],
@@ -159,7 +163,7 @@ if (empty($error)) {
         }
         reJson($floor_arr);
     } else {
-        returnSuccess("Không tồn tại tầng");
+        returnSuccess("Không tồn tại tầng", $token);
     }
 } else {
     $error['success'] = 'false';

@@ -2,49 +2,47 @@
 
 // $secret_key = base64_encode(md5("my_name_is_JunoPhraend"));
 
-// use \Firebase\JWT\JWT;
+use \Firebase\JWT\JWT;
 
-// $header_arr = apache_request_headers();
-// global $secret_key;
-// // returnError($secret_key);
-// if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization'])) {
-//     $author = explode(" ", $header_arr['Authorization']);
-//     $author['token'] = $author[1];
+$header_arr = apache_request_headers();
+global $secret_key, $time_expire;
+if (isset($header_arr['Authorization']) && !empty($header_arr['Authorization'])) {
+    $author = explode(" ", $header_arr['Authorization']);
+    if (count($author) != 2) {
+        errorToken("4003","4003");
+    }
+    if ($author[0] != "Bearer") {
+        errorToken("4003","4003");
+    }
+    $author['token'] = $author[1];
 
-//     $token = $author['token'];
-//     // returnError($token);
-//     // $token = $header_arr['Authorization'];
-//     $data = JWT::decode($token, $secret_key, array('HS256'));
-//     if ($data->exp < time()) {
-//         $payload_tmp = array(
-//             "nbf" => time(),  //cho phép sử dụng token tại thời điểm này
-//             "exp" => time() + 60, // token hết hạn
-//             'username' => $row['username'],
-//            'password' => $row['password'],
-//             'email' => $row['email'],
-//         );
-//         $token = JWT::encode($payload_tmp, $secret_key);
-//         $result_arr['success'] = "true";
-//         $result_arr['data'] = array();
-//         array_push($result_arr['data'], $result_item = ['token' => $token]);
-//         reJson($result_arr);
-//     }
+    $token = $author['token'];
+    $data = JWT::decode($token, $secret_key, array('HS256'));
+    if ($data->exp < time()) {
+        errorToken("4001","4001");
+    }
+    
+    $payload_tmp = array(
+        "nbf" => time(),  //cho phép sử dụng token tại thời điểm này
+        "exp" => time() + $time_expire, // token hết hạn
+        'id_business' => $data->id_business,
+        'username' => $data->username,
+        'password' => $data->password,
+        'email' => $data->email,
+        'store_code' => $data->store_code,
+        'id_type' =>  $data->id_type
+    );
+    $token = JWT::encode($payload_tmp, $secret_key);
 
-//     $sql = "SELECT * FROM `tbl_account_account` WHERE `account_username` = '{$data->username}' 
-//             AND `account_password` = '$data->password'";
-//     $result = db_qr($sql);
-//     $nums = db_qr($result);
-//     if($nums == 0){
-//         echo json_encode(array(
-//             'success' => 'false',
-//             'error_code' => 'T0123N',
-//             'message' => 'Lỗi token'
-//         ));
-//     }
-// }else{
-//     echo json_encode(array(
-//         'success' => 'false',
-//         'error_code' => 'T0123N',
-//         'message' => 'Lỗi token'
-//     ));
-// }
+
+    $sql = "SELECT * FROM `tbl_account_account` WHERE `account_username` = '{$data->username}' 
+            AND `account_password` = '$data->password' AND `id_business` = '{$data->id_business}'";
+    // returnSuccess($sql);
+    $result = db_qr($sql);
+    $nums = db_nums($result);
+    if ($nums == 0) {
+        errorToken("4003","4003");
+    }
+} else {
+    errorToken("4003","4003");
+}

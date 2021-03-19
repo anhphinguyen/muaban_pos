@@ -33,7 +33,7 @@ switch ($type_manager) {
 
             $sql = "DELETE FROM `tbl_organization_floor` WHERE `id` = '{$id_floor}'";
             if (db_qr($sql)) {
-                returnSuccess("Xóa thành công");
+                returnSuccess("Xóa thành công", $token);
             }
             break;
         }
@@ -48,7 +48,7 @@ switch ($type_manager) {
             } else {
                 returnError("Truyền vào id_floor");
             }
-
+            
             $sql = "SELECT `id_business` FROM `tbl_organization_floor` WHERE `id` = '{$id_floor}'";
             $result = db_qr($sql);
             $nums = db_nums($result);
@@ -103,21 +103,11 @@ switch ($type_manager) {
                 }
             }
 
-            // if (isset($_REQUEST['floor_type']) && !empty($_REQUEST['floor_type'])) {
-            //     $floor_type = $_REQUEST['floor_type'];
-            //     $sql = "UPDATE `tbl_organization_floor` SET
-            //             `floor_type` = '{$floor_type}'
-            //             WHERE `id` = '{$id_floor}'
-            //             ";
-            //     if (db_qr($sql)) {
-            //         $success['floor_type'] = 'true';
-            //     }
-            // }
 
             if (!empty($success)) {
-                returnSuccess("Cập nhật thành công");
+                returnSuccess("Cập nhật thành công", $token);
             } else {
-                returnSuccess("Không có thông tin cập nhật");
+                returnSuccess("Không có thông tin cập nhật", $token);
             }
 
             break;
@@ -181,10 +171,10 @@ switch ($type_manager) {
                 if ($nums > 0) {
                     while($row = db_assoc($result)){
                         if($row['floor_title'] == $floor_title){
-                            returnError("Tầng này đã tồn tại");
+                            returnError("Đã tồn tại tầng này");
                         }
                         if($row['floor_priority'] == $floor_priority){
-                            returnError("Số thứ tự đã tồn tại");
+                            returnError("Đã tồn tại STT này");
                         }
                     }
                 }
@@ -193,10 +183,11 @@ switch ($type_manager) {
                         SET 
                         `id_business` = '{$id_business}',
                         `floor_priority` = '{$floor_priority}',
+                        `floor_type` = '{$floor_type}',
                         `floor_title` = '{$floor_title}'
                         ";
                 if (db_qr($sql)) {
-                    returnSuccess("Tạo mới tầng thành công");
+                    returnSuccess("Tạo mới tầng thành công", $token);
                 } else {
                     returnError("Tạo mới thất bại");
                 }
@@ -223,6 +214,7 @@ switch ($type_manager) {
             $floor_arr = array();
             if ($nums > 0) {
                 $floor_arr['success'] = "true";
+                $floor_arr['refresh_token'] = $token;
 
                 $floor_arr['data'] = array();
                 while ($row = db_assoc($result)) {
@@ -237,7 +229,7 @@ switch ($type_manager) {
                 }
                 reJson($floor_arr);
             } else {
-                returnSuccess("Danh sách trống");
+                returnSuccess("Danh sách trống",$token);
             }
             break;
         }

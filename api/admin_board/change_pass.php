@@ -72,10 +72,7 @@ if (empty($error)) {
                 ";
     $result = mysqli_query($conn, $sql);
     if ($result) {
-        echo json_encode(array(
-            'success' => 'true',
-            'message' => 'Đổi mật khẩu thành công'
-        ));
+        returnSuccess("Đổi mật khẩu thành công", $token);
     }else{
         returnError("Đổi mật khẩu không thành công.");
     }

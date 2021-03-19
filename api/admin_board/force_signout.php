@@ -27,10 +27,10 @@ $title = "Thông báo đăng nhập!!!";
 $bodyMessage = "Phiên làm việc đã kết thúc, vui lòng đăng nhập lại để tiếp tục.";
 $action = "check_sign_out";
 $type_send = 'topic';
-$to = 'muaban_pos_notification';
+$to = 'muaban_pos_notification_'.strval($id_business);
 switch ($target) {
     case 'admin':
-        $to = "muaban_pos_notification_admin";
+        $to = "muaban_pos_notification_admin_".strval($id_business);
         
         $query = "UPDATE tbl_account_account SET ";
         $query .= " force_sign_out  = '1' WHERE id_type = '1' AND `id_business` = '{$id_business}'";
@@ -38,7 +38,7 @@ switch ($target) {
         
         break;
     case 'employee':
-        $to = "muaban_pos_notification_employee";
+        $to = "muaban_pos_notification_employee_".strval($id_business);
         
         $query = "UPDATE tbl_account_account SET ";
         $query .= " force_sign_out  = '1' WHERE id_type != '1' AND `id_business` = '{$id_business}'";
@@ -48,4 +48,4 @@ switch ($target) {
 }
 
 pushNotification($title, $bodyMessage, $action, $to, $type_send);
-returnSuccess("Gửi thông báo thành công!");
+returnSuccess("Gửi thông báo thành công!", $token);

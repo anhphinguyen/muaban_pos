@@ -25,6 +25,7 @@ switch ($type_manager) {
                 returnError("Truyền vào id_table");
             }
 
+
             $sql = "SELECT * FROM `tbl_organization_table` WHERE `id` = '{$id_table}'";
             $result = db_qr($sql);
             $nums = db_nums($result);
@@ -36,10 +37,9 @@ switch ($type_manager) {
                 }
             }
 
-
             $sql = "DELETE FROM `tbl_organization_table` WHERE `id` = '{$id_table}'";
             if (db_qr($sql)) {
-                returnSuccess("Xóa thành công");
+                returnSuccess("Xóa thành công", $token);
             }
             break;
         }
@@ -55,10 +55,29 @@ switch ($type_manager) {
                 returnError("Truyền vào id_table");
             }
 
+            $sql = "SELECT `id_floor` FROM `tbl_organization_table` WHERE `id` = '{$id_table}'";
+            $result = db_qr($sql);
+            $nums = db_nums($result);
+            if ($nums > 0) {
+                while ($row = db_assoc($result)) {
+                    $id_floor = $row['id_floor'];
+                }
+            }
+
             $success = array();
 
             if (isset($_REQUEST['table_title']) && !empty($_REQUEST['table_title'])) {
                 $table_title = $_REQUEST['table_title'];
+
+                $sql = "SELECT `table_title` 
+                        FROM `tbl_organization_table` 
+                        WHERE `table_title` = '{$table_title}'
+                        AND `id_floor` = '{$id_floor}'";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if ($nums > 0) {
+                    returnError("Đã tồn tại bàn này");
+                }
 
                 $sql = "UPDATE `tbl_organization_table` SET
                         `table_title` = '{$table_title}'
@@ -70,9 +89,9 @@ switch ($type_manager) {
             }
 
             if (!empty($success)) {
-                returnSuccess("Cập nhật thành công");
+                returnSuccess("Cập nhật thành công", $token);
             } else {
-                returnSuccess("Không có thông tin cập nhật");
+                returnSuccess("Không có thông tin cập nhật", $token);
             }
 
             break;
@@ -134,7 +153,7 @@ switch ($type_manager) {
                         `table_title` = '{$table_title}'
                         ";
                 if (db_qr($sql)) {
-                    returnSuccess("Tạo mới bàn thành công");
+                    returnSuccess("Tạo mới bàn thành công", $token);
                 } else {
                     returnError("Tạo mới thất bại");
                 }
@@ -159,6 +178,7 @@ switch ($type_manager) {
             $table_arr = array();
             if ($nums > 0) {
                 $table_arr['success'] = "true";
+                $table_arr['refresh_token'] = $token;
 
                 $table_arr['data'] = array();
                 while ($row = db_assoc($result)) {
@@ -172,7 +192,7 @@ switch ($type_manager) {
                 }
                 reJson($table_arr);
             } else {
-                returnSuccess("Danh sách trống");
+                returnSuccess("Danh sách trống", $token);
             }
             break;
         }

@@ -21,6 +21,8 @@ if (isset($_REQUEST['id_business'])) {
 $category_arr = array();
 if(empty($error)){
     $category_arr['success'] = "true";
+    $category_arr['refresh_token'] = $token;
+
     $category_arr['data'] = array();
     $result = db_qr($sql);
     $nums = db_nums($result);
@@ -36,7 +38,7 @@ if(empty($error)){
         }
         reJson($category_arr);
     }else{
-        returnSuccess("Không tồn tại danh muc");
+        returnSuccess("Không tồn tại danh muc", $token);
     }
 
 }else{

@@ -11,7 +11,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
         }
     }
 
-    if (! isset($_REQUEST['type_manager'])) {
+    if (!isset($_REQUEST['type_manager'])) {
         returnError("type_manager is missing!");
     }
     $typeManager = $_REQUEST['type_manager'];
@@ -37,6 +37,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                           OR account_username LIKE '%{$filter}%' 
                           OR account_phone LIKE '%{$filter}%')";
             }
+
 
             $result = mysqli_query($conn, $sql);
             while ($row = $result->fetch_assoc()) {
@@ -73,7 +74,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                  ON tbl_account_account.id_type = tbl_account_type.id
                  WHERE tbl_account_account.id_business = '$id_business'";
 
-            if (! empty($filter)) {
+            if (!empty($filter)) {
                 $sql .= " AND (tbl_account_account.account_fullname LIKE '%" . $filter . "%' OR account_username LIKE '%" . $filter . "%' OR account_phone LIKE '%" . $filter . "%')";
             }
 
@@ -87,6 +88,8 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
             // Check if any categories
 
             $employee_arr['success'] = 'true';
+            $employee_arr['refresh_token'] =  $token;
+
             $employee_arr['page'] = $page;
             $employee_arr['data'] = array();
 
@@ -122,7 +125,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                     returnError("Nhập tên đăng nhập!");
                 }
             }
-            if (! isset($_REQUEST['username'])) {
+            if (!isset($_REQUEST['username'])) {
                 returnError("Nhập tên đăng nhập!");
             }
             $username = $_REQUEST['username'];
@@ -132,7 +135,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 WHERE account_username = '" . $username . "' AND id_business = '$id_business '";
             $result_check_username_exists = mysqli_query($conn, $sql_check_username_exists);
             $num_result_check_username_exists = mysqli_num_rows($result_check_username_exists);
-            if ($num_result_check_username_exists >0){
+            if ($num_result_check_username_exists > 0) {
                 returnError("Tên đăng nhập đã tồn tại!");
             }
 
@@ -142,7 +145,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 }
             }
 
-            if (! isset($_REQUEST['password'])) {
+            if (!isset($_REQUEST['password'])) {
                 returnError("Nhập mật khẩu!");
             }
 
@@ -152,7 +155,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 }
             }
 
-            if (! isset($_REQUEST['full_name'])) {
+            if (!isset($_REQUEST['full_name'])) {
                 returnError("Nhập họ và tên!");
             }
 
@@ -173,7 +176,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
             $phone_number = '';
             if (isset($_REQUEST['phone_number']) &&  !empty($_REQUEST['phone_number'])) {
                 $phone_number = $_REQUEST['phone_number'];
-            }else{
+            } else {
                 returnError("Nhập số điện thoại!");
             }
 
@@ -203,7 +206,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                             $rolePermission = explode(',', $_REQUEST['role_permission']);
 
                             foreach ($rolePermission as $itemRole) {
-                                if (! empty($itemRole)) {
+                                if (!empty($itemRole)) {
                                     $sql_insert_role = "INSERT INTO tbl_account_authorize SET
                                     id_admin = '" . $id_created . "'
                                     , grant_permission = '" . $itemRole . "'
@@ -216,7 +219,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                     }
                 }
 
-                returnSuccess("Tạo tài khoản thành công!");
+                returnSuccess("Tạo tài khoản thành công!", $token);
             } else {
                 returnError("Tạo tài khoản không thành công!");
             }
@@ -239,7 +242,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
 
             $check = 0;
 
-            if (isset($_REQUEST['username']) && ! empty($_REQUEST['username'])) {
+            if (isset($_REQUEST['username']) && !empty($_REQUEST['username'])) {
 
                 $username = $_REQUEST['username'];
                 //check username exists
@@ -249,72 +252,72 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
 
                 $result_check_username_exists = mysqli_query($conn, $sql_check_username_exists);
                 $num_result_check_username_exists = mysqli_num_rows($result_check_username_exists);
-                if ($num_result_check_username_exists >0){
+                if ($num_result_check_username_exists > 0) {
                     returnError("Tên đăng nhập đã tồn tại!");
                 }
 
-                $check ++;
+                $check++;
                 $query = "UPDATE tbl_account_account SET ";
                 $query .= " account_username  = '" . $username . "' ";
                 $query .= " WHERE id = '" . $idUser . "'";
                 // Create post
                 if ($conn->query($query)) {
-                    $check --;
+                    $check--;
                 }
             }
 
-            if (isset($_REQUEST['id_type']) && ! empty($_REQUEST['id_type'])) {
+            if (isset($_REQUEST['id_type']) && !empty($_REQUEST['id_type'])) {
                 $id_type = $_REQUEST['id_type'];
 
-                $check ++;
+                $check++;
                 $query = "UPDATE tbl_account_account  SET ";
                 $query .= " id_type  = '" . $id_type . "' ";
                 $query .= " WHERE id = '" . $idUser . "'";
                 // Create post
                 if ($conn->query($query)) {
-                    $check --;
+                    $check--;
                 }
             }
 
-            if (isset($_REQUEST['full_name']) && ! empty($_REQUEST['full_name'])) {
-                $check ++;
+            if (isset($_REQUEST['full_name']) && !empty($_REQUEST['full_name'])) {
+                $check++;
                 $query = "UPDATE tbl_account_account  SET ";
                 $query .= " account_fullname  = '" . $_REQUEST['full_name'] . "' ";
                 $query .= " WHERE id = '" . $idUser . "'";
                 // Create post
                 if ($conn->query($query)) {
-                    $check --;
+                    $check--;
                 }
             }
-            if (isset($_REQUEST['email']) && ! empty($_REQUEST['email'])) {
-                $check ++;
+            if (isset($_REQUEST['email']) && !empty($_REQUEST['email'])) {
+                $check++;
                 $query = "UPDATE tbl_account_account  SET ";
                 $query .= " account_email  = '" . $_REQUEST['email'] . "' ";
                 $query .= " WHERE id = '" . $idUser . "'";
                 // Create post
                 if ($conn->query($query)) {
-                    $check --;
+                    $check--;
                 }
             }
-            if (isset($_REQUEST['phone_number']) && ! empty($_REQUEST['phone_number'])) {
-                $check ++;
+            if (isset($_REQUEST['phone_number']) && !empty($_REQUEST['phone_number'])) {
+                $check++;
                 $query = "UPDATE tbl_account_account  SET ";
                 $query .= " account_phone  = '" . $_REQUEST['phone_number'] . "' ";
                 $query .= " WHERE id = '" . $idUser . "'";
                 // Create post
                 if ($conn->query($query)) {
-                    $check --;
+                    $check--;
                 }
             }
 
-            if (isset($_REQUEST['status']) && ! empty($_REQUEST['status'])) {
-                $check ++;
+            if (isset($_REQUEST['status']) && !empty($_REQUEST['status'])) {
+                $check++;
                 $query = "UPDATE tbl_account_account  SET ";
                 $query .= "account_status  = '" . $_REQUEST['status'] . "' ";
                 $query .= "WHERE id = '" . $idUser . "'";
                 // Create post
                 if ($conn->query($query)) {
-                    $check --;
+                    $check--;
                 }
             }
             if (isset($_REQUEST['role_permission'])) {
@@ -337,7 +340,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                         $rolePermission = explode(',', $_REQUEST['role_permission']);
 
                         foreach ($rolePermission as $itemRole) {
-                            if (! empty($itemRole)) {
+                            if (!empty($itemRole)) {
                                 $sql_insert_role = "INSERT INTO tbl_account_authorize SET id_admin = '" . $idUser . "', grant_permission = '" . $itemRole . "', id_business = {$id_business}";
 
                                 mysqli_query($conn, $sql_insert_role);
@@ -359,7 +362,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
             }
 
             if ($check == 0) {
-                returnSuccess("Cập nhật thành công!");
+                returnSuccess("Cập nhật thành công!", $token);
             } else {
                 returnError("Cập nhật không thành công");
             }
@@ -401,7 +404,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                         $rolePermission = explode(',', $_REQUEST['role_permission']);
 
                         foreach ($rolePermission as $itemRole) {
-                            if (! empty($itemRole)) {
+                            if (!empty($itemRole)) {
                                 $sql_insert_role = "INSERT INTO tbl_account_authorize SET 
                                                     id_admin = '" . $idUser . "', 
                                                     grant_permission = '" . $itemRole . "',
@@ -421,7 +424,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
 
                     //                 pushNotification($title, $bodyMessage, $action, $to, $type_send);
 
-                    returnSuccess("Cập nhật phân quyền thành công!");
+                    returnSuccess("Cập nhật phân quyền thành công!", $token);
                 }
             } else {
                 returnError("role_permission is missing!");
@@ -470,7 +473,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                             $sql_update_password = "UPDATE tbl_account_account SET account_password = '" . md5($new_password) . "' WHERE id = '" . $idUser . "'";
 
                             if ($conn->query($sql_update_password)) {
-                                returnSuccess("Cập nhật mật khẩu thành công!");
+                                returnSuccess("Cập nhật mật khẩu thành công!", $token);
                             } else {
                                 returnError("Cập nhật mật khẩu không thành công!");
                             }
@@ -510,7 +513,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
             }
 
             $sql = "SELECT * FROM tbl_account_account WHERE id = '$idUser'  AND id_business  = '$id_business'";
-            
+
             $result = mysqli_query($conn, $sql);
             $num_result = mysqli_num_rows($result);
             if ($num_result > 0) {
@@ -518,7 +521,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                     $sql_update_status = "UPDATE tbl_account_account SET account_status = '" . $user_status . "' WHERE id = '" . $idUser . "'";
 
                     if ($conn->query($sql_update_status)) {
-                        returnSuccess("Cập nhật trạng thái thành công!");
+                        returnSuccess("Cập nhật trạng thái thành công!", $token);
                     } else {
                         returnError("Cập nhật trạng thái không thành công!");
                     }
@@ -564,7 +567,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $query .= "WHERE id = '" . $id_account . "'";
                 // check execute query
                 if ($conn->query($query)) {
-                    returnSuccess("Cập nhật mật khẩu thành công!");
+                    returnSuccess("Cập nhật mật khẩu thành công!", $token);
                 } else {
                     returnError("Cập nhật mật khẩu không thành công!");
                 }
@@ -582,7 +585,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 }
             }
 
-            if (! isset($_REQUEST['id_user'])) {
+            if (!isset($_REQUEST['id_user'])) {
                 returnError("Nhập id_user");
             }
 
@@ -611,7 +614,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                             WHERE  id = '" . $id_customer . "'
                           ";
                 if ($conn->query($sql_delete_customer)) {
-                    returnSuccess("Xóa tài khoản thành công!");
+                    returnSuccess("Xóa tài khoản thành công!", $token);
                 } else {
                     returnError("Xóa tài khoản không thành công!");
                 }
@@ -626,6 +629,6 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
 
             break;
     }
-}else {
+} else {
     returnError("Chọn cửa hàng");
 }

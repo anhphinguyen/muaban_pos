@@ -39,8 +39,8 @@ switch ($type_manager) {
             }
 
             $sql = "SELECT `id` FROM `tbl_organization_floor` 
-                WHERE `floor_title` = '{$order_floor}'
-                AND `id_business` = '{$id_business}'";
+                    WHERE `floor_title` = '{$order_floor}'
+                    AND `id_business` = '{$id_business}'";
             $result = db_qr($sql);
             $nums = db_nums($result);
             if ($nums > 0) {
@@ -51,38 +51,39 @@ switch ($type_manager) {
 
             $success = array();
             $sql = "UPDATE `tbl_order_order` 
-            SET `order_status` = '6'
-            WHERE `id` = '{$id_order}'
-            ";
+                SET `order_status` = '6'
+                WHERE `id` = '{$id_order}'
+                ";
             if (db_qr($sql)) {
                 $success['order_status'] = "true";
             }
 
             $sql = "UPDATE `tbl_order_detail` 
-            SET `detail_status` = 'C'
-            WHERE `id_order` = '{$id_order}'
-            ";
+                SET `detail_status` = 'C'
+                WHERE `id_order` = '{$id_order}'
+                ";
             if (db_qr($sql)) {
                 $success['detail_status'] = "true";
             }
 
             $sql = "UPDATE `tbl_organization_table`
-                SET `table_status` = 'empty'
-                WHERE `table_title` = '{$order_table}'
-                AND `id_floor` = '{$id_floor}'
-                ";
+                    SET `table_status` = 'empty'
+                    WHERE `table_title` = '{$order_table}'
+                    AND `id_floor` = '{$id_floor}'
+                    ";
             if (db_qr($sql)) {
                 $success['table_status'] = "true";
             }
 
             if (!empty($success)) {
-                returnSuccess("Hủy đơn hàng thành công");
+                returnSuccess("Hủy đơn hàng thành công", $token);
             } else {
                 returnError("Hủy đơn hàng thất bại");
             }
             break;
         }
     case "finished": {
+
             // add point customer
             $sql = " SELECT `id_customer` FROM `tbl_order_order`
                      WHERE `id` = '{$id_order}'
@@ -127,12 +128,16 @@ switch ($type_manager) {
                 if (!empty($element_str)) {
 
                     $element_arr = explode("|", $element_str);
+
                     $total_product_point_arr = array();
                     foreach ($element_arr as $element_item) {
                         $total_product_point_tmp = 0;
                         $element = explode("-", $element_item);
+
                         $id_product_arr = explode(",", $element[0]);
+
                         $detail_quantity = $element[1];
+
                         for ($i = 0; $i < count($id_product_arr); $i++) {
                             if (!empty($id_product_arr[$i])) {
                                 $sql = "SELECT `product_point` 
@@ -142,21 +147,23 @@ switch ($type_manager) {
                                 $nums = db_nums($result);
                                 if ($nums > 0) {
                                     while ($row = db_assoc($result)) {
-                                        $total_product_point_tmp += $row['product_point'];
+                                        $total_product_point_tmp += (int)$row['product_point'];
                                     }
                                 }
                             }
                         }
+
                         $total_product_point_tmp *= $detail_quantity;
                         array_push($total_product_point_arr, $total_product_point_tmp);
                     }
 
                     $total_product_point = 0;
-                    foreach($total_product_point_arr as $total_point_item){
+                    foreach ($total_product_point_arr as $total_point_item) {
                         $total_product_point += $total_point_item;
                     }
 
                     $update_customer_point = $customer_point + $total_product_point;
+
                     //add poit customer here
                     $sql_update_customer_point = "UPDATE `tbl_customer_customer` 
                                                     SET `customer_point` = '{$update_customer_point}'
@@ -231,12 +238,13 @@ switch ($type_manager) {
                 }
 
                 if (!empty($success)) {
-                    returnSuccess("Cập nhật trạng thái finished thành công");
+
+                    returnSuccess("Cập nhật trạng thái finished thành công", $token);
                 } else {
                     returnError("Cập nhật thất bại");
                 }
             } else {
-                returnSuccess("Đã qua trạng thái thanh toán");
+                returnSuccess("Đã qua trạng thái thanh toán", $token);
             }
             break;
         }
@@ -340,12 +348,12 @@ switch ($type_manager) {
                 }
 
                 if (!empty($success)) {
-                    returnSuccess("Cập nhật trạng thái payment thành công");
+                    returnSuccess("Cập nhật trạng thái payment thành công", $token);
                 } else {
                     returnError("Cập nhật thất bại");
                 }
             } else {
-                returnSuccess("Đã qua trạng thái lên món");
+                returnSuccess("Đã qua trạng thái lên món", $token);
             }
             break;
         }
@@ -387,12 +395,12 @@ switch ($type_manager) {
                 }
 
                 if (!empty($success)) {
-                    returnSuccess("Cập nhật trạng thái processing thành công");
+                    returnSuccess("Cập nhật trạng thái processing thành công", $token);
                 } else {
                     returnError("Cập nhật thất bại");
                 }
             } else {
-                returnSuccess("Đã qua trạng thái chờ");
+                returnSuccess("Đã qua trạng thái chờ", $token);
             }
             break;
         }

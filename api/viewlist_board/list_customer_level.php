@@ -43,6 +43,8 @@ if ($nums_level) {
 $level_arr = array();
 if ($nums > 0) {
     $level_arr['success'] = 'true';
+    $level_arr['refresh_token'] = $token;
+
     $level_arr['data'] = array();
     while ($row = db_assoc($result)) {
         $level_item = array(
@@ -69,5 +71,5 @@ if ($nums > 0) {
 
     reJson($level_arr);
 } else {
-    returnSuccess("Danh sách trống");
+    returnSuccess("Danh sách trống", $token);
 }

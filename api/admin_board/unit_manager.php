@@ -10,7 +10,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
 
         //chon type_mânger
         switch ($type_manager) {
-            //list unit
+                //list unit
             case "list_unit":
                 $sql = "SELECT * FROM `tbl_product_unit`
                         WHERE tbl_product_unit.id_business = '$id_business'";
@@ -20,6 +20,8 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $num = mysqli_num_rows($result);
 
                 $module_arr['success'] = 'true';
+                $module_arr['refresh_token'] = $token;
+
                 $module_arr['data'] = array();
                 if ($num > 0) {
                     while ($row = $result->fetch_assoc()) {
@@ -38,26 +40,26 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 }
                 break;
 
-            //update unit
+                //update unit
             case "update_unit":
 
                 $id_unit = '';
                 $unit_title = '';
                 $unit_symbol = '';
 
-                if (isset($_REQUEST['id_unit']) && $_REQUEST['id_unit'] != ''){
+                if (isset($_REQUEST['id_unit']) && $_REQUEST['id_unit'] != '') {
                     $id_unit = $_REQUEST['id_unit'];
-                }else{
+                } else {
                     returnError("Nhập id_unit");
                 }
-                if (isset($_REQUEST['unit_title']) && $_REQUEST['unit_title'] != ''){
+                if (isset($_REQUEST['unit_title']) && $_REQUEST['unit_title'] != '') {
                     $unit_title = $_REQUEST['unit_title'];
-                }else{
+                } else {
                     returnError("Nhập unit_title");
                 }
-                if (isset($_REQUEST['unit_symbol']) && $_REQUEST['unit_symbol'] != ''){
+                if (isset($_REQUEST['unit_symbol']) && $_REQUEST['unit_symbol'] != '') {
                     $unit_symbol = $_REQUEST['unit_symbol'];
-                }else{
+                } else {
                     returnError("Nhập unit_symbol");
                 }
 
@@ -73,7 +75,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
 
 
                 if ($conn->query($sql)) {
-                    returnSuccess("Cập nhật thành công!");
+                    returnSuccess("Cập nhật thành công!", $token);
                 } else {
                     returnError("Cập nhật không thành công!");
                 }
@@ -85,14 +87,14 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $unit_title = '';
                 $unit_symbol = '';
 
-                if (isset($_REQUEST['unit_title']) && $_REQUEST['unit_title'] != ''){
+                if (isset($_REQUEST['unit_title']) && $_REQUEST['unit_title'] != '') {
                     $unit_title = $_REQUEST['unit_title'];
-                }else{
+                } else {
                     returnError("Nhập unit_title");
                 }
-                if (isset($_REQUEST['unit_symbol']) && $_REQUEST['unit_symbol'] != ''){
+                if (isset($_REQUEST['unit_symbol']) && $_REQUEST['unit_symbol'] != '') {
                     $unit_symbol = $_REQUEST['unit_symbol'];
-                }else{
+                } else {
                     returnError("Nhập unit_symbol");
                 }
 
@@ -107,7 +109,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                 $sql .= ", id_business ='$id_business'";
 
                 if ($conn->query($sql)) {
-                    returnSuccess("Tạo mới thành công!");
+                    returnSuccess("Tạo mới thành công!", $token);
                 } else {
                     returnError("Tạo mới không thành công!");
                 }
@@ -117,7 +119,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
             case "delete_unit":
 
                 $id_unit = '';
-                if (isset($_REQUEST['id_unit']) && ! empty($_REQUEST['id_unit'])) {
+                if (isset($_REQUEST['id_unit']) && !empty($_REQUEST['id_unit'])) {
                     $id_unit = $_REQUEST['id_unit'];
                 } else {
                     returnError("Nhập id_unit!");
@@ -138,7 +140,7 @@ if (isset($_REQUEST['id_business']) && $_REQUEST['id_business'] != '') {
                             WHERE  id = '" . $id_unit . "'
                           ";
                     if ($conn->query($sql_delete_product_unit)) {
-                        returnSuccess("Xóa đơn vị tính thành công!");
+                        returnSuccess("Xóa đơn vị tính thành công!", $token);
                     } else {
                         returnError("Xóa đơn vị tính không thành công!");
                     }

@@ -46,7 +46,7 @@ if (isset($type_manager)) {
 
                 $sql = "DELETE FROM `tbl_order_detail` WHERE `id` = '{$id_detail}'";
                 if (db_qr($sql)) {
-                    returnSuccess("Xóa thành công");
+                    returnSuccess("Xóa thành công", $token);
                 } else {
                     returnError("Xóa thất bại");
                 }
@@ -69,6 +69,16 @@ if (isset($type_manager)) {
 
                 $success = array();
 
+                $sql = "SELECT `detail_status` FROM `tbl_order_detail` WHERE `id` = '{$id_detail}'";
+                $result = db_qr($sql);
+                $nums = db_nums($result);
+                if($nums > 0){
+                    while($row = db_assoc($result)){
+                        if($row['detail_status']  == 'Y'){
+                            returnError("Món đã được chế biến, không thể thay đổi số lượng");
+                        }
+                    }
+                }
                 if (isset($_REQUEST['detail_quantity'])) {
                     if ($_REQUEST['detail_quantity'] == '') {
                         unset($_REQUEST['detail_quantity']);
@@ -84,17 +94,15 @@ if (isset($type_manager)) {
                 }
 
                 if (!empty($success)) {
-                    returnSuccess("Tạo đơn hàng thành công");
+                    returnSuccess("Tạo đơn hàng thành công", $token);
                 } else {
-                    returnError("Tao don hang khong thanh cong");
+                    returnError("Tạo đơn hàng không thành công");
                 }
                 break;
             }
-            // case "update_detail_status": { // chef
-            //         include_once "chef_update_status.php";
-            //         break;
-            //     }
+
         case "update_change_table": {
+
 
                 if (isset($_REQUEST['id_table_before'])) {
                     if ($_REQUEST['id_table_before'] == '') {
@@ -238,10 +246,6 @@ if (isset($type_manager)) {
                 }
                 break;
             }
-            // case "update_order_status": {
-            //         include_once "update_order_status.php";
-            //         break;
-            //     }
         case "update_add_product": {
 
                 if (isset($_REQUEST['id_business'])) {
@@ -330,6 +334,7 @@ if (isset($type_manager)) {
                 if (!empty($success)) {
                     $detail_arr = array();
                     $detail_arr['success'] = 'true';
+                    $detail_arr['refresh_token'] = $token;
                     $detail_arr['data'] = array();
                     foreach ($id_detail_arr as $id_insert) {
                         $sql = "SELECT * FROM `tbl_order_detail` 
@@ -339,7 +344,7 @@ if (isset($type_manager)) {
                         $result = db_qr($sql);
                         $nums = db_nums($result);
                         if ($nums > 0) {
-                            
+
                             while ($row = db_assoc($result)) {
                                 $detail_item = array(
                                     'id' => $row['id'],
@@ -353,15 +358,15 @@ if (isset($type_manager)) {
                     }
                     ///push notify
                     $title = "Thông báo đơn hàng!!!";
-                    $bodyMessage = "Có đơn hàng vừa được gọi thêm";
+                    $bodyMessage = $order_floor." - ".$order_table. " vừa gọi món";
                     $action = "create_order";
                     $type_send = 'topic';
-                    $to = 'chef_order_notifycation';
+                    $to = 'chef_order_notifycation_'.strval($id_business);
                     pushNotification($title, $bodyMessage, $action, $to, $type_send);
                     /// end
                     reJson($detail_arr);
                 } else {
-                    returnError("Tạo đơn hàng không thành công");
+                    returnError("Tao don hang khong thanh cong");
                 }
             }
         case "create": {
@@ -543,7 +548,6 @@ if (isset($type_manager)) {
                                         $extra_product = substr($element_item[2], 0, -1);
                                         $detail_cost_product = $element_item[3];
 
-
                                         $sql = "INSERT INTO `tbl_order_detail`
                                         SET `id_order` = '{$id_insert}',
                                             `id_product` = '{$id_product}',
@@ -579,6 +583,7 @@ if (isset($type_manager)) {
                             $detail_arr = array();
                             if ($nums > 0) {
                                 $detail_arr['success'] = 'true';
+                                $detail_arr['refresh_token'] = $token;
                                 $detail_arr['data'] = array();
                                 while ($row = db_assoc($result)) {
                                     $detail_item = array(
@@ -592,21 +597,19 @@ if (isset($type_manager)) {
 
                                 ///push notify
                                 $title = "Thông báo đơn hàng!!!";
-                                $bodyMessage = "Có đơn hàng vừa tạo";
+                                $bodyMessage = $order_floor." - ".$order_table. " vừa gọi món";
                                 $action = "create_order";
                                 $type_send = 'topic';
-                                $to = 'chef_order_notifycation';
+                                $to = 'chef_order_notifycation_'.strval($id_business);
                                 pushNotification($title, $bodyMessage, $action, $to, $type_send);
                                 /// end
-
-
                                 reJson($detail_arr);
                             }
                         } else {
-                            returnError("Tạo đơn hàng thành công");
+                            returnError("Tạo đơn hàng không thành công");
                         }
                     } else {
-                        returnError("Tạo đơn hàng thất bại");
+                        returnError("Lỗi thêm đơn hàng không thành công");
                     }
                 } else {
                     reJson($error);
