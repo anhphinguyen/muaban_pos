@@ -1,0 +1,20 @@
+	
+Cập nhật 19.03.2021
+
+Vấn đề phát sinh:
+1) Thiếu module chức năng Thống kê - Báo cáo cho Admin
+ 
+
+Phương hướng xử lý:
+
+1) Bổ sung các chức năng thống kê báo cáo theo điều kiện - bao gồm :
+
++ Thống kê số lượng khách hàng theo từng cấp độ   VVVVVVVVVVVVVVVVVVVVVVVVVV
+
++ Thống kê tổng số khách hàng trên hệ thống , số khách hàng phát sinh trong tháng , ngày , năm . VVVVVV
+
++ Thống kê tổng số lượng sản phẩm có trên hệ thống 
+
++ Thống kê sản phẩm bán chạy nhất trong tháng , ngày , năm . VVVVVVVVVVVVVVVVVVVVVVVVVV
+
++ Thống kê doanh thu cửa hàng trong tháng ,ngày , năm  VVVVVVVVVVVVVVVVVVVVVVVVVV

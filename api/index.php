@@ -38,6 +38,10 @@ switch ($detect) {
 
         /* admin board */
 
+    case 'statistic': {
+            include_once 'admin_board/statistic.php';
+            break;
+        }
     case 'app_deploy_manager': {
             include_once 'admin_board/app_deploy_manager.php';
             break;
