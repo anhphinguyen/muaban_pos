@@ -38,6 +38,11 @@ if (db_nums($result) > 0) {
 
 ///
 for ($i = 0; $i < count($id_order_arr); $i++) {
+    $sql_update_xxx = "UPDATE `tbl_order_detail` SET
+                                    `detail_status` = 'Y'
+                                    WHERE `id` = '{$id_detail_arr[$i]}'
+                            ";
+                           
     $sql = "SELECT * FROM `tbl_order_order`
                         WHERE `id` = '{$id_order_arr[$i]}' 
                         AND `order_status` = '1' 
@@ -74,32 +79,34 @@ for ($i = 0; $i < count($id_order_arr); $i++) {
         } else {
             returnError("Lỗi kiểm tra loại tầng");
         }
-
+        
         if ($floor_type == 'carry-out') {
 
             $sql_check_detail_status = "SELECT id FROM tbl_order_detail WHERE id_order = '{$id_order_arr[$i]}' AND detail_status = 'N'";
             $total_detail_status_N = count(db_fetch_array($sql_check_detail_status));
+            // echo $total_detail_status_N."-".$id_order_arr[$i];
+            // exit();
             if ($total_detail_status_N == 0) {
                 $sql_update_order_status = "UPDATE `tbl_order_order` 
                                             SET `order_status` = '4',
                                                 `order_check_time` = '{$time_delivery}'
                                             WHERE `id` = '{$id_order_arr[$i]}'    
                                             ";
-            }else{
+            } else {
                 $sql_update_order_status = "UPDATE `tbl_order_order` 
                                             SET `order_status` = '2',
                                                 `order_check_time` = '{$time_delivery}'
                                             WHERE `id` = '{$id_order_arr[$i]}'    
                                             ";
             }
-        }else{
+        } else {
             $sql_update_order_status = "UPDATE `tbl_order_order` 
                                     SET `order_status` = '3',
                                         `order_check_time` = '{$time_delivery}'
                                     WHERE `id` = '{$id_order_arr[$i]}'    
                                     ";
         }
-        
+
 
         if (db_qr($sql_update_order_status)) {
             $success['update_order_status'] = "true";
@@ -107,11 +114,8 @@ for ($i = 0; $i < count($id_order_arr); $i++) {
     }
 
 
-    $sql = "UPDATE `tbl_order_detail` SET
-                    `detail_status` = 'Y'
-                    WHERE `id` = '{$id_detail_arr[$i]}'
-            ";
-    if (db_qr($sql)) {
+
+    if (db_qr($sql_update_xxx)) {
         $success['finised'] = "true";
     }
 }

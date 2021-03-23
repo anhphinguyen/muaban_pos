@@ -64,6 +64,9 @@ function handing_files_img($myfile, $dir_save)
     $total = count($_FILES[$myfile]['name']);
     for ($i = 0; $i < $total; $i++) {
         if ($_FILES[$myfile]['error'][$i] == 0) {
+            
+            $_FILES[$myfile]['name'][$i] = convert_vi_to_en($_FILES[$myfile]['name'][$i]);
+
             $target_dir = $dir_save;
             $target_dir_4_upload = '../' . $dir_save;
             $target_file = $target_dir . basename($_FILES[$myfile]['name'][$i]);
@@ -122,11 +125,13 @@ function handing_file_img($myfile, $dir_save)
 {    // myfile = file nhập vào, $max_size = kích thước lớn nhất của file, 
     // $allow_file_type = các đuôi file cho phép, $dir_save = thư mục lưu trữ
     if ($_FILES[$myfile]['error'] == 0) {
+        
+        $_FILES[$myfile]['name'] = convert_vi_to_en($_FILES[$myfile]['name']);
+
         $target_dir = $dir_save;
         $target_dir_4_upload = '../' . $dir_save;
         $target_file = $target_dir . basename($_FILES[$myfile]['name']);
         $target_save_file = $target_dir_4_upload . basename($_FILES[$myfile]['name']);
-
 
         $allow_file_type = array('jpg', 'jpeg', 'png');
         $max_file_size = 5242880;
@@ -192,7 +197,7 @@ function db_qr($sql)
 function errorToken($error_code, $msg = "", $data = array())
 {
     echo json_encode(array(
-        'success' => ($error_code == '4001')?'true':'false',
+        'success' => ($error_code == '4001') ? 'true' : 'false',
         'message' => $msg,
         'error_code' => $error_code,
         'data' => $data
@@ -275,6 +280,27 @@ function getRolePermission($idUser = '')
     }
 
     return $arr_result;
+}
+
+function convert_vi_to_en($str)
+{
+    $str = preg_replace("/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/", "a", $str);
+    $str = preg_replace("/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/", "e", $str);
+    $str = preg_replace("/(ì|í|ị|ỉ|ĩ)/", "i", $str);
+    $str = preg_replace("/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/", "o", $str);
+    $str = preg_replace("/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/", "u", $str);
+    $str = preg_replace("/(ỳ|ý|ỵ|ỷ|ỹ)/", "y", $str);
+    $str = preg_replace("/(đ)/", "d", $str);
+    $str = preg_replace("/(À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ)/", "A", $str);
+    $str = preg_replace("/(È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ)/", "E", $str);
+    $str = preg_replace("/(Ì|Í|Ị|Ỉ|Ĩ)/", "I", $str);
+    $str = preg_replace("/(Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ)/", "O", $str);
+    $str = preg_replace("/(Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ)/", "U", $str);
+    $str = preg_replace("/(Ỳ|Ý|Ỵ|Ỷ|Ỹ)/", "Y", $str);
+    $str = preg_replace("/(Đ)/", "D", $str);
+    $str = preg_replace("/(\“|\”|\‘|\’|\,|\!|\&|\;|\@|\#|\%|\~|\`|\=|\_|\'|\]|\[|\}|\{|\)|\(|\+|\^)/", '-', $str);
+    $str = preg_replace("/( )/", '_', $str);
+    return $str;
 }
 
 function saveImage($file, $target_save = '')
